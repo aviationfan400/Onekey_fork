@@ -1,3 +1,1 @@
-# onekeyweb
-
-Onekey website - under development.
+# **Ignore this repository.**
