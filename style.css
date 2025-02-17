@@ -31,7 +31,8 @@ header {
     line-height:30px;
     color:rgb(255, 255, 255);
     font-family:"Ubuntu", Ubuntu, Serif; 
-    color: #ddd;
+    color: #dcdcdc;
+    font-weight: 500;
 }
 
 
@@ -51,15 +52,30 @@ header {
         pointer-events: auto;
         z-index:1;
 
-        background: linear-gradient(135deg, #000, #333);
+        background: linear-gradient(135deg, #1a1a1a, #333);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+        
 }
 
 /* hover effect */
 .Volunteering-Box:hover {
     transform: translateY(-5px); 
     box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.5);
+}
+
+.learn-more {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 16px;
+    background: #ff6f00;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-size: 0.95rem;
+    border: none;
 }
 
 nav ul {
@@ -190,4 +206,8 @@ footer {
 .learn-more:hover {
     background: #e65c00;
     transform: translateX(5px); 
+}
+
+.Volunteering-Box, .learn-more {
+    user-select: none; /* Prevents text highlighting */
 }
