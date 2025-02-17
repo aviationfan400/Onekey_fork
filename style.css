@@ -45,7 +45,7 @@ header {
         text-align:center;
         color: white;
         margin-top: 200px;
-        margin-left: -750px;
+        margin-left: -500px;
         border-radius:25px;
         position: relative;
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
@@ -64,11 +64,48 @@ header {
     box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.5);
 }
 
+
+
+/*------------------------------------------------------------*/
+
+.Performances-Box {
+    width: 300px;
+    height:auto;
+    background-color: rgb(0, 0, 0);
+    border:rgb(83, 83, 83);
+    margin:20px;
+    text-align:center;
+    color: white;
+    margin-top: -200px;
+    margin-right: -500px;
+    border-radius:25px;
+    position: relative;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+    z-index:1;
+
+    background: linear-gradient(135deg, #1a1a1a, #333);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    
+}
+
+/* hover effect */
+.Performances-Box:hover {
+transform: translateY(-5px); 
+box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.5);
+}
+
+
+
+
+
+
 .learn-more {
     display: inline-block;
     margin-top: 15px;
     padding: 10px 16px;
-    background: #ff6f00;
     color: white;
     font-weight: bold;
     border-radius: 8px;
