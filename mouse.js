@@ -10,21 +10,20 @@ const style = document.createElement("style");
 style.innerHTML = `
     #circle {
         position: fixed;
-        width: 30px;
-        height: 30px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
-        background-color: blue; !important /* Default color */
+        background-color: rgba(51, 51, 51, 0.5) !important;
         pointer-events: none;
-        opacity:0.65;
-        z-index: 999999; /* Extremely high to stay on top */
-        transition: background-color 0.2s, width 0.1s, height 0.1s;
+        opacity: 0.65;
+        z-index: 999999;
+        transition: width 0.1s, height 0.1s;
     }
 `;
 document.head.appendChild(style);
 
-//circle colour, pretty sure you can also use hex codes for this
-circle.style.backgroundColor = "#4A90E2";
-circle.style.mixBlendMode = "multiply";
+// Remove the color setting
+circle.style.mixBlendMode = "normal";
 
 let mouseX = 0, mouseY = 0; // Mouse target position
 let circleX = 0, circleY = 0; // Circle's current position
@@ -47,14 +46,12 @@ function animate() {
     requestAnimationFrame(animate); // Keep animating
 }
 
-// detects lmb down
+// Restore mousedown/mouseup size changes
 document.addEventListener("mousedown", () => {
     circle.style.width = "15px";
     circle.style.height = "15px";
-    circle.style.backgroundColor = "#F39C12";
 });
 
-// detects lmb up
 document.addEventListener("mouseup", () => {
     circle.style.width = "20px";
     circle.style.height = "20px";
@@ -66,5 +63,9 @@ document.addEventListener("scroll", () => {
     circle.style.top = `${mouseY + scrollY}px`;
 });
 
+// Remove the click color change
+document.addEventListener("click", () => {
+    // Empty function to override any previous click handlers
+});
 
 animate();
