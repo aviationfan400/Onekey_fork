@@ -50,8 +50,8 @@ logo.addEventListener('mouseleave', () => {
 
 // Mouse click effect
 document.addEventListener("mousedown", () => {
-    circle.style.width = "15px";
-    circle.style.height = "15px";
+    circle.style.width = "13px";
+    circle.style.height = "13px";
 });
 
 document.addEventListener("mouseup", () => {
@@ -65,7 +65,6 @@ document.addEventListener("scroll", () => {
     circle.style.top = `${mouseY + scrollY}px`;
 });
 
-// Remove the click color change
 document.addEventListener("click", () => {
     // Empty function to override any previous click handlers
 });
