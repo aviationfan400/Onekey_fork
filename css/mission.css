@@ -2,6 +2,7 @@
     background-color: #f8f9fa;
     padding: 80px 20px;
     position: relative;
+    text-align: center;
 }
 
 .Mission::before {

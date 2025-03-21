@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - ONEKEY</title>
+    <title>Contact - ONEKEY</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/navigation.css">
     <link rel="stylesheet" href="../css/sidebar.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/transition.css">
 </head>
 
 <body>
@@ -27,29 +29,77 @@
         </nav>
     </header>
 
-    <main>
+    <main class="transition-fade">
         <section class="Contact">
             <div class="section-container">
-                <h1>About Us</h1>
-
-                <h2>Emails</h2>
-
+                <h1>Contact Us</h1>
                 <div class="content-wrapper">
-
-                    <p>
-                        Curtis: iscurt.wei@gmail.com
+                    <p class="mission-statement">
+                        Meet the team behind OneKey and get in touch with us!
                     </p>
-                    <p2 >
-                        Ethan: ethan_xyz@hotmail.com
-                    </p2>
+                    
+                    <div class="team-section">
+                        <div class="team-member">
+                            <img src="../images/team-member2.jpg" alt="Team Member" class="member-photo">
+                            <div class="member-info">
+                                <h3>Curtis Wei</h3>
+                                <span class="member-role">Community Outreach</span>
+                                <p class="member-bio">Placeholder</p>
+                                <div class="social-links">
+                                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                                    <a href="#"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="team-member">
+                            <img src="../images/team-member3.jpg" alt="Team Member" class="member-photo">
+                            <div class="member-info">
+                                <h3>Ethan Xie</h3>
+                                <span class="member-role">Student Coordinator</span>
+                                <p class="member-bio">Placeholder</p>
+                                <div class="social-links">
+                                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                                    <a href="https://www.instagram.com/ethanx421/" target="_blank"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form-container">
+                        <h2>Get In Touch</h2>
+                        <form class="contact-form">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <input type="text" id="subject" name="subject" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn">Send Message</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
-
-    <script src="../mouse.js"></script>
-    <script src="../menu.js"></script>
+    <script src="../js/mouse.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/transition.js"></script>
 </body>
 </html>
     

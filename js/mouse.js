@@ -22,6 +22,12 @@ document.head.appendChild(Object.assign(document.createElement("style"), {
             border-radius: 4px;
             transition: width 0.15s ease-out, height 0.15s ease-out, border-radius 0.15s ease-out;
         }
+
+        #circle.contact-hover {
+            width: 5px;
+            height: 24px;
+            border-radius: 4px;
+        }
     `
 }));
 
@@ -31,12 +37,31 @@ document.addEventListener("mousemove", e => {
     circle.style.top = e.clientY + 'px';
 });
 
-// Add hover effect ONLY for menu toggle
+
 const menuToggle = document.querySelector('.menu-toggle');
 const logo = document.querySelector('.logo');
 
-menuToggle.addEventListener('mouseenter', () => circle.classList.add('menu-hover'));
+
+const formInputs = document.querySelectorAll('.form-group input, .form-group textarea');
+
+menuToggle.addEventListener('mouseenter', () => {
+    circle.classList.add('menu-hover');
+    circle.classList.remove('contact-hover');
+});
 menuToggle.addEventListener('mouseleave', () => circle.classList.remove('menu-hover'));
+
+// form input hover effect
+formInputs.forEach(input => {
+    input.addEventListener('mouseenter', () => {
+        circle.classList.add('contact-hover');
+
+        circle.style.width = '';
+        circle.style.height = '';
+    });
+    input.addEventListener('mouseleave', () => {
+        circle.classList.remove('contact-hover');
+    });
+});
 
 logo.addEventListener('mouseenter', () => {
     circle.style.width = '24px';
@@ -48,15 +73,49 @@ logo.addEventListener('mouseleave', () => {
     circle.style.height = '16px';
 });
 
+// Track what element we're currently hovering over
+let currentHoverElement = null;
+
+// Update the current hover element
+document.addEventListener('mouseover', (e) => {
+    // Check if we're hovering over an input or the menu toggle
+    if (e.target.matches('.form-group input, .form-group textarea')) {
+        currentHoverElement = 'input';
+    } else if (e.target === menuToggle) {
+        currentHoverElement = 'menu';
+    } else if (e.target === logo) {
+        currentHoverElement = 'logo';
+    } else {
+        currentHoverElement = null;
+    }
+});
+
 // Mouse click effect
 document.addEventListener("mousedown", () => {
-    circle.style.width = "13px";
-    circle.style.height = "13px";
+    // Save the current hover state
+    if (!currentHoverElement) {
+        circle.style.width = "13px";
+        circle.style.height = "13px";
+    }
 });
 
 document.addEventListener("mouseup", () => {
-    circle.style.width = "16px";
-    circle.style.height = "16px";
+    // Restore the appropriate state based on what we're hovering over
+    if (currentHoverElement === 'input') {
+        circle.classList.add('contact-hover');
+        circle.style.width = '';
+        circle.style.height = '';
+    } else if (currentHoverElement === 'menu') {
+        circle.classList.add('menu-hover');
+        circle.style.width = '';
+        circle.style.height = '';
+    } else if (currentHoverElement === 'logo') {
+        circle.style.width = '24px';
+        circle.style.height = '24px';
+    } else {
+        circle.style.width = "16px";
+        circle.style.height = "16px";
+    }
 });
 
 // allows for scrolling
