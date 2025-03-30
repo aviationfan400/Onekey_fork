@@ -10,6 +10,31 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Nav Links:', navLinks);
     console.log('Logo:', logo);
 
+    // Add transition duration variable
+    const TRANSITION_DURATION = 800; // 800ms = 0.8 seconds (matches CSS)
+
+    let isAnimating = false;
+
+    // Initialize menu state
+    const initializeMenu = () => {
+        navLinks.classList.add('nav-transition');
+        logo.classList.add('menu-transition');
+        menuToggle.classList.add('menu-transition');
+    };
+
+    // Run initialization
+    initializeMenu();
+
+    // Fix cursor issues
+    document.documentElement.style.cursor = 'auto';
+    document.body.style.cursor = 'auto';
+    
+    const links = document.querySelectorAll('a, button, .menu-toggle');
+    links.forEach(link => {
+        link.style.cursor = 'pointer';
+    });
+
+    // Toggle menu with proper animations
     menuToggle.addEventListener('click', () => {
         navLinks.classList.toggle('active');
         logo.classList.toggle('menu-active');
@@ -37,12 +62,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle link clicks for smooth transitions
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = link.getAttribute('href');
+            
+            // Start closing animation
+            navLinks.classList.remove('active');
+            logo.classList.remove('menu-active');
+            menuToggle.classList.remove('active');
+            
+            // Navigate after transition
+            setTimeout(() => {
+                window.location.href = href;
+            }, TRANSITION_DURATION);
+        });
+    });
+
     // Add aria labels and roles for accessibility
     menuToggle.setAttribute('aria-label', 'Open navigation menu');
     menuToggle.setAttribute('role', 'button');
     menuToggle.setAttribute('tabindex', '0');
 
-    // Add transparent menu styles
+    // Add transparent menu styles for top bar
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             header.classList.add('scrolled');
@@ -59,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add scroll animation
+    // Initialize intersection observer for animations
     const observerOptions = {
         root: null,
         rootMargin: '0px',

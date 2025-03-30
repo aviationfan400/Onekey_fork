@@ -135,3 +135,76 @@ document.addEventListener("mouseleave", () => {
 document.addEventListener("mouseenter", () => {
     circle.style.opacity = "0.65";
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    
+    if (!cursorDot || !cursorOutline) return;
+    
+    let mouseX = 0;
+    let mouseY = 0;
+    let outlineX = 0;
+    let outlineY = 0;
+    
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+    });
+    
+    function animateCursor() {
+        let dx = mouseX - outlineX;
+        let dy = mouseY - outlineY;
+        
+        outlineX += dx * 0.2;
+        outlineY += dy * 0.2;
+        
+        cursorOutline.style.left = outlineX + 'px';
+        cursorOutline.style.top = outlineY + 'px';
+        
+        requestAnimationFrame(animateCursor);
+    }
+    
+    animateCursor();
+    
+    const interactiveElements = document.querySelectorAll('a, button, .menu-toggle, .cta-button, [role="button"], .value-item, .member-image, .nav-links li, .footer-social a');
+    
+    interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+            cursorOutline.style.width = '60px';
+            cursorOutline.style.height = '60px';
+            cursorOutline.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            cursorOutline.style.width = '40px';
+            cursorOutline.style.height = '40px';
+            cursorOutline.style.backgroundColor = 'transparent';
+        });
+    });
+    
+    document.addEventListener('mouseout', (e) => {
+        if (e.relatedTarget === null) {
+            cursorDot.style.opacity = '0';
+            cursorOutline.style.opacity = '0';
+        }
+    });
+    
+    document.addEventListener('mouseover', () => {
+        cursorDot.style.opacity = '1';
+        cursorOutline.style.opacity = '1';
+    });
+    
+    document.addEventListener('mousedown', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(0.7)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(0.7)';
+    });
+    
+    document.addEventListener('mouseup', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+});
