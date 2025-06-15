@@ -3,13 +3,11 @@
     padding: 0;
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    cursor: none !important;
 }
 
 body {
     line-height: 1.6;
     overflow-x: hidden;
-    cursor: none !important;
     font-family: 'Poppins', sans-serif;
 }
 
@@ -51,7 +49,6 @@ nav {
 
 .menu-toggle {
     font-size: 1.5rem;
-    cursor: none !important;
     color: black;
     margin-right: 2rem;
     transition: transform 0.3s ease, color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -75,7 +72,6 @@ nav {
 
 .menu-toggle i {
     pointer-events: none;
-    cursor: none !important;
 }
 
 .nav-links {
@@ -622,10 +618,7 @@ nav.fade > *:not(.logo):not(.menu-toggle):not(.nav-links.active):not(.menu-toggl
 
 html {
     scroll-behavior: smooth;
-    cursor: none !important;
 }
 
-*, *:before, *:after {
-    cursor: none !important;
-}
+/* Remove cursor conflicts - let cursor-fix.css handle this */
 

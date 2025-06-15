@@ -1,0 +1,16 @@
+/* Simple iPad Pro Style Cursor - Circle Only */
+* {
+    cursor: none !important;
+}
+
+.cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: rgba(128, 128, 128, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+} 
