@@ -1,210 +1,170 @@
-// Create and style cursor
-let circle = document.createElement("div");
-circle.id = "circle";
-document.body.appendChild(circle);
-
-document.head.appendChild(Object.assign(document.createElement("style"), {
-    innerHTML: `
-        #circle {
-            position: fixed;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: rgba(145, 145, 145, 1);
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-        }
+// Simple and Reliable Custom Cursor System
+(function() {
+    'use strict';
+    
+    let cursorDot, cursorOutline;
+    let mouseX = 0, mouseY = 0;
+    let isInitialized = false;
+    
+    // Check if mobile device
+    function isMobile() {
+        return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    
+    // Create cursor elements
+    function createCursorElements() {
+        // Remove any existing cursor elements
+        const existingDot = document.querySelector('.cursor-dot');
+        const existingOutline = document.querySelector('.cursor-outline');
+        if (existingDot) existingDot.remove();
+        if (existingOutline) existingOutline.remove();
         
-        #circle.menu-hover {
-            width: 32px;
-            height: 24px;
-            border-radius: 4px;
-            transition: width 0.15s ease-out, height 0.15s ease-out, border-radius 0.15s ease-out;
-        }
-
-        #circle.contact-hover {
-            width: 5px;
-            height: 24px;
-            border-radius: 4px;
-        }
-    `
-}));
-
-// Simple mouse following without any delay
-document.addEventListener("mousemove", e => {
-    circle.style.left = e.clientX + 'px';
-    circle.style.top = e.clientY + 'px';
-});
-
-
-const menuToggle = document.querySelector('.menu-toggle');
-const logo = document.querySelector('.logo');
-
-
-const formInputs = document.querySelectorAll('.form-group input, .form-group textarea');
-
-menuToggle.addEventListener('mouseenter', () => {
-    circle.classList.add('menu-hover');
-    circle.classList.remove('contact-hover');
-});
-menuToggle.addEventListener('mouseleave', () => circle.classList.remove('menu-hover'));
-
-// form input hover effect
-formInputs.forEach(input => {
-    input.addEventListener('mouseenter', () => {
-        circle.classList.add('contact-hover');
-
-        circle.style.width = '';
-        circle.style.height = '';
-    });
-    input.addEventListener('mouseleave', () => {
-        circle.classList.remove('contact-hover');
-    });
-});
-
-logo.addEventListener('mouseenter', () => {
-    circle.style.width = '24px';
-    circle.style.height = '24px';
-});
-
-logo.addEventListener('mouseleave', () => {
-    circle.style.width = '16px';
-    circle.style.height = '16px';
-});
-
-// Track what element we're currently hovering over
-let currentHoverElement = null;
-
-// Update the current hover element
-document.addEventListener('mouseover', (e) => {
-    // Check if we're hovering over an input or the menu toggle
-    if (e.target.matches('.form-group input, .form-group textarea')) {
-        currentHoverElement = 'input';
-    } else if (e.target === menuToggle) {
-        currentHoverElement = 'menu';
-    } else if (e.target === logo) {
-        currentHoverElement = 'logo';
-    } else {
-        currentHoverElement = null;
+        // Create new cursor elements
+        cursorDot = document.createElement('div');
+        cursorDot.className = 'cursor-dot';
+        
+        cursorOutline = document.createElement('div');
+        cursorOutline.className = 'cursor-outline';
+        
+        // Add to body
+        document.body.appendChild(cursorDot);
+        document.body.appendChild(cursorOutline);
+        
+        console.log('Cursor elements created');
     }
-});
-
-// Mouse click effect
-document.addEventListener("mousedown", () => {
-    // Save the current hover state
-    if (!currentHoverElement) {
-        circle.style.width = "13px";
-        circle.style.height = "13px";
+    
+    // Apply cursor styles directly
+    function applyCursorStyles() {
+        if (!cursorDot || !cursorOutline) return;
+        
+        // Cursor dot styles
+        Object.assign(cursorDot.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '8px',
+            height: '8px',
+            backgroundColor: '#3498db',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            zIndex: '9999',
+            transform: 'translate(-50%, -50%)',
+            transition: 'transform 0.2s ease',
+            opacity: '1',
+            visibility: 'visible'
+        });
+        
+        // Cursor outline styles
+        Object.assign(cursorOutline.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '40px',
+            height: '40px',
+            border: '2px solid #3498db',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            zIndex: '9998',
+            transform: 'translate(-50%, -50%)',
+            transition: 'transform 0.3s ease',
+            opacity: '1',
+            visibility: 'visible',
+            backgroundColor: 'transparent'
+        });
+        
+        console.log('Cursor styles applied');
     }
-});
-
-document.addEventListener("mouseup", () => {
-    // Restore the appropriate state based on what we're hovering over
-    if (currentHoverElement === 'input') {
-        circle.classList.add('contact-hover');
-        circle.style.width = '';
-        circle.style.height = '';
-    } else if (currentHoverElement === 'menu') {
-        circle.classList.add('menu-hover');
-        circle.style.width = '';
-        circle.style.height = '';
-    } else if (currentHoverElement === 'logo') {
-        circle.style.width = '24px';
-        circle.style.height = '24px';
-    } else {
-        circle.style.width = "16px";
-        circle.style.height = "16px";
+    
+    // Hide default cursor
+    function hideDefaultCursor() {
+        const style = document.createElement('style');
+        style.id = 'cursor-hide-style';
+        style.textContent = `
+            * { cursor: none !important; }
+            html, body { cursor: none !important; }
+        `;
+        document.head.appendChild(style);
+        console.log('Default cursor hidden');
     }
-});
-
-// allows for scrolling
-document.addEventListener("scroll", () => {
-    let scrollY = window.scrollY;
-    circle.style.top = `${mouseY + scrollY}px`;
-});
-
-document.addEventListener("click", () => {
-    // Empty function to override any previous click handlers
-});
-
-document.addEventListener("mouseleave", () => {
-    circle.style.opacity = "0";
-});
-
-document.addEventListener("mouseenter", () => {
-    circle.style.opacity = "0.65";
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const cursorDot = document.querySelector('.cursor-dot');
-    const cursorOutline = document.querySelector('.cursor-outline');
     
-    if (!cursorDot || !cursorOutline) return;
-    
-    let mouseX = 0;
-    let mouseY = 0;
-    let outlineX = 0;
-    let outlineY = 0;
-    
-    document.addEventListener('mousemove', (e) => {
+    // Update cursor position
+    function updateCursor(e) {
+        if (!cursorDot || !cursorOutline) return;
+        
         mouseX = e.clientX;
         mouseY = e.clientY;
         
         cursorDot.style.left = mouseX + 'px';
         cursorDot.style.top = mouseY + 'px';
-    });
-    
-    function animateCursor() {
-        let dx = mouseX - outlineX;
-        let dy = mouseY - outlineY;
-        
-        outlineX += dx * 0.2;
-        outlineY += dy * 0.2;
-        
-        cursorOutline.style.left = outlineX + 'px';
-        cursorOutline.style.top = outlineY + 'px';
-        
-        requestAnimationFrame(animateCursor);
+        cursorOutline.style.left = mouseX + 'px';
+        cursorOutline.style.top = mouseY + 'px';
     }
     
-    animateCursor();
-    
-    const interactiveElements = document.querySelectorAll('a, button, .menu-toggle, .cta-button, [role="button"], .value-item, .member-image, .nav-links li, .footer-social a');
-    
-    interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            cursorOutline.style.width = '60px';
-            cursorOutline.style.height = '60px';
-            cursorOutline.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-        });
+    // Setup hover effects
+    function setupHoverEffects() {
+        const elements = document.querySelectorAll('a, button, .menu-toggle, .cta-button, .value-item, .member-image, .nav-links li, .footer-social a, .pillar, .team-member, .fab, .submit-btn, input, textarea, select');
         
-        element.addEventListener('mouseleave', () => {
-            cursorOutline.style.width = '40px';
-            cursorOutline.style.height = '40px';
-            cursorOutline.style.backgroundColor = 'transparent';
+        elements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                if (cursorOutline) {
+                    cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                    cursorOutline.style.borderColor = '#5dade2';
+                }
+                if (cursorDot) {
+                    cursorDot.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                    cursorDot.style.backgroundColor = '#5dade2';
+                }
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                if (cursorOutline) {
+                    cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursorOutline.style.borderColor = '#3498db';
+                }
+                if (cursorDot) {
+                    cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursorDot.style.backgroundColor = '#3498db';
+                }
+            });
         });
-    });
+    }
     
-    document.addEventListener('mouseout', (e) => {
-        if (e.relatedTarget === null) {
-            cursorDot.style.opacity = '0';
-            cursorOutline.style.opacity = '0';
+    // Initialize cursor system
+    function initCursor() {
+        if (isInitialized || isMobile()) return;
+        
+        console.log('Initializing cursor system...');
+        
+        createCursorElements();
+        applyCursorStyles();
+        hideDefaultCursor();
+        setupHoverEffects();
+        
+        // Add mouse move listener
+        document.addEventListener('mousemove', updateCursor);
+        
+        // Show cursors
+        if (cursorDot && cursorOutline) {
+            cursorDot.style.opacity = '1';
+            cursorOutline.style.opacity = '1';
+        }
+        
+        isInitialized = true;
+        console.log('Cursor system initialized successfully');
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCursor);
+    } else {
+        initCursor();
+    }
+    
+    // Reinitialize on page visibility change
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !isMobile()) {
+            setTimeout(initCursor, 100);
         }
     });
     
-    document.addEventListener('mouseover', () => {
-        cursorDot.style.opacity = '1';
-        cursorOutline.style.opacity = '1';
-    });
-    
-    document.addEventListener('mousedown', () => {
-        cursorDot.style.transform = 'translate(-50%, -50%) scale(0.7)';
-        cursorOutline.style.transform = 'translate(-50%, -50%) scale(0.7)';
-    });
-    
-    document.addEventListener('mouseup', () => {
-        cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
-        cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
-    });
-});
+})();

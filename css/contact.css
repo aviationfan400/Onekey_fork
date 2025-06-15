@@ -6,7 +6,7 @@
     margin-top:36px;
 }
 .Contact {
-    background-color: #f8f9fa;
+    background-color: transparent;
     padding: 80px 20px;
     position: relative;
     text-align: center;
@@ -19,7 +19,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(74, 144, 226, 0.05) 0%, rgba(243, 156, 18, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.02) 0%, rgba(243, 156, 18, 0.02) 100%);
     z-index: 0;
 }
 

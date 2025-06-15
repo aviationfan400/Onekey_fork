@@ -9,6 +9,8 @@
 body {
     line-height: 1.6;
     overflow-x: hidden;
+    cursor: none !important;
+    font-family: 'Poppins', sans-serif;
 }
 
 header {
@@ -614,5 +616,16 @@ nav.fade > *:not(.logo):not(.menu-toggle):not(.nav-links.active):not(.menu-toggl
 .submit-btn:hover {
     background: #357ABD;
     transform: translateY(-2px);
+}
+
+/* Global styles */
+
+html {
+    scroll-behavior: smooth;
+    cursor: none !important;
+}
+
+*, *:before, *:after {
+    cursor: none !important;
 }
 

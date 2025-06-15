@@ -1,4 +1,5 @@
 /* Base styles */
+
 :root {
     --primary: #3498db;
     --primary-light: #5dade2;
@@ -10,43 +11,167 @@
     --bg: #fff;
 }
 
+/* Smooth scrolling for the entire page */
+html {
+    scroll-behavior: smooth !important;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scroll-behavior: inherit;
 }
 
-.cursor-dot,
-.cursor-outline {
-    pointer-events: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    z-index: 9999;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.cursor-dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--primary);
-}
-
-.cursor-outline {
-    width: 40px;
-    height: 40px;
-    border: 2px solid var(--primary);
-    transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
-}
-
-html, body {
+/* Remove default cursor completely */
+*, *:before, *:after {
     cursor: none !important;
 }
 
+/* Enhanced smooth scroll animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Bidirectional scroll-triggered animations */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: opacity, transform;
+}
+
+.scroll-animate.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-animate.animate-out {
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: all 0.4s ease-out;
+}
+
+.scroll-animate-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: opacity, transform;
+}
+
+.scroll-animate-left.animate {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-animate-left.animate-out {
+    opacity: 0;
+    transform: translateX(-15px);
+    transition: all 0.4s ease-out;
+}
+
+.scroll-animate-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: opacity, transform;
+}
+
+.scroll-animate-right.animate {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-animate-right.animate-out {
+    opacity: 0;
+    transform: translateX(15px);
+    transition: all 0.4s ease-out;
+}
+
+/* Scroll direction based animations */
+body.scrolling-down .scroll-animate:not(.animate) {
+    transform: translateY(20px);
+}
+
+body.scrolling-up .scroll-animate:not(.animate) {
+    transform: translateY(-20px);
+}
+
+/* Enhanced cursor styles - force visibility and proper positioning */
+.cursor-dot,
+.cursor-outline {
+    pointer-events: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: translate(-50%, -50%) !important;
+    border-radius: 50% !important;
+    z-index: 9999 !important;
+    transition: opacity 0.3s ease-in-out !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.cursor-dot {
+    width: 8px !important;
+    height: 8px !important;
+    background-color: #3498db !important;
+    z-index: 9999 !important;
+}
+
+.cursor-outline {
+    width: 40px !important;
+    height: 40px !important;
+    border: 2px solid #3498db !important;
+    background: transparent !important;
+    transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease !important;
+    z-index: 9998 !important;
+}
+
+/* Force hide default cursor completely */
+html, body {
+    cursor: none !important;
+    scroll-behavior: smooth;
+}
+
+*, *:before, *:after {
+    cursor: none !important;
+}
+
+/* Ensure all interactive elements have no cursor */
 a, button, .menu-toggle, .cta-button, [role="button"], 
-.value-item, .member-image, .nav-links li, .footer-social a {
+.value-item, .member-image, .nav-links li, .footer-social a,
+.pillar, .team-member, .fab, .submit-btn, input, textarea, select,
+.contact-form button, .mission-cta a, .logo {
     cursor: none !important;
 }
 
@@ -97,6 +222,7 @@ nav {
     backdrop-filter: blur(10px); /* Modern glass effect */
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .logo {
@@ -587,16 +713,6 @@ footer {
     color: var(--text-light);
 }
 
-/* Override to fix cursor visibility */
-html, body, * {
-    cursor: auto !important;
-}
-
-a, button, .menu-toggle, .cta-button, [role="button"], 
-.value-item, .member-image {
-    cursor: pointer !important;
-}
-
 /* Responsive design */
 @media (max-width: 1000px) {
     .story-container, 
@@ -631,19 +747,6 @@ a, button, .menu-toggle, .cta-button, [role="button"],
 }
 
 @media (max-width: 768px) {
-    .cursor-dot, .cursor-outline {
-        display: none;
-    }
-    
-    html, body {
-        cursor: auto !important;
-    }
-    
-    a, button, .menu-toggle, .cta-button, [role="button"], 
-    .value-item, .member-image, .nav-links li, .footer-social a {
-        cursor: pointer !important;
-    }
-    
     main {
         padding: 100px 20px 40px;
     }

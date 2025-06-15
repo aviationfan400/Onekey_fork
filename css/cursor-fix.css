@@ -1,0 +1,44 @@
+/* Simple Cursor Fix - Clean and Reliable */
+
+/* Basic cursor element styles - let JS handle the rest */
+.cursor-dot {
+    pointer-events: none;
+    position: fixed;
+    z-index: 9999;
+    border-radius: 50%;
+}
+
+.cursor-outline {
+    pointer-events: none;
+    position: fixed;
+    z-index: 9998;
+    border-radius: 50%;
+    background: transparent;
+}
+
+/* Hide default cursor on desktop only */
+@media (min-width: 769px) {
+    * {
+        cursor: none !important;
+    }
+}
+
+/* Show default cursor on mobile */
+@media (max-width: 768px) {
+    .cursor-dot,
+    .cursor-outline {
+        display: none !important;
+    }
+    
+    * {
+        cursor: auto !important;
+    }
+    
+    a,
+    button,
+    input,
+    textarea,
+    select {
+        cursor: pointer !important;
+    }
+} 

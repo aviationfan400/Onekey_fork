@@ -1,23 +1,86 @@
-.transition-fade {
-    opacity: 1;
-    transition: opacity 0.4s ease;
-}
-
-html.is-animating .transition-fade {
+/* Advanced smooth page transitions */
+html {
     opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.slide-out {
-    animation: slideOut 0.6s ease-in-out;
+html[style*="opacity: 1"] {
+    opacity: 1;
 }
 
-@keyframes slideOut {
+body {
+    transition: opacity 0.2s ease;
+}
+
+body.transitioning {
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Main content transitions */
+main {
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(0);
+}
+
+main.page-loaded {
+    opacity: 1;
+}
+
+main.transition-fade {
+    opacity: 1;
+}
+
+/* Slide out animation */
+main.slide-out {
+    animation: smoothSlideOut 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes smoothSlideOut {
     0% {
         transform: translateX(0);
         opacity: 1;
     }
+    30% {
+        transform: translateX(15px);
+        opacity: 0.8;
+    }
+    70% {
+        transform: translateX(50px);
+        opacity: 0.3;
+    }
     100% {
-        transform: translateX(100%);
+        transform: translateX(100px);
         opacity: 0;
     }
+}
+
+/* Ensure consistent background during transitions */
+html, body {
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+/* Prevent layout shifts */
+* {
+    box-sizing: border-box;
+}
+
+/* Smooth loading states */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Enhanced fade effects */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
 }

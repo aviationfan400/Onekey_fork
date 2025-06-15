@@ -29,6 +29,8 @@ section {
 body {
     line-height: 1.6;
     overflow-x: hidden;
+    cursor: none !important;
+    font-family: 'Poppins', sans-serif;
 }
 
 header {
@@ -144,4 +146,13 @@ header {
     z-index: 3;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+html {
+    scroll-behavior: smooth;
+    cursor: none !important;
+}
+
+*, *:before, *:after {
+    cursor: none !important;
 } 
