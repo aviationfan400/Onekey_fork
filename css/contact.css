@@ -270,6 +270,66 @@
     flex-shrink: 0;
 }
 
+.member-photo.shane {
+    margin-bottom:80px;
+}
+
+.member-info.ethan h3{
+    margin-top: -80px;
+}
+.member-info.ethan .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.member-info.jiawei h3{
+    margin-top: -80px;
+}
+.member-info.jiawei .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.member-info.eliza h3{
+    margin-top: -80px;
+}
+.member-info.eliza .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.member-info.alex h3{
+    margin-top: -80px;
+}
+.member-info.alex .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.member-info.gabby h3{
+    margin-top: -80px;
+}
+.member-info.gabby .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.member-info.jessica h3{
+    margin-top: -80px;
+}
+.member-info.jessica .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.member-info.shane h3{
+    margin-top: -150px;
+}
+.member-info.shane .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
 .team-member:hover .member-photo {
     transform: scale(1.05);
 }
