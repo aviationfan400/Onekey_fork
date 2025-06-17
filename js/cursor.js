@@ -1,71 +1,54 @@
-// Simple iPad Pro Style Cursor - Circle Only
-(function() {
-    'use strict';
-    
-    let cursor = null;
-    let isInitialized = false;
-    let mouseX = 0;
-    let mouseY = 0;
-    let animationId = null;
-    
-    function createCursor() {
-        if (cursor) return cursor;
-        
-        cursor = document.createElement('div');
-        cursor.className = 'cursor';
-        document.body.appendChild(cursor);
-        return cursor;
-    }
-    
-    function updateCursorPosition() {
-        if (!cursor) return;
-        
-        cursor.style.left = mouseX + 'px';
-        cursor.style.top = mouseY + 'px';
-    }
-    
-    function handleMouseMove(e) {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        
-        if (!animationId) {
-            animationId = requestAnimationFrame(() => {
-                updateCursorPosition();
-                animationId = null;
-            });
-        }
-    }
-    
-    function handleMouseLeave() {
-        if (cursor) cursor.style.opacity = '0';
-    }
-    
-    function handleMouseEnter() {
-        if (cursor) cursor.style.opacity = '1';
-    }
-    
-    function init() {
-        if (isInitialized) return;
-        
-        // Skip on mobile/touch devices
-        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-            return;
-        }
-        
-        createCursor();
-        
-        document.addEventListener('mousemove', handleMouseMove, { passive: true });
-        document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-        document.addEventListener('mouseenter', handleMouseEnter, { passive: true });
-        
-        isInitialized = true;
-    }
-    
-    // Initialize immediately if DOM is ready
-    if (document.readyState !== 'loading') {
-        init();
-    } else {
-        document.addEventListener('DOMContentLoaded', init, { once: true });
-    }
-    
-})(); 
+let circle = document.getElementById("circle");
+if (!circle) {
+    circle = document.createElement("div");
+    circle.id = "circle";
+    document.body.appendChild(circle);
+}
+
+const CIRCLE_SIZE = 20; // px
+const CIRCLE_RADIUS = CIRCLE_SIZE / 2;
+Object.assign(circle.style, {
+    width: CIRCLE_SIZE + "px",
+    height: CIRCLE_SIZE + "px",
+    position: "fixed",
+    pointerEvents: "none",
+    zIndex: 999999,
+    background: "rgba(51,51,51,0.5)",
+    borderRadius: "50%",
+    opacity: "0.65",
+    left: "0px",
+    top: "0px"
+});
+
+let mouseX = 0, mouseY = 0;
+let circleX = 0, circleY = 0;
+const delay = 0.9;
+
+document.addEventListener("mousemove", (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+});
+
+function animate() {
+    circleX += (mouseX - circleX) * delay;
+    circleY += (mouseY - circleY) * delay;
+    circle.style.transform = `translate(${circleX - CIRCLE_RADIUS}px, ${circleY - CIRCLE_RADIUS}px)`;
+    requestAnimationFrame(animate);
+}
+animate();
+
+// Restore mousedown/mouseup size changes
+document.addEventListener("mousedown", () => {
+    circle.style.width = "15px";
+    circle.style.height = "15px";
+});
+
+document.addEventListener("mouseup", () => {
+    circle.style.width = `${CIRCLE_SIZE}px`;
+    circle.style.height = `${CIRCLE_SIZE}px`;
+});
+
+// Remove the click color change
+document.addEventListener("click", () => {
+    // Empty function to override any previous click handlers
+});
