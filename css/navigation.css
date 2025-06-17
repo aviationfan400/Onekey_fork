@@ -16,9 +16,20 @@ nav {
 .logo {
     font-weight: bold;
     font-size: 1.5rem;
-    color: white;
+    color: #4A90E2;
     margin-right: auto; /* Push to the left */
     transition: all 0.3s ease;
+}
+
+.logo a {
+    color: #4A90E2;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.logo a:hover {
+    text-decoration: underline;
 }
 
 /* Menu toggle on the right */
@@ -108,6 +119,7 @@ nav {
 
 .nav-links a:hover {
     transform: translateY(-3px);
+    text-decoration: none; /* Explicitly prevent underline */
 }
 
 /* For small screens */ 
