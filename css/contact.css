@@ -270,9 +270,7 @@
     flex-shrink: 0;
 }
 
-.member-photo.shane {
-    margin-bottom:80px;
-}
+
 
 .member-info.ethan h3{
     margin-top: -80px;
@@ -323,9 +321,17 @@
 }
 
 .member-info.shane h3{
-    margin-top: -150px;
+    margin-top: -80px;
 }
 .member-info.shane .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.member-info.selena h3{
+    margin-top: -80px;
+}
+.member-info.selena .member-role{
     margin-top: -25px;
     margin-bottom: 30px;
 }
