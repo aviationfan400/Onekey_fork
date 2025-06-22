@@ -334,6 +334,14 @@
     margin-bottom: 2rem;
 }
 
+.member-info.curtis h3{
+    margin-top: -80px;
+}
+.member-info.curtis .member-role{
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
 .team-member:hover .member-photo {
     transform: scale(1.05);
 }
