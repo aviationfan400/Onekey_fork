@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Involved - ONEKEY</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/transition.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .construction-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        .construction-content {
+            max-width: 600px;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        .construction-icon {
+            font-size: 4rem;
+            color: #e74c3c;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .construction-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .construction-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .construction-message {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: #5a6c7d;
+            line-height: 1.7;
+            margin-bottom: 3rem;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+        
+        .contact-cta {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .contact-cta p {
+            margin: 0 0 1rem 0;
+            font-size: 0.9rem;
+            color: #5a6c7d;
+        }
+        
+        .temp-contact-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background-color: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .temp-contact-button:hover {
+            background-color: #34495e;
+            transform: translateY(-1px);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @media (max-width: 768px) {
+            .construction-title {
+                font-size: 2rem;
+            }
+            
+            .construction-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .construction-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="logo"><a href="../index.html">ONEKEY</a></div>
+            
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="get-involved.html">Get Involved</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="transition-fade">
+        <div class="construction-container">
+            <div class="construction-content">
+                <div class="construction-icon">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <h1 class="construction-title">Get Involved</h1>
+                <p class="construction-subtitle">Area Under Construction</p>
+                <div class="construction-message">
+                    <p>We're building an exciting platform where you can learn about volunteer opportunities, performance events, tutoring programs, and ways to support our mission.</p>
+                    <p>This page will soon feature volunteer applications, event calendars, and multiple ways to join the OneKey community!</p>
+                </div>
+                
+                <div class="contact-cta">
+                    <p><strong>Interested in getting involved right now?</strong></p>
+                    <p>While we're building this page, you can still reach out to us through our contact page.</p>
+                    <a href="contact.html" class="temp-contact-button">
+                        <i class="fas fa-envelope"></i>
+                        Contact Us Today
+                    </a>
+                </div>
+                
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/transition.js"></script>
+    <script src="../js/menu.js"></script>
+</body>
+</html> 

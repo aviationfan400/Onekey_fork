@@ -35,74 +35,100 @@ document.addEventListener('DOMContentLoaded', () => {
         link.style.cursor = 'pointer';
     });
 
+    // Function to close menu
+    const closeMenu = () => {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        navLinks.classList.remove('active');
+        if (logo) logo.classList.remove('menu-active');
+        if (menuToggle) menuToggle.classList.remove('active');
+        body.style.overflow = 'auto';
+        
+        setTimeout(() => {
+            isAnimating = false;
+        }, TRANSITION_DURATION);
+    };
+
+    // Function to open menu
+    const openMenu = () => {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        navLinks.classList.add('active');
+        if (logo) logo.classList.add('menu-active');
+        if (menuToggle) menuToggle.classList.add('active');
+        body.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+            isAnimating = false;
+        }, TRANSITION_DURATION);
+    };
+
+    // Create close button for mobile menu
+    const createCloseButton = () => {
+        const closeButton = document.createElement('button');
+        closeButton.className = 'menu-close';
+        closeButton.innerHTML = '<i class="fas fa-times"></i>';
+        closeButton.setAttribute('aria-label', 'Close navigation menu');
+        closeButton.setAttribute('tabindex', '0');
+        closeButton.addEventListener('click', closeMenu);
+        
+        // Add keyboard support
+        closeButton.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                closeMenu();
+            }
+        });
+        
+        return closeButton;
+    };
+
+    // Add close button to nav links
+    if (navLinks) {
+        const closeButton = createCloseButton();
+        navLinks.appendChild(closeButton);
+    }
+
     // Toggle menu with proper animations
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             // Prevent multiple clicks during animation
             if (isAnimating) return;
-            isAnimating = true;
             
             const isOpening = !navLinks.classList.contains('active');
             
-            navLinks.classList.toggle('active');
-            if (logo) logo.classList.toggle('menu-active');
-            menuToggle.classList.toggle('active');
-            
-            // Handle body overflow
-            body.style.overflow = isOpening ? 'hidden' : 'auto';
-            
-            // Reset animation state after transition completes
-            setTimeout(() => {
-                isAnimating = false;
-            }, TRANSITION_DURATION);
+            if (isOpening) {
+                openMenu();
+            } else {
+                closeMenu();
+            }
         });
     }
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (navLinks && !navLinks.contains(e.target) && menuToggle && !menuToggle.contains(e.target) && navLinks.classList.contains('active')) {
-            // Prevent multiple clicks during animation
-            if (isAnimating) return;
-            isAnimating = true;
-            
-            navLinks.classList.remove('active');
-            if (logo) logo.classList.remove('menu-active');
-            if (menuToggle) menuToggle.classList.remove('active');
-            body.style.overflow = 'auto';
-            
-            // Reset animation state after transition completes
-            setTimeout(() => {
-                isAnimating = false;
-            }, TRANSITION_DURATION);
+            closeMenu();
         }
     });
 
     // Close menu when pressing Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navLinks && navLinks.classList.contains('active')) {
-            navLinks.classList.remove('active');
-            if (logo) logo.classList.remove('menu-active');
-            if (menuToggle) menuToggle.classList.remove('active');
-            body.style.overflow = 'auto';
+            closeMenu();
         }
     });
 
-    // Handle link clicks for smooth transitions
+    // Handle link clicks - let the main transition system handle navigation
     if (navLinks) {
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const href = link.getAttribute('href');
+                // Close the menu immediately when a link is clicked
+                closeMenu();
                 
-                // Start closing animation
-                navLinks.classList.remove('active');
-                if (logo) logo.classList.remove('menu-active');
-                if (menuToggle) menuToggle.classList.remove('active');
-                
-                // Navigate after transition
-                setTimeout(() => {
-                    window.location.href = href;
-                }, TRANSITION_DURATION);
+                // Don't prevent default - let the transition system handle it
             });
         });
     }

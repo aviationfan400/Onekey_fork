@@ -4,12 +4,14 @@ nav {
     position: fixed;
     width: 100%;
     z-index: 1000;
-    padding: 1rem 2rem;
+    padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.8); /* Consistent background */
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Logo on the left */
@@ -22,10 +24,11 @@ nav {
 }
 
 .logo a {
-    color: #4A90E2;
+    color: #2c3e50;
     text-decoration: none;
     transition: all 0.3s ease;
     position: relative;
+    font-weight: 600;
 }
 
 .logo a:hover {
@@ -41,7 +44,7 @@ nav {
 
 .menu-toggle i {
     font-size: 1.5rem;
-    color: white;
+    color: #2c3e50;
     transition: transform 0.4s ease;
 }
 
@@ -59,7 +62,7 @@ nav {
     left: 0;
     width: 300px; /* Match the width in sidebar.css */
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.9); /* Match the color in sidebar.css */
+    background-color: rgba(255, 255, 255, 0.85); /* Opaque white background */
     transform: translateX(-100%); /* Start off-screen */
     transition: transform 0.4s ease, background-color 0.3s ease;
     
@@ -75,7 +78,8 @@ nav {
 /* Active state - slide in from left to center */
 .nav-links.active {
     transform: translateX(0);
-    background: black;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
 }
 
 /* Style for navigation links */
@@ -107,7 +111,7 @@ nav {
 
 /* Style the links */
 .nav-links a {
-    color: white;
+    color: #2C3E50;
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: 300;
@@ -120,11 +124,53 @@ nav {
 .nav-links a:hover {
     transform: translateY(-3px);
     text-decoration: none; /* Explicitly prevent underline */
+    color: #4A90E2; /* Change to blue on hover */
+}
+
+/* Close button for mobile menu */
+.menu-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: none;
+    border: none;
+    color: #2C3E50;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 1001;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.nav-links.active .menu-close {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.2s;
+}
+
+.menu-close:hover {
+    background-color: rgba(44, 62, 80, 0.1);
+    transform: scale(1.1) rotate(90deg);
+}
+
+.menu-close i {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 /* For small screens */ 
 @media (max-width: 768px) {
     .nav-links a {
         font-size: 1.2rem;
+    }
+    
+    .menu-close {
+        top: 1.5rem;
+        right: 1.5rem;
+        font-size: 1.3rem;
     }
 } 

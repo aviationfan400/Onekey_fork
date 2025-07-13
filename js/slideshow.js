@@ -5,9 +5,9 @@ class Slideshow {
         this.currentSlide = 0;
         this.isTransitioning = false;
         
-        // options. currently changes every ~4-5 seconds. 
+        // options. currently changes every 5 seconds by default. 
         this.autoPlay = options.autoPlay !== false;
-        this.autoPlayInterval = options.autoPlayInterval || 5000;
+        this.autoPlayInterval = options.autoPlayInterval || 5000; // 5 seconds default
         this.transitionDuration = options.transitionDuration || 1500;
         
         this.init();
@@ -70,11 +70,19 @@ class Slideshow {
     }
     
     showSlide(index) {
+        const slides = this.container.querySelectorAll('.slide');
+        
+        // Handle initial load case
+        if (index === this.currentSlide && !slides[index].classList.contains('active')) {
+            slides[index].classList.add('active');
+            this.dots[index].classList.add('active');
+            return;
+        }
+        
         if (this.isTransitioning || index === this.currentSlide) return;
         
         this.isTransitioning = true;
         
-        const slides = this.container.querySelectorAll('.slide');
         const currentSlide = slides[this.currentSlide];
         const nextSlide = slides[index];
 
@@ -143,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (slideshowContainer) {
         new Slideshow('slideshow-container', slideshowImages, {
             autoPlay: true,
-            autoPlayInterval: 4000,
+            autoPlayInterval: 5000, // 5 seconds in milliseconds
             transitionDuration: 1500
         });
     }

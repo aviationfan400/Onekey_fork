@@ -6,21 +6,167 @@
     <title>Mission - ONEKEY</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/navigation.css">
-    <link rel="stylesheet" href="../css/sidebar.css">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="../css/mission.css">
     <link rel="stylesheet" href="../css/transition.css">
-    <link rel="stylesheet" href="../css/about-fluid.css">
-    <link rel="stylesheet" href="../css/cursor.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Mission Page Styles */
+        .mission-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .mission-container h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .mission-statement {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            color: #5a6c7d;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        
+        .mission-pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .pillar {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .pillar:hover {
+            transform: translateY(-5px);
+        }
+        
+        .pillar i {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pillar h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .pillar p {
+            font-family: 'Inter', sans-serif;
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+        
+        .mission-impact {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .mission-impact h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+        
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+        }
+        
+        .stat .number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #3498db;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat .label {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: #5a6c7d;
+            font-weight: 500;
+        }
+        
+        .mission-cta {
+            text-align: center;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .mission-container {
+                padding: 2rem 1rem;
+            }
+            
+            .mission-container h1 {
+                font-size: 2rem;
+            }
+            
+            .mission-statement {
+                font-size: 1.1rem;
+            }
+            
+            .mission-pillars {
+                grid-template-columns: 1fr;
+            }
+            
+            .impact-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <header>
-        <nav style="background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);">
+        <nav>
             <div class="menu-toggle">
                 <i class="fas fa-bars"></i>
             </div>
@@ -29,79 +175,69 @@
                 <li><a href="../index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="mission.html">Mission</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="get-involved.html">Get Involved</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Background gradient and shapes -->
-    <div class="bg-gradient"></div>
-    <canvas id="shapesCanvas"></canvas>
-
     <main class="transition-fade">
         <section class="Mission">
-            <div class="section-container">
+            <div class="mission-container">
                 <h1>Our Mission</h1>
-                <div class="content-wrapper">
-                    <p class="mission-statement">
-                        At OneKey, our mission is to unlock student potential through community engagement and 
-                        volunteer opportunities that make a real difference.
-                    </p>
-                    
-                    <div class="mission-pillars">
-                        <div class="pillar">
-                            <i class="fas fa-hands-helping"></i>
-                            <h3>Community Service</h3>
-                            <p>We connect students with meaningful skills that address real community needs and create lasting positive impact through volunteering and tutoring.</p>
-                        </div>
-                        
-                        <div class="pillar">
-                            <i class="fas fa-graduation-cap"></i>
-                            <h3>Skill Development</h3>
-                            <p>Through our programs, students develop leadership, teamwork, and practical skills that prepare them for future success.</p>
-                        </div>
-                        
-                        <div class="pillar">
-                            <i class="fas fa-users"></i>
-                            <h3>Inclusive Participation</h3>
-                            <p>We believe every student has unique talents to contribute, regardless of background or experience level.</p>
-                        </div>
+                <p class="mission-statement">
+                    At OneKey, our mission is to unlock student potential through community engagement and 
+                    volunteer opportunities that make a real difference.
+                </p>
+                
+                <div class="mission-pillars">
+                    <div class="pillar">
+                        <i class="fas fa-hands-helping"></i>
+                        <h3>Community Service</h3>
+                        <p>We connect students with meaningful skills that address real community needs and create lasting positive impact through volunteering and tutoring.</p>
                     </div>
                     
-                    <div class="mission-impact">
-                        <h3>Our Impact</h3>
-                        <div class="impact-stats">
-                            <div class="stat">
-                                <span class="number">500+</span>
-                                <span class="label">Students Engaged</span>
-                            </div>
-                            <div class="stat">
-                                <span class="number">$</span>
-                                <span class="label">Raised</span>
-                            </div>
-                            <div class="stat">
-                                <span class="number">2,000+</span>
-                                <span class="label">Volunteer Hours</span>
-                            </div>
-                        </div>
+                    <div class="pillar">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Skill Development</h3>
+                        <p>Through our programs, students develop leadership, teamwork, and practical skills that prepare them for future success.</p>
                     </div>
                     
-                    <div class="mission-cta">
-                        <a href="contact.html" class="cta-button">Join Our Mission</a>
+                    <div class="pillar">
+                        <i class="fas fa-users"></i>
+                        <h3>Inclusive Participation</h3>
+                        <p>We believe every student has unique talents to contribute, regardless of background or experience level.</p>
                     </div>
+                </div>
+                
+                <div class="mission-impact">
+                    <h3>Our Impact</h3>
+                    <div class="impact-stats">
+                        <div class="stat">
+                            <span class="number">500+</span>
+                            <span class="label">Students Engaged</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number">$5,000+</span>
+                            <span class="label">Raised</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number">2,000+</span>
+                            <span class="label">Volunteer Hours</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mission-cta">
+                    <a href="contact.html" class="cta-button">Join Our Mission</a>
                 </div>
             </div>
         </section>
     </main>
 
-    <script src="../js/fluid-shapes.js"></script>
-    <script src="../js/cursor.js"></script>
     <script src="../js/transition.js"></script>
-    <script src="../js/scroll-animations.js"></script>
-    <script src="../js/performance-optimizer.js"></script>
-    <script src="../js/smart-interactions.js"></script>
     <script src="../js/menu.js"></script>
-    <link rel="stylesheet" href="../css/enhanced-ui.css">
 </body>
 </html>
     
