@@ -1,0 +1,128 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
+import AuthModal from '../Auth/AuthModal';
+import RegisterModal from '../Auth/RegisterModal';
+import UserMenu from '../Auth/UserMenu';
+
+const Navigation: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  
+  const location = useLocation();
+  const { isAuthenticated, user } = useAuthStore();
+  
+  const isHomePage = location.pathname === '/';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  const handleAuthClick = () => {
+    if (isAuthenticated) {
+      // User menu will handle this
+      return;
+    }
+    setShowAuthModal(true);
+  };
+
+  const navClass = `navigation ${isScrolled ? 'scrolled' : ''} ${!isHomePage ? 'subpage-nav' : ''}`;
+
+  return (
+    <>
+      <header>
+        <nav className={navClass}>
+          <div className="menu-toggle" onClick={toggleMenu}>
+            <i className="fas fa-bars"></i>
+          </div>
+          
+          <Link to="/" className="logo" onClick={closeMenu}>
+            ONEKEY
+          </Link>
+          
+          <div className="auth-buttons">
+            {isAuthenticated && user ? (
+              <UserMenu user={user} />
+            ) : (
+              <>
+                <button className="register-btn" onClick={() => setShowRegisterModal(true)}>
+                  <i className="fas fa-user-plus"></i>
+                  Sign Up
+                </button>
+                <button className="login-btn" onClick={handleAuthClick}>
+                  <i className="fas fa-sign-in-alt"></i>
+                  Login
+                </button>
+              </>
+            )}
+          </div>
+          
+          <ul className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+            <li>
+              <Link to="/" onClick={closeMenu}>Home</Link>
+            </li>
+            <li>
+              <Link to="/about" onClick={closeMenu}>About</Link>
+            </li>
+            <li>
+              <Link to="/projects" onClick={closeMenu}>Projects</Link>
+            </li>
+            <li>
+              <Link to="/timeline" onClick={closeMenu}>Timeline</Link>
+            </li>
+            <li>
+              <Link to="/get-involved" onClick={closeMenu}>Get Involved</Link>
+            </li>
+            <li>
+              <Link to="/contact" onClick={closeMenu}>Contact</Link>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      {/* Overlay for mobile menu */}
+      {isMenuOpen && (
+        <div 
+          className="menu-overlay" 
+          onClick={closeMenu}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 998,
+          }}
+        />
+      )}
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
+      
+      <RegisterModal 
+        isOpen={showRegisterModal} 
+        onClose={() => setShowRegisterModal(false)} 
+      />
+    </>
+  );
+};
+
+export default Navigation; 
