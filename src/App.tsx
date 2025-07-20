@@ -6,7 +6,7 @@ import About from './pages/About';
 import Projects from './pages/Projects';
 import Timeline from './pages/Timeline';
 import GetInvolved from './pages/GetInvolved';
-import Contact from './pages/Contact';
+import MeetOurTeam from './pages/MeetOurTeam';
 import Mission from './pages/Mission';
 
 function App() {
@@ -95,7 +95,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/get-involved" element={<GetInvolved />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/team" element={<MeetOurTeam />} />
         <Route path="/mission" element={<Mission />} />
       </Routes>
     </Layout>

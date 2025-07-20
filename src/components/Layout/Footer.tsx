@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
           <Link to="/projects">Projects</Link>
           <Link to="/timeline">Timeline</Link>
           <Link to="/get-involved">Get Involved</Link>
-          <Link to="/contact">Contact</Link>
+          <Link to="/team">Meet Our Team</Link>
         </div>
         
         <div className="footer-connect">

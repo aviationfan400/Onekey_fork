@@ -89,7 +89,7 @@ const Navigation: React.FC = () => {
               <Link to="/get-involved" onClick={closeMenu}>Get Involved</Link>
             </li>
             <li>
-              <Link to="/contact" onClick={closeMenu}>Contact</Link>
+              <Link to="/team" onClick={closeMenu}>Meet Our Team</Link>
             </li>
           </ul>
         </nav>

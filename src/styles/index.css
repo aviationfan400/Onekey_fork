@@ -3171,4 +3171,570 @@ body {
   .footer-bottom p {
     font-size: 0.8rem;
   }
+}
+
+/* Meet Our Team Page Styles - Constance Hotels Theme */
+
+/* Team Hero Section */
+.team-hero {
+  height: 35vh;
+  position: relative;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 90px;
+}
+
+.team-hero .hero-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.team-hero .hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(196, 174, 123, 0.1) 0%, transparent 70%);
+  z-index: 1;
+}
+
+.team-hero .hero-content {
+  text-align: center;
+  color: white;
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem 2rem;
+}
+
+.team-hero .hero-content h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 300;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+}
+
+.team-hero .hero-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 3rem;
+  line-height: 1.7;
+}
+
+.team-hero .hero-accent-line {
+  width: 80px;
+  height: 2px;
+  background: #c4ae7b;
+  margin: 0 auto;
+}
+
+/* Section Headers */
+.team-page .section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.team-page .section-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.team-page .section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background: #c4ae7b;
+}
+
+.team-page .section-header p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2rem;
+}
+
+/* Leadership Section */
+.leadership-section {
+  padding: 5.5rem 0;
+  background: #ffffff;
+}
+
+.leadership-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Communications Section */
+.communications-section {
+  padding: 5.5rem 0;
+  background: #f8f8f8;
+}
+
+.communications-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Coordinators Section */
+.coordinators-section {
+  padding: 5.5rem 0;
+  background: #ffffff;
+}
+
+.coordinators-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.team-member-card {
+  background: #ffffff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  transition: all 0.6s ease;
+  overflow: hidden;
+  border-left: 4px solid #c4ae7b;
+}
+
+.team-member-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+}
+
+.team-member-card .member-image {
+  height: 250px;
+  overflow: hidden;
+}
+
+.team-member-card .member-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.team-member-card:hover .member-image img {
+  transform: scale(1.1);
+}
+
+.team-member-card .member-info {
+  padding: 1.8rem;
+  text-align: center;
+  position: relative;
+  height: 225px;
+  display: flex;
+  flex-direction: column;
+}
+
+.team-member-card .member-info h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.member-details {
+  margin-bottom: 1rem;
+}
+
+.member-school {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #888;
+  display: block;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.member-role {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #c4ae7b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+}
+
+.member-bio {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 auto 0;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.instagram-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 30px;
+  height: 30px;
+  background: rgba(131, 58, 180, 0.3);
+  color: rgba(131, 58, 180, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.instagram-btn:hover {
+  background: rgba(131, 58, 180, 0.5);
+  color: rgba(131, 58, 180, 1);
+  transform: scale(1.1);
+}
+
+.instagram-btn i {
+  font-size: 0.9rem;
+}
+
+
+
+/* Alumni Section */
+.alumni-section {
+  padding: 5.5rem 0;
+  background: #f8f8f8;
+}
+
+.alumni-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.alumni-card {
+  background: #ffffff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  transition: all 0.6s ease;
+  overflow: hidden;
+  border: 2px solid rgba(196, 174, 123, 0.3);
+}
+
+.alumni-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border-color: rgba(196, 174, 123, 0.6);
+}
+
+.alumni-card .member-image {
+  height: 250px;
+  overflow: hidden;
+  position: relative;
+}
+
+.alumni-card .member-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(196, 174, 123, 0.1);
+  pointer-events: none;
+}
+
+.alumni-card .member-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  filter: sepia(10%);
+}
+
+.alumni-card:hover .member-image img {
+  transform: scale(1.1);
+  filter: sepia(0%);
+}
+
+.alumni-card .member-info {
+  padding: 1.8rem;
+  text-align: center;
+  position: relative;
+  height: 225px;
+  display: flex;
+  flex-direction: column;
+}
+
+.alumni-card .member-info h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.alumni-card .member-details {
+  margin-bottom: 1rem;
+}
+
+.alumni-card .member-school {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #888;
+  display: block;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.alumni-card .member-role {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(196, 174, 123, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+}
+
+.alumni-card .member-bio {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 auto 0;
+  flex-grow: 1;
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.alumni-card .instagram-btn {
+  background: rgba(131, 58, 180, 0.2);
+  color: rgba(131, 58, 180, 0.6);
+}
+
+.alumni-card .instagram-btn:hover {
+  background: rgba(131, 58, 180, 0.4);
+  color: rgba(131, 58, 180, 0.9);
+}
+
+/* Join Team Section */
+.join-team-section {
+  padding: 5.5rem 0;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+  color: white;
+  text-align: center;
+}
+
+.join-content h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: white;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+}
+
+.join-content p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 700px;
+  margin: 0 auto 4rem;
+  line-height: 1.7;
+}
+
+.join-opportunities {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto 3rem;
+}
+
+.opportunity-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3rem 2rem;
+  transition: all 0.4s ease;
+  border: 1px solid rgba(196, 174, 123, 0.3);
+}
+
+.opportunity-card:hover {
+  background: rgba(196, 174, 123, 0.1);
+  border-color: #c4ae7b;
+  transform: translateY(-5px);
+}
+
+.opportunity-icon {
+  margin-bottom: 2rem;
+}
+
+.opportunity-icon i {
+  font-size: 3rem;
+  color: #c4ae7b;
+}
+
+.opportunity-card h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.opportunity-card p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.join-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Responsive Team Page */
+@media (max-width: 1024px) {
+  .leadership-grid,
+  .communications-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .coordinators-grid,
+  .alumni-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .join-opportunities {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-hero {
+    height: 30vh;
+    margin-top: 80px;
+  }
+  
+  .team-hero .hero-content {
+    padding: 1.2rem 1.2rem 2.5rem 1.2rem;
+  }
+  
+  .leadership-section,
+  .communications-section,
+  .coordinators-section,
+  .alumni-section,
+  .join-team-section {
+    padding: 4rem 0;
+  }
+  
+  .leadership-grid,
+  .communications-grid,
+  .coordinators-grid,
+  .alumni-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .join-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-hero {
+    height: 25vh;
+    margin-top: 70px;
+  }
+  
+  .team-hero .hero-content {
+    padding: 1rem 1rem 2rem 1rem;
+  }
+  
+  .leadership-section,
+  .communications-section,
+  .coordinators-section,
+  .alumni-section,
+  .join-team-section {
+    padding: 3rem 0;
+  }
+  
+  .team-member-card .member-info,
+  .alumni-card .member-info {
+    padding: 1.5rem;
+    height: 200px;
+  }
+  
+  .instagram-btn {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 25px;
+    height: 25px;
+  }
+  
+  .instagram-btn i {
+    font-size: 0.8rem;
+  }
+  
+  .join-content h2 {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
 } 
