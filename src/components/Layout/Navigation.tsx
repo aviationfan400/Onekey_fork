@@ -34,14 +34,6 @@ const Navigation: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  const handleAuthClick = () => {
-    if (isAuthenticated) {
-      // User menu will handle this
-      return;
-    }
-    setShowAuthModal(true);
-  };
-
   const navClass = `navigation ${isScrolled ? 'scrolled' : ''} ${!isHomePage ? 'subpage-nav' : ''}`;
 
   return (

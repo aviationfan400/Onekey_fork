@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthStore, User } from '../../store/authStore';
 import UserManagement from './UserManagement';
 import ActivityLogs from './ActivityLogs';
@@ -14,7 +14,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const [showActivityLogs, setShowActivityLogs] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { logout, hasPermission } = useAuthStore();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
