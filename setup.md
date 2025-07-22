@@ -48,17 +48,3 @@ OneKey/
 ├── tsconfig.json    # TypeScript config
 └── README.md        # Full documentation
 ```
-
-## What's New
-
-✅ **All your original design preserved**
-✅ **Enhanced admin features**
-✅ **Multi-admin support**
-✅ **Better timeline management**
-✅ **Mobile responsive**
-✅ **Modern React architecture**
-✅ **Ready for email integration**
-
-## Need Help?
-
-Check the full README.md for detailed documentation. 

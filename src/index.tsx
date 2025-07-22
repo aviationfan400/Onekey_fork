@@ -6,6 +6,8 @@ import './styles/index.css';
 import './styles/modal.css';
 import './styles/admin-dashboard.css';
 import './styles/navigation-fixes.css';
+// Import Tailwind last so existing styles take precedence
+import './styles/tailwind.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

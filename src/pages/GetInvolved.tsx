@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const GetInvolved: React.FC = () => {
-  // Smooth scrolling animations - Constance style
   useEffect(() => {
     const observerOptions = {
       threshold: 0.1,
@@ -39,7 +38,6 @@ const GetInvolved: React.FC = () => {
 
   return (
     <div className="get-involved-page">
-      {/* Hero Section - Constance Style */}
       <section className="involved-hero">
         <div className="hero-background">
           <div className="hero-overlay"></div>
@@ -264,7 +262,7 @@ const GetInvolved: React.FC = () => {
           <div className="volunteers-grid">
             <div className="volunteer-card">
               <div className="volunteer-image">
-                <img src="/pics/alexzhang.jpg" alt="Alex Zhang" />
+                <img src="/Onekey/pics/alexzhang.jpg" alt="Alex Zhang" />
               </div>
               <div className="volunteer-info">
                 <h3>Alex Zhang</h3>
@@ -279,7 +277,7 @@ const GetInvolved: React.FC = () => {
             
             <div className="volunteer-card">
               <div className="volunteer-image">
-                <img src="/pics/selenayu.jpg" alt="Selena Yu" />
+                <img src="/Onekey/pics/selenayu.jpg" alt="Selena Yu" />
               </div>
               <div className="volunteer-info">
                 <h3>Selena Yu</h3>

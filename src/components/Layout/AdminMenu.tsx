@@ -5,7 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 const AdminMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, hasPermission } = useAuthStore();
+  const { isAuthenticated, hasPermission, logout } = useAuthStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -23,58 +23,35 @@ const AdminMenu: React.FC = () => {
     return null;
   }
 
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+  };
+
   return (
-    <div className="admin-menu" ref={menuRef}>
+    <div className="admin-menu tw-relative" ref={menuRef}>
       <button 
-        className="admin-menu-btn" 
+        className="admin-menu-btn tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-transition-all tw-duration-300 hover:tw-bg-gold-600/10" 
         onClick={() => setIsOpen(!isOpen)}
       >
-        <i className="fas fa-cog"></i>
-        <span>Admin</span>
-        <i className={`fas fa-chevron-down ${isOpen ? 'rotated' : ''}`}></i>
+        <i className="fas fa-cog tw-text-gold-600"></i>
+        <span className="tw-font-sans tw-font-medium tw-text-sm tw-text-luxury-800">Admin</span>
+        <i className={`fas fa-chevron-down tw-text-gold-600 tw-transition-transform tw-duration-300 ${isOpen ? 'rotated tw-rotate-180' : ''}`}></i>
       </button>
       
       {isOpen && (
-        <div className="admin-dropdown active">
-          <div className="dropdown-header">
-            <strong>Admin Tools</strong>
-            <small>Management & Control</small>
-          </div>
-          
-          <hr className="dropdown-divider" />
-          
-          <Link to="/admin" className="dropdown-item" onClick={() => setIsOpen(false)}>
-            <i className="fas fa-tachometer-alt"></i>
-            Admin Dashboard
+        <div className="admin-dropdown active tw-absolute tw-top-full tw-left-0 tw-bg-white tw-rounded-lg tw-shadow-luxury tw-border tw-border-gold-600/20 tw-py-2 tw-min-w-48">
+          <Link to="/admin" className="dropdown-item tw-flex tw-items-center tw-gap-3 tw-px-4 tw-py-2 tw-text-luxury-800 tw-transition-all tw-duration-300 hover:tw-bg-gold-600/10 hover:tw-text-gold-600" onClick={() => setIsOpen(false)}>
+            <i className="fas fa-tachometer-alt tw-w-4 tw-text-center"></i>
+            <span className="tw-font-sans tw-font-medium tw-text-sm">View Admin Panel</span>
           </Link>
           
-          {hasPermission('manage_users') && (
-            <Link to="/admin?tab=users" className="dropdown-item" onClick={() => setIsOpen(false)}>
-              <i className="fas fa-users-cog"></i>
-              User Management
-            </Link>
-          )}
+          <hr className="dropdown-divider tw-border-gold-600/20 tw-my-2" />
           
-          {hasPermission('view_activity_logs') && (
-            <Link to="/admin?tab=logs" className="dropdown-item" onClick={() => setIsOpen(false)}>
-              <i className="fas fa-history"></i>
-              Activity Logs
-            </Link>
-          )}
-          
-          {hasPermission('manage_timeline') && (
-            <Link to="/admin?tab=timeline" className="dropdown-item" onClick={() => setIsOpen(false)}>
-              <i className="fas fa-calendar-alt"></i>
-              Timeline Management
-            </Link>
-          )}
-          
-          <hr className="dropdown-divider" />
-          
-          <Link to="/dashboard" className="dropdown-item" onClick={() => setIsOpen(false)}>
-            <i className="fas fa-user-circle"></i>
-            User Dashboard
-          </Link>
+          <button className="dropdown-item tw-flex tw-items-center tw-gap-3 tw-px-4 tw-py-2 tw-text-red-600 tw-transition-all tw-duration-300 hover:tw-bg-red-50 hover:tw-text-red-700 tw-w-full tw-text-left tw-border-none tw-bg-transparent" onClick={handleLogout}>
+            <i className="fas fa-sign-out-alt tw-w-4 tw-text-center"></i>
+            <span className="tw-font-sans tw-font-medium tw-text-sm">Logout</span>
+          </button>
         </div>
       )}
     </div>
