@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import AuthModal from '../Auth/AuthModal';
 import RegisterModal from '../Auth/RegisterModal';
-// UserMenu removed
+import UserMenu from '../Auth/UserMenu';
 import AdminMenu from './AdminMenu';
 
 const Navigation: React.FC = () => {
@@ -48,7 +48,19 @@ const Navigation: React.FC = () => {
             ONEKEY
           </Link>
           
-          {/* Login button moved to footer */}
+          <div className="auth-buttons">
+            {isAuthenticated && user ? (
+              <UserMenu user={user} />
+            ) : (
+              <>
+                {/* Login button moved to footer */}
+                {/* <button className="login-btn" onClick={handleAuthClick}>
+                  <i className="fas fa-sign-in-alt"></i>
+                  Login
+                </button> */}
+              </>
+            )}
+          </div>
           
           <ul className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
             <li>
@@ -71,8 +83,6 @@ const Navigation: React.FC = () => {
           </ul>
         </nav>
       </header>
-
-      {/* AuthModal moved to footer */}
 
       {/* Overlay for mobile menu */}
       {isMenuOpen && (

@@ -5,7 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 const AdminMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, hasPermission, logout } = useAuthStore();
+  const { isAuthenticated, hasPermission } = useAuthStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -23,11 +23,6 @@ const AdminMenu: React.FC = () => {
     return null;
   }
 
-  const handleLogout = () => {
-    logout();
-    setIsOpen(false);
-  };
-
   return (
     <div className="admin-menu" ref={menuRef}>
       <button 
@@ -41,17 +36,45 @@ const AdminMenu: React.FC = () => {
       
       {isOpen && (
         <div className="admin-dropdown active">
-          <Link to="/admin" className="dropdown-item" onClick={() => setIsOpen(false)}>
-            <i className="fas fa-tachometer-alt"></i>
-            View Admin Panel
-          </Link>
+          <div className="dropdown-header">
+            <strong>Admin Tools</strong>
+            <small>Management & Control</small>
+          </div>
           
           <hr className="dropdown-divider" />
           
-          <button className="dropdown-item" onClick={handleLogout}>
-            <i className="fas fa-sign-out-alt"></i>
-            Logout
-          </button>
+          <Link to="/admin" className="dropdown-item" onClick={() => setIsOpen(false)}>
+            <i className="fas fa-tachometer-alt"></i>
+            Admin Dashboard
+          </Link>
+          
+          {hasPermission('manage_users') && (
+            <Link to="/admin?tab=users" className="dropdown-item" onClick={() => setIsOpen(false)}>
+              <i className="fas fa-users-cog"></i>
+              User Management
+            </Link>
+          )}
+          
+          {hasPermission('view_activity_logs') && (
+            <Link to="/admin?tab=logs" className="dropdown-item" onClick={() => setIsOpen(false)}>
+              <i className="fas fa-history"></i>
+              Activity Logs
+            </Link>
+          )}
+          
+          {hasPermission('manage_timeline') && (
+            <Link to="/admin?tab=timeline" className="dropdown-item" onClick={() => setIsOpen(false)}>
+              <i className="fas fa-calendar-alt"></i>
+              Timeline Management
+            </Link>
+          )}
+          
+          <hr className="dropdown-divider" />
+          
+          <Link to="/dashboard" className="dropdown-item" onClick={() => setIsOpen(false)}>
+            <i className="fas fa-user-circle"></i>
+            User Dashboard
+          </Link>
         </div>
       )}
     </div>
