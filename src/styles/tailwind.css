@@ -1,6 +1,5 @@
 /* Tailwind CSS - Safe Import */
 /* This file contains only Tailwind directives and will not override your existing styles */
-/* All Tailwind classes will have 'tw-' prefix to avoid conflicts */
 
 @tailwind base;
 @tailwind components;
@@ -9,46 +8,46 @@
 /* Custom Tailwind components that match your luxury theme */
 @layer components {
   /* Luxury button component using your theme */
-  .tw-btn-luxury {
-    @apply tw-px-8 tw-py-3 tw-bg-gold-600 tw-text-white tw-font-sans tw-font-medium tw-text-sm tw-uppercase tw-tracking-wider tw-rounded-luxury tw-transition-all tw-duration-300 tw-shadow-gold;
+  .btn-luxury {
+    @apply px-8 py-3 bg-gold-600 text-white font-sans font-medium text-sm uppercase tracking-wider rounded-luxury transition-all duration-300 shadow-gold;
   }
   
-  .tw-btn-luxury:hover {
-    @apply tw-bg-gold-700 tw-transform tw--translate-y-1 tw-shadow-lg;
+  .btn-luxury:hover {
+    @apply bg-gold-700 transform -translate-y-1 shadow-lg;
   }
   
   /* Luxury card component */
-  .tw-card-luxury {
-    @apply tw-bg-white tw-rounded-luxury tw-shadow-luxury tw-p-6 tw-transition-all tw-duration-300;
+  .card-luxury {
+    @apply bg-white rounded-luxury shadow-luxury p-6 transition-all duration-300;
   }
   
-  .tw-card-luxury:hover {
-    @apply tw-shadow-luxury-lg tw-transform tw--translate-y-1;
+  .card-luxury:hover {
+    @apply shadow-luxury-lg transform -translate-y-1;
   }
   
   /* Text styles matching your theme */
-  .tw-text-luxury-title {
-    @apply tw-font-serif tw-text-3xl tw-font-light tw-text-luxury-900 tw-tracking-wide;
+  .text-luxury-title {
+    @apply font-serif text-3xl font-light text-luxury-900 tracking-wide;
   }
   
-  .tw-text-luxury-subtitle {
-    @apply tw-font-sans tw-text-lg tw-font-light tw-text-luxury-800 tw-tracking-wide;
+  .text-luxury-subtitle {
+    @apply font-sans text-lg font-light text-luxury-800 tracking-wide;
   }
   
-  .tw-text-luxury-body {
-    @apply tw-font-sans tw-text-base tw-font-light tw-text-luxury-700 tw-leading-relaxed;
+  .text-luxury-body {
+    @apply font-sans text-base font-light text-luxury-700 leading-relaxed;
   }
   
   /* Navigation component matching your existing nav */
-  .tw-nav-luxury {
-    @apply tw-bg-white/95 tw-backdrop-blur-luxury tw-border-b tw-border-gold-600/20 tw-transition-all tw-duration-500;
+  .nav-luxury {
+    @apply bg-white/95 backdrop-blur-luxury border-b border-gold-600/20 transition-all duration-500;
   }
   
-  .tw-nav-link-luxury {
-    @apply tw-text-luxury-800 tw-font-sans tw-font-normal tw-text-sm tw-tracking-wider tw-uppercase tw-transition-all tw-duration-300 tw-relative;
+  .nav-link-luxury {
+    @apply text-luxury-800 font-sans font-normal text-sm tracking-wider uppercase transition-all duration-300 relative;
   }
   
-  .tw-nav-link-luxury:hover {
-    @apply tw-text-gold-600 tw-transform tw--translate-y-px;
+  .nav-link-luxury:hover {
+    @apply text-gold-600 transform -translate-y-px;
   }
 } 

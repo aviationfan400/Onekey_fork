@@ -87,8 +87,6 @@ module.exports = {
     },
   },
   plugins: [],
-  // Important: Use a prefix to avoid conflicts with existing CSS
-  prefix: 'tw-',
   // Disable base styles to prevent conflicts with your existing styles
   corePlugins: {
     preflight: false,
