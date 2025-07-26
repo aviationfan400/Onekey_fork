@@ -28,27 +28,49 @@ export interface ActivityLog {
   details: string;
   timestamp: string;
   ipAddress?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface AuthState {
-  user: User | null;
   isAuthenticated: boolean;
+  user: User | null;
   users: User[];
   activityLogs: ActivityLog[];
+  activityLogsPagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  } | null;
   isLoading: boolean;
   error: string | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  
+  // Auth methods
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  getCurrentUser: () => Promise<void>;
+  
+  // User management
   fetchUsers: () => Promise<void>;
-  addUser: (userData: CreateUserRequest) => Promise<User | null>;
+  addUser: (userData: any) => Promise<boolean>;
   removeUser: (userId: string) => Promise<boolean>;
-  updateUserRole: (userId: string, role: User['role']) => Promise<boolean>;
+  updateUserRole: (userId: string, role: string) => Promise<boolean>;
   updateUserStatus: (userId: string, isActive: boolean) => Promise<boolean>;
   changePassword: (userId: string, newPassword: string) => Promise<boolean>;
+  
+  // Activity logging
   logActivity: (userId: string, action: string, details: string) => void;
-  getUserPermissions: (role: User['role']) => string[];
+  fetchAllActivityLogs: (page?: number, limit?: number, action?: string) => Promise<void>;
+  
+  // Current user
+  getCurrentUser: () => Promise<void>;
+  
+  // Permissions
+  getUserPermissions: (role: string) => string[];
   hasPermission: (permission: string) => boolean;
+  
+  // Error handling
   clearError: () => void;
 }
 
@@ -108,6 +130,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       users: [],
       activityLogs: [],
+      activityLogsPagination: null,
       isLoading: false,
       error: null,
 
@@ -245,33 +268,20 @@ export const useAuthStore = create<AuthState>()(
             // Refresh users list
             await get().fetchUsers();
             set({ isLoading: false, error: null });
-            
-            // Return the created user (we'll need to fetch it)
-            const newUser: User = {
-              id: response.data?.userId || '',
-              username: userData.username,
-              email: userData.email,
-              firstName: userData.firstName,
-              lastName: userData.lastName,
-              role: userData.role as User['role'] || 'user',
-              isActive: true,
-              createdAt: new Date().toISOString(),
-            };
-            
-            return newUser;
+            return true;
           } else {
             set({ 
               isLoading: false, 
               error: response.error || 'Failed to create user'
             });
-            return null;
+            return false;
           }
         } catch (error) {
           set({ 
             isLoading: false, 
             error: error instanceof Error ? error.message : 'Failed to create user'
           });
-          return null;
+          return false;
         }
       },
 
@@ -388,8 +398,46 @@ export const useAuthStore = create<AuthState>()(
         }));
       },
 
-      getUserPermissions: (role) => {
-        return PERMISSIONS[role] || [];
+      fetchAllActivityLogs: async (page = 1, limit = 100, action = 'all') => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await apiService.getAllActivityLogs(page, limit, action);
+          if (response.success && response.data) {
+            // Transform API data to store format
+            const transformedLogs = response.data.logs.map(log => ({
+              id: log.id,
+              userId: log.user_id,
+              action: log.action,
+              details: log.details,
+              timestamp: log.timestamp,
+              ipAddress: log.ip_address,
+              username: log.username,
+              firstName: log.first_name,
+              lastName: log.last_name
+            }));
+            
+            set({
+              activityLogs: transformedLogs,
+              activityLogsPagination: response.data.pagination,
+              isLoading: false,
+              error: null,
+            });
+          } else {
+            set({
+              isLoading: false,
+              error: response.error || 'Failed to fetch activity logs',
+            });
+          }
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : 'Failed to fetch activity logs',
+          });
+        }
+      },
+
+      getUserPermissions: (role: string) => {
+        return PERMISSIONS[role as keyof typeof PERMISSIONS] || [];
       },
 
       hasPermission: (permission) => {

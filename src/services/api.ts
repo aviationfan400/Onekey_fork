@@ -1,4 +1,14 @@
-const API_BASE_URL = 'http://localhost:3001/api/v1';
+// Auto-detect API base URL based on environment
+const getApiBaseUrl = () => {
+  // In production, the API is served from the same domain
+  if (process.env.NODE_ENV === 'production') {
+    return '/api/v1';
+  }
+  // In development, use localhost
+  return 'http://localhost:3001/api/v1';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -84,10 +94,15 @@ export interface CreateEventRequest {
 export interface ActivityLog {
   id: string;
   user_id: string;
+  userId?: string; // For compatibility with store
   action: string;
   details: string;
   ip_address?: string;
+  ipAddress?: string; // For compatibility with store
   timestamp: string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
 }
 
 class ApiService {
@@ -200,6 +215,21 @@ class ApiService {
     return this.request<{ logs: ActivityLog[] }>(`/users/${userId}/activity`);
   }
 
+  async getAllActivityLogs(page: number = 1, limit: number = 100, action: string = 'all'): Promise<ApiResponse<{ 
+    logs: ActivityLog[], 
+    pagination: { page: number, limit: number, total: number, totalPages: number } 
+  }>> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      action: action
+    });
+    return this.request<{ 
+      logs: ActivityLog[], 
+      pagination: { page: number, limit: number, total: number, totalPages: number } 
+    }>(`/users/admin/activity-logs?${params}`);
+  }
+
   // Timeline Events
   async getEvents(): Promise<ApiResponse<{ events: TimelineEvent[] }>> {
     return this.request<{ events: TimelineEvent[] }>('/timeline/events');
@@ -273,7 +303,8 @@ class ApiService {
 
   // Health Check
   async healthCheck(): Promise<ApiResponse<{ status: string; timestamp: string }>> {
-    const response = await fetch('http://localhost:3001/health');
+    const healthUrl = process.env.NODE_ENV === 'production' ? '/health' : 'http://localhost:3001/health';
+    const response = await fetch(healthUrl);
     const data = await response.json();
     
     return {

@@ -189,4 +189,54 @@ router.get('/:id/activity',
   }
 );
 
+// Get all activity logs (admin only)
+router.get('/admin/activity-logs',
+  authenticateToken,
+  requireRole(['admin']),
+  logActivity('get_all_activity_logs'),
+  (req: AuthenticatedRequest, res: Response) => {
+    const page = parseInt(req.query['page'] as string) || 1;
+    const limit = parseInt(req.query['limit'] as string) || 100;
+    const offset = (page - 1) * limit;
+    const action = req.query['action'] as string;
+    
+    let query = 'SELECT al.*, u.username, u.first_name, u.last_name FROM activity_logs al LEFT JOIN users u ON al.user_id = u.id';
+    let countQuery = 'SELECT COUNT(*) as total FROM activity_logs al LEFT JOIN users u ON al.user_id = u.id';
+    const params: any[] = [];
+    
+    if (action && action !== 'all') {
+      query += ' WHERE al.action = ?';
+      countQuery += ' WHERE al.action = ?';
+      params.push(action);
+    }
+    
+    query += ' ORDER BY al.timestamp DESC LIMIT ? OFFSET ?';
+    params.push(limit, offset);
+    
+    // Get total count
+    db.get(countQuery, action && action !== 'all' ? [action] : [], (err: any, countResult: any) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      // Get logs
+      db.all(query, params, (err: any, logs: any) => {
+        if (err) {
+          return res.status(500).json({ error: 'Database error' });
+        }
+        
+        return res.json({ 
+          logs,
+          pagination: {
+            page,
+            limit,
+            total: countResult.total,
+            totalPages: Math.ceil(countResult.total / limit)
+          }
+        });
+      });
+    });
+  }
+);
+
 export default router; 

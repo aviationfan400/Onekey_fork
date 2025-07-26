@@ -289,7 +289,7 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Join Our Team Section */}
-      <section className="join-team-section">
+      <section className="join-team-section" style={{ marginBottom: '0', paddingBottom: '6rem' }}>
         <div className="container">
           <div className="join-content">
             <h2>Join Our Team</h2>

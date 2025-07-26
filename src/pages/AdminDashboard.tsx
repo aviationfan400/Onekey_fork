@@ -13,6 +13,7 @@ const AdminDashboard: React.FC = () => {
     user, 
     users, 
     activityLogs, 
+    activityLogsPagination,
     isLoading: authLoading,
     error: authError,
     addUser, 
@@ -22,6 +23,7 @@ const AdminDashboard: React.FC = () => {
     changePassword,
     logActivity,
     fetchUsers,
+    fetchAllActivityLogs,
     getCurrentUser,
     clearError: clearAuthError
   } = useAuthStore();
@@ -50,6 +52,9 @@ const AdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [activityFilter, setActivityFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
   const [newUserData, setNewUserData] = useState({
     username: '',
     email: '',
@@ -98,7 +103,9 @@ const AdminDashboard: React.FC = () => {
     // Fetch data from backend
     fetchUsers();
     fetchEvents();
-  }, [isAuthenticated, user, navigate, location.search, fetchUsers, fetchEvents]);
+    // Fetch activity logs with pagination
+    fetchAllActivityLogs(currentPage, itemsPerPage, activityFilter);
+  }, [isAuthenticated, user, navigate, location.search, fetchUsers, fetchEvents, fetchAllActivityLogs, currentPage, itemsPerPage, activityFilter]);
 
   if (!isAuthenticated || !user) {
     return null;
@@ -143,35 +150,30 @@ const AdminDashboard: React.FC = () => {
       alert('Passwords do not match');
       return;
     }
-
-    try {
-      const newUser = await addUser({
-        username: newUserData.username,
-        email: newUserData.email,
-        firstName: newUserData.firstName,
-        lastName: newUserData.lastName,
-        role: newUserData.role as 'admin' | 'user',
-        password: newUserData.password
-      });
-      
-      if (newUser && user) {
-        logActivity(user.id, 'add_user', `Created new user: ${newUser.username} (${newUser.role})`);
-      }
-      
-      setShowCreateUserModal(false);
-      setNewUserData({
-        username: '',
-        email: '',
-        firstName: '',
-        lastName: '',
-        role: 'user',
-        password: '',
-        confirmPassword: ''
-      });
-    } catch (error) {
-      console.error('Error creating user:', error);
-      alert('Failed to create user');
+    
+    const success = await addUser({
+      username: newUserData.username,
+      email: newUserData.email,
+      firstName: newUserData.firstName,
+      lastName: newUserData.lastName,
+      role: newUserData.role as 'admin' | 'user',
+      password: newUserData.password
+    });
+    
+    if (success && user) {
+      logActivity(user.id, 'add_user', `Created new user: ${newUserData.username} (${newUserData.role})`);
     }
+    
+    setShowCreateUserModal(false);
+    setNewUserData({
+      username: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      role: 'user',
+      password: '',
+      confirmPassword: ''
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -755,6 +757,16 @@ const AdminDashboard: React.FC = () => {
             <>
               <div className="content-header">
                 <h2 className="content-title">Activity Logs</h2>
+                <div className="content-actions">
+                  <button 
+                    className="btn btn-secondary"
+                    onClick={() => fetchAllActivityLogs(currentPage, itemsPerPage, activityFilter)}
+                    disabled={authLoading}
+                  >
+                    <i className="fas fa-sync-alt"></i>
+                    {authLoading ? 'Refreshing...' : 'Refresh'}
+                  </button>
+                </div>
               </div>
 
               <div className="search-bar">
@@ -765,33 +777,126 @@ const AdminDashboard: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <select 
+                  className="filter-select"
+                  value={activityFilter}
+                  onChange={(e) => {
+                    setActivityFilter(e.target.value);
+                    setCurrentPage(1); // Reset to first page when filtering
+                  }}
+                >
+                  <option value="all">All Actions</option>
+                  <option value="login">Login</option>
+                  <option value="logout">Logout</option>
+                  <option value="add_user">Add User</option>
+                  <option value="update_user">Update User</option>
+                  <option value="delete_user">Delete User</option>
+                  <option value="add_event">Add Event</option>
+                  <option value="update_event">Update Event</option>
+                  <option value="delete_event">Delete Event</option>
+                  <option value="add_team_member">Add Team Member</option>
+                  <option value="update_team_member">Update Team Member</option>
+                  <option value="delete_team_member">Delete Team Member</option>
+                </select>
+                <select 
+                  className="filter-select"
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value={25}>25 per page</option>
+                  <option value={50}>50 per page</option>
+                  <option value={100}>100 per page</option>
+                </select>
               </div>
 
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Time</th>
-                    <th>User</th>
-                    <th>Action</th>
-                    <th>Details</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredLogs.map((log) => (
-                    <tr key={log.id}>
-                      <td>{formatDate(log.timestamp)}</td>
-                      <td>{users.find(u => u.id === log.userId)?.username || 'Unknown'}</td>
-                      <td>
-                        <span className="role-badge admin">
-                          <i className={getActionIcon(log.action)}></i>
-                          {log.action}
-                        </span>
-                      </td>
-                      <td>{log.details}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              {authLoading ? (
+                <div className="loading-state">
+                  <i className="fas fa-spinner fa-spin"></i>
+                  <p>Loading activity logs...</p>
+                </div>
+              ) : (
+                <>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>IP Address</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activityLogs
+                        .filter(log => 
+                          searchTerm === '' || 
+                          log.details.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (log.username && log.username.toLowerCase().includes(searchTerm.toLowerCase()))
+                        )
+                        .map((log) => (
+                        <tr key={log.id}>
+                          <td>{formatDate(log.timestamp)}</td>
+                          <td>
+                            {log.username ? (
+                              <div>
+                                <strong>{log.username}</strong>
+                                {log.firstName && log.lastName && (
+                                  <>
+                                    <br />
+                                    <small>{log.firstName} {log.lastName}</small>
+                                  </>
+                                )}
+                              </div>
+                            ) : (
+                              'Unknown User'
+                            )}
+                          </td>
+                          <td>
+                            <span className="role-badge admin">
+                              <i className={getActionIcon(log.action)}></i>
+                              {log.action.replace(/_/g, ' ').toUpperCase()}
+                            </span>
+                          </td>
+                          <td>{log.details}</td>
+                          <td>{log.ipAddress || 'N/A'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {/* Pagination */}
+                  {activityLogsPagination && activityLogsPagination.totalPages > 1 && (
+                    <div className="pagination">
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1 || authLoading}
+                      >
+                        <i className="fas fa-chevron-left"></i>
+                        Previous
+                      </button>
+                      
+                      <span className="pagination-info">
+                        Page {activityLogsPagination.page} of {activityLogsPagination.totalPages} 
+                        ({activityLogsPagination.total} total logs)
+                      </span>
+                      
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, activityLogsPagination.totalPages))}
+                        disabled={currentPage === activityLogsPagination.totalPages || authLoading}
+                      >
+                        Next
+                        <i className="fas fa-chevron-right"></i>
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </>
           )}
 
