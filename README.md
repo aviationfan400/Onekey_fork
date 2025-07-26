@@ -1,5 +1,5 @@
 # Onekey Website
-##Raspberry Pi installation:
+## Raspberry Pi installation:
 First, let's install the github cli tool.
 ```
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
