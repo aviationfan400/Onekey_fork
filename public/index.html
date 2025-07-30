@@ -12,6 +12,23 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
+    <!-- Cache busting for development -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- Force hard refresh with timestamp -->
+    <script>
+      // Force reload without cache
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        const timestamp = new Date().getTime();
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/static/css/main.css?v=' + timestamp;
+        document.head.appendChild(link);
+      }
+    </script>
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     

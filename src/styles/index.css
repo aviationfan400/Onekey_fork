@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600&display=swap');
 
+/* CSS Reset - Fix margin problems */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 /* CSS Variables for Optimization - Zero Visual Changes */
 :root {
   --luxury-gold: #c4ae7b;
@@ -9,6 +22,93 @@
   --container-width: 1200px;
   --smooth-transition: all 0.3s ease;
   --center-margin: 0 auto;
+}
+
+/* Home Page Reset - Fix margin problems */
+.home-page {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.home-page * {
+  margin: 0;
+  padding: 0;
+}
+
+.home-page .container {
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Ensure loading overlay doesn't interfere with home page */
+.home-page .loading-overlay,
+.home-page ~ .loading-overlay {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Fix any white overlays or modals that might be covering content */
+.home-page + .loading-overlay,
+.home-page + [class*="overlay"],
+.home-page + [class*="modal"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Ensure home page sections are properly visible */
+.home-page section {
+  position: relative;
+  z-index: 2;
+}
+
+.home-page .philosophy-section,
+.home-page .values-section,
+.home-page .history-section,
+.home-page .statistics-section,
+.home-page .service-areas-section,
+.home-page .snapshot-section,
+.home-page .join-cta-section {
+  position: relative;
+  z-index: 2;
+  background: inherit;
+}
+
+/* Disable parallax scrolling on home page */
+.home-page .parallax-element {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+.home-page .landmark-image img,
+.home-page .area-image img {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Disable any parallax-related animations on home page */
+.home-page * {
+  transform: none !important;
+  transition: none !important;
+}
+
+.home-page .animate-on-scroll {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.home-page .animate-on-scroll.animate {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* Enhanced Meet Our Team Centering */
@@ -7288,6 +7388,8 @@ body {
 .service-areas-section {
   padding: 8rem 0;
   background: #ffffff;
+  position: relative;
+  z-index: 1;
 }
 
 .areas-intro {
@@ -7386,6 +7488,10 @@ body {
 .snapshot-section {
   padding: 8rem 0;
   background: #f8f8f8;
+  position: relative;
+  z-index: 2;
+  margin-top: 0;
+  clear: both;
 }
 
 .snapshot-header {
@@ -7462,6 +7568,12 @@ body {
   border-bottom: none;
 }
 
+.stat-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #666;
+}
 
 .stat-value {
   font-family: 'Cormorant Garamond', serif;
@@ -7909,542 +8021,6 @@ body {
   margin-bottom: 2rem;
   line-height: 1.6;
 }
-
-/* Font import removed - using main import at top of file */
-
-/* Constance Hotels Style - Exact Copy for OneKey */
-
-/* Smooth Scrolling with Delay - Luxury Effect */
-html {
-  scroll-behavior: unset; /* Disable default smooth scroll */
-  scroll-padding-top: 90px;
-}
-
-/* Custom Smooth Scroll with Delay */
-* {
-  box-sizing: border-box;
-}
-
-/* Add custom scroll behavior */
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: unset; /* Override default */
-}
-
-/* Delayed Smooth Scrolling Implementation */
-
-/* Override anchor click behavior for delayed scroll */
-a[href^="#"], 
-.nav-links a,
-button[onclick*="scroll"] {
-  scroll-behavior: unset;
-  transition: all 0.3s ease;
-}
-
-/* Scrolling States */
-body.scrolling {
-  pointer-events: none;
-}
-
-/* Page Load Animation */
-body {
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Smooth Link Transitions */
-a {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-a:active {
-  transform: scale(0.98);
-}
-
-/* Enhanced Smooth Scrolling for Luxury Feel */
-* {
-  scroll-margin-top: 90px;
-}
-
-/* Momentum Scrolling for Touch Devices */
-body {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Custom Scrollbar for Desktop */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(196, 174, 123, 0.5);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 174, 123, 0.8);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(196, 174, 123, 0.5) #f1f1f1;
-}
-
-/* Page Transition Effect */
-
-
-/* Luxury Loading State */
-
-.loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Navigation - Constance Hotels Style */
-
-.navigation.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-
-.logo:hover {
-  color: var(--luxury-gold-dark);
-  transform: scale(1.02);
-}
-
-
-.nav-links li {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  color: var(--luxury-dark-light);
-    text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-    position: relative;
-  padding: 2rem 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-  background: linear-gradient(90deg, #c4ae7b, #d4bf8a);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover {
-  color: var(--luxury-gold);
-  transform: translateY(-1px);
-}
-
-.nav-links a:hover::before {
-    width: 100%;
-}
-
-
-.login-btn,
-
-.login-btn:hover,
-.register-btn:hover {
-  background: var(--luxury-gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(196, 174, 123, 0.3);
-}
-
-
-.register-btn:hover {
-  background: #b8a068;
-}
-
-/* Mobile Menu Toggle */
-
-.menu-toggle i {
-  font-size: 1.5rem;
-  color: var(--luxury-gold);
-}
-
-/* Responsive Navigation */
-@media (max-width: 1024px) {
-  .navigation {
-    padding: 0 2rem;
-  }
-  
-  .nav-links {
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 1rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navigation {
-    padding: 0 1.5rem;
-    height: 80px;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-  }
-  
-  .menu-toggle {
-    display: flex;
-    order: 3;
-  }
-  
-  .nav-links {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    gap: 0;
-    padding: 2rem 0;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    justify-content: flex-start;
-    height: auto;
-}
-
-  .nav-links.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-  .nav-links li {
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid rgba(196, 174, 123, 0.1);
-  }
-  
-  .nav-links li:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a {
-    width: 100%;
-    padding: 1.5rem 2rem;
-    height: auto;
-    text-align: left;
-    font-size: 1rem;
-  }
-  
-  .nav-links a::before {
-    left: 2rem;
-    right: 2rem;
-    width: auto;
-    height: 2px;
-    bottom: 0;
-    background: var(--luxury-gold);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  
-  .nav-links a:hover::before {
-    transform: scaleX(1);
-  }
-  
-  .auth-buttons {
-    order: 2;
-    gap: 0.5rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i,
-  .register-btn i {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navigation {
-    padding: 0 1rem;
-    height: 70px;
-  }
-  
-  .logo {
-    font-size: 1.6rem;
-  }
-  
-  .nav-links {
-    top: 70px;
-    padding: 1.5rem 0;
-  }
-  
-  .nav-links a {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    gap: 0.3rem;
-  }
-  
-  .login-btn,
-  .register-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Smooth Scrolling with Animations */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 90px;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--luxury-dark-light);
-  background: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Animation Classes - Constance Style */
-
-.animate-on-scroll.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-
-/* Container */
-
-/* Hero Section - Constance Style */
-
-
-
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
-
-.slide-content h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-weight: 300;
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  line-height: 1.1;
-}
-
-.slide-content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Philosophy Section - Constance Style */
-
-
-.philosophy-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.philosophy-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: var(--luxury-gold);
-}
-
-
-.dna-section,
-.ambition-section,
-
-.dna-section h3,
-.ambition-section h3,
-.origin-section h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--luxury-dark);
-  margin-bottom: 1.5rem;
-}
-
-
-.dna-section p:not(.highlight-text),
-.ambition-section p:not(.highlight-text),
-.origin-section p:not(.highlight-text) {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Values Section - Constance Grid */
-
-
-
-.value-item:last-child {
-  border-right: none;
-}
-
-.value-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--luxury-gold);
-  transform: translateY(100%);
-  transition: transform 0.6s ease;
-  z-index: 1;
-}
-
-.value-item:hover::before {
-  transform: translateY(0);
-}
-
-.value-item:hover {
-  color: white;
-}
-
-.value-item:hover .value-icon i,
-.value-item:hover h3,
-.value-item:hover p {
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-
-.value-icon i {
-  font-size: 2.5rem;
-  color: var(--luxury-gold);
-  transition: color 0.4s ease;
-}
-
-.value-item h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-.value-item p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-  position: relative;
-  z-index: 2;
-  transition: color 0.4s ease;
-}
-
-/* History Section - Timeline like Constance */
-
-
-.section-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--luxury-dark);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-.section-header p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-
 
 /* Font import removed - using main import at top of file */
 
@@ -11753,7 +11329,17 @@ body {
 
 
 /* Service Areas - Business Activities Style */
+.service-areas-section {
+  padding: 8rem 0;
+  background: #ffffff;
+  position: relative;
+  z-index: 1;
+}
 
+.areas-intro {
+  text-align: center;
+  margin-bottom: 6rem;
+}
 
 .areas-intro h2 {
   font-family: 'Cormorant Garamond', serif;
@@ -11773,8 +11359,29 @@ body {
   margin: var(--center-margin);
 }
 
+.areas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  max-width: 1000px;
+  margin: var(--center-margin);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
 
+.area-card {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  cursor: pointer;
+}
 
+.area-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 
 .area-image img {
   width: 100%;
@@ -11783,6 +11390,18 @@ body {
   transition: transform 0.8s ease;
 }
 
+.area-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 3rem 2rem 2rem;
+  color: white;
+  text-align: center;
+  transform: translateY(50%);
+  transition: transform 0.6s ease;
+}
 
 .area-card:hover .area-content {
   transform: translateY(0);
@@ -11810,7 +11429,19 @@ body {
 }
 
 /* Snapshot Section - Company Snapshot Style */
+.snapshot-section {
+  padding: 8rem 0;
+  background: #f8f8f8;
+  position: relative;
+  z-index: 2;
+  margin-top: 0;
+  clear: both;
+}
 
+.snapshot-header {
+  text-align: center;
+  margin-bottom: 6rem;
+}
 
 .snapshot-header h2 {
   font-family: 'Cormorant Garamond', serif;
@@ -11821,13 +11452,32 @@ body {
   letter-spacing: 1px;
 }
 
+.snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  max-width: 1000px;
+  margin: var(--center-margin);
+}
 
+.snapshot-card {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  transition: all 0.6s ease;
+  overflow: hidden;
+}
 
 .snapshot-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
+.snapshot-header-card {
+  background: #1a1a1a;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
 
 .snapshot-header-card h3 {
   font-family: 'Cormorant Garamond', serif;
@@ -11837,16 +11487,63 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.program-type {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--luxury-gold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
+.snapshot-stats {
+  padding: 2rem;
+}
 
+.snapshot-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
 
 .snapshot-stat:last-child {
   border-bottom: none;
 }
 
+.stat-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #666;
+}
 
+.stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--luxury-dark);
+}
 
+.snapshot-cta {
+  padding: 0 2rem 2rem;
+}
 
+.view-details {
+  display: block;
+  background: var(--luxury-gold);
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.4s ease;
+}
 
 .view-details:hover {
   background: #b8a068;
@@ -15693,9 +15390,6 @@ body {
   background: var(--luxury-gold);
 }
 
-
-.dna-section,
-.ambition-section,
 
 .dna-section h3,
 .ambition-section h3,
