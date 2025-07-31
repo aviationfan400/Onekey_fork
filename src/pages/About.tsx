@@ -67,6 +67,9 @@ const About: React.FC = () => {
               <p>Founded in 2020, our organization began as a small initiative to bring musical performances to local senior living facilities. What started as weekend concerts has grown into a comprehensive community service program touching the lives of hundreds of students and seniors alike.</p>
               <p>Today, OneKey stands as a testament to the impact young people can make when given the opportunity to serve. Our volunteers don't just perform music—they create moments of joy, forge meaningful relationships, and develop leadership skills that will serve them throughout their lives.</p>
             </div>
+            <div className="story-image">
+              <img src={`${process.env.PUBLIC_URL}/pics/onekey.jpg`} alt="OneKey Team" />
+            </div>
           </div>
         </div>
       </section>
@@ -162,6 +165,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Values Grid - Constance Style */}
+      {/* 
       <section className="values-about">
         <div className="container">
           <div className="values-header">
@@ -204,6 +208,7 @@ const About: React.FC = () => {
           </div>
         </div>
       </section>
+      */}
 
       {/* Join Section - Luxury CTA */}
       <section className="join-about">

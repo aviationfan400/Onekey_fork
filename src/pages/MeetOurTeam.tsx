@@ -123,7 +123,7 @@ const MeetOurTeam: React.FC = () => {
             {leadershipMembers.map((member) => (
               <div key={member.id} className="team-member-card">
                 <div className="member-image">
-                  <img src={member.image} alt={member.name} />
+                  <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
                 </div>
                 <div className="member-info">
                   <h3>{member.name}</h3>
@@ -171,7 +171,7 @@ const MeetOurTeam: React.FC = () => {
             {communicationsMembers.map((member) => (
               <div key={member.id} className="team-member-card">
                 <div className="member-image">
-                  <img src={member.image} alt={member.name} />
+                  <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
                 </div>
                 <div className="member-info">
                   <h3>{member.name}</h3>
@@ -219,7 +219,7 @@ const MeetOurTeam: React.FC = () => {
             {coordinatorsMembers.map((member) => (
               <div key={member.id} className="team-member-card">
                 <div className="member-image">
-                  <img src={member.image} alt={member.name} />
+                  <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
                 </div>
                 <div className="member-info">
                   <h3>{member.name}</h3>
@@ -254,10 +254,10 @@ const MeetOurTeam: React.FC = () => {
           </div>
           <div className="alumni-grid">
             {alumniMembers.map((member) => (
-              <div key={member.id} className="alumni-card">
+              <div key={member.id} className="team-member-card">
                 <div className="member-image">
                   {member.image ? (
-                    <img src={member.image} alt={member.name} />
+                    <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
                   ) : (
                     <div className="member-image-placeholder">
                       <i className="fas fa-user" />

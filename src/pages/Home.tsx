@@ -195,7 +195,7 @@ const Home: React.FC = () => {
             <h2>Ready to Make a Difference?</h2>
             <p>Join OneKey and become part of a student-driven organization dedicated to creating positive change through music, education, and community service.</p>
             <div className="cta-buttons">
-              <a href="/contact" className="btn-primary">Contact Us</a>
+              <a href="/timeline" className="btn-primary">View Upcoming Events</a>
             </div>
           </div>
         </div>

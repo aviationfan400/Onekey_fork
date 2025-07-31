@@ -8004,6 +8004,149 @@ body {
   text-align: center;
 }
 
+.philosophy-content {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.philosophy-main {
+  flex: 1;
+  max-width: 800px;
+  margin: 0;
+  text-align: center;
+}
+
+.story-image {
+  flex: 0 0 300px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.story-image:hover {
+  transform: translateY(-5px);
+}
+
+.story-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.story-image:hover img {
+  transform: scale(1.05);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .philosophy-content {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .philosophy-main {
+    max-width: 100%;
+  }
+  
+  .story-image {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+/* Story Layout Styles */
+.story-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.story-text {
+  text-align: left;
+}
+
+.story-text h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--luxury-dark);
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.story-text .lead-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--luxury-gold);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.story-text p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.story-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.story-image:hover {
+  transform: translateY(-5px);
+}
+
+.story-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.story-image:hover img {
+  transform: scale(1.05);
+}
+
+/* Mobile Responsive for Story Layout */
+@media (max-width: 768px) {
+  .story-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .story-text {
+    text-align: center;
+  }
+  
+  .story-text h3 {
+    font-size: 2rem;
+  }
+  
+  .story-image {
+    order: -1;
+  }
+}
+
 .philosophy-main h3 {
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.5rem;
@@ -20085,6 +20228,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
   transition: transform 0.6s ease;
 }
 
