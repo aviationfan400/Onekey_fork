@@ -38,13 +38,17 @@ router.post('/events', (req, res) => {
   const { name, date, category, location, time, attendees, performers, duration, description, photo_url } = req.body;
   const id = uuidv4();
 
+  console.log('Creating timeline event:', { id, name, date, category });
+
   db.run(
     'INSERT INTO timeline_events (id, name, date, category, location, time, attendees, performers, duration, description, photo_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [id, name, date, category, location, time, attendees, performers, duration, description, photo_url],
     function(err: any) {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        console.error('Database error creating event:', err);
+        return res.status(500).json({ error: 'Database error', details: err.message });
       }
+      console.log('Event created successfully:', id);
       return res.status(201).json({ id, message: 'Event created successfully' });
     }
   );
