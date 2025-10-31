@@ -15,7 +15,6 @@ const AdminDashboard: React.FC = () => {
     activityLogs, 
     activityLogsPagination,
     isLoading: authLoading,
-    error: authError,
     addUser, 
     removeUser, 
     updateUserRole, 
@@ -23,19 +22,14 @@ const AdminDashboard: React.FC = () => {
     changePassword,
     logActivity,
     fetchUsers,
-    fetchAllActivityLogs,
-    getCurrentUser,
-    clearError: clearAuthError
+    fetchAllActivityLogs
   } = useAuthStore();
   const { 
     events, 
     addEvent, 
     removeEvent, 
     updateEvent, 
-    isLoading: timelineLoading,
-    error: timelineError,
-    fetchEvents,
-    clearError: clearTimelineError
+    fetchEvents
   } = useTimelineStore();
   const { teamMembers, addTeamMember, updateTeamMember, removeTeamMember, toggleTeamMemberStatus } = useTeamStore();
   
@@ -362,15 +356,6 @@ const AdminDashboard: React.FC = () => {
     return matchesSearch && matchesRole;
   });
 
-  const filteredLogs = activityLogs.filter(log => {
-    const user = users.find(u => u.id === log.userId);
-    const username = user ? user.username : 'Unknown';
-    const matchesSearch = searchTerm === '' || 
-                         username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         log.details.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
 
   const handleTeamInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

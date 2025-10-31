@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiService, TimelineEvent as ApiTimelineEvent, CreateEventRequest } from '../services/api';
+import { apiService, CreateEventRequest } from '../services/api';
 
 export interface TimelineEvent {
   id: string;

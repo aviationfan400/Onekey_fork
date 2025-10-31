@@ -1,11 +1,4 @@
 // Enhanced Persistence Test Utility with Server Shutdown and Debug Support
-interface DebugLevel {
-  ERROR: 0;
-  WARN: 1;
-  INFO: 2;
-  DEBUG: 3;
-  TRACE: 4;
-}
 
 interface PersistenceHealth {
   localStorage: boolean;
@@ -315,7 +308,7 @@ class PersistenceDebugger {
       this.log(2, 'Importing debug data', data);
       
       // Optionally restore localStorage data
-      if (confirm('Restore localStorage data from import?')) {
+      if (window.confirm('Restore localStorage data from import?')) {
         Object.entries(data.localStorage || {}).forEach(([key, value]) => {
           localStorage.setItem(key, value as string);
         });
@@ -362,7 +355,7 @@ class PersistenceDebugger {
   }
 
   private clearAllPersistenceData() {
-    if (confirm('This will clear ALL persistence data. Are you sure?')) {
+    if (window.confirm('This will clear ALL persistence data. Are you sure?')) {
       localStorage.clear();
       sessionStorage.clear();
       this.emergencyBackups = [];
@@ -653,7 +646,6 @@ class PersistenceDebugger {
 
     // Create backup of current data before restore
     if (currentData) {
-      const timestamp = new Date().toISOString();
       sessionStorage.setItem(`pre-restore-backup-${Date.now()}`, currentData);
       console.info('[BACKUP MANAGER] Created backup of current data before restore');
     }
@@ -1384,7 +1376,7 @@ export const createPreBuildBackup = () => {
       console.info('[PERSISTENCE] Recovery instructions saved');
       
       // Export debug data automatically
-      const exportedData = persistenceDebugger.getDebugger().exportData();
+      persistenceDebugger.getDebugger().exportData();
       console.info('[PERSISTENCE] Debug data exported automatically');
     }
     

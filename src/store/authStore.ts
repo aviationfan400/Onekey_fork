@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiService, User as ApiUser, CreateUserRequest, UpdateUserRequest } from '../services/api';
+import { apiService } from '../services/api';
 
 export interface User {
   id: string;
@@ -87,14 +87,6 @@ const DEFAULT_ADMIN: User = {
   department: 'IT'
 };
 
-const DEFAULT_USERS: User[] = [DEFAULT_ADMIN];
-
-const DEFAULT_CREDENTIALS: UserCredentials[] = [
-  {
-    userId: 'admin-1',
-    passwordHash: 'admin'
-  }
-];
 
 // Permission definitions
 const PERMISSIONS = {
