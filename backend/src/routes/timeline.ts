@@ -16,7 +16,7 @@ router.get('/events', (_req, res) => {
 router.get('/events/:id', (req, res) => {
   db.get('SELECT * FROM timeline_events WHERE id = ?', [req.params.id], (err: any, event: any) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).js on({ error: 'Database error' });
     }
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });

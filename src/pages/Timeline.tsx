@@ -636,6 +636,22 @@ const Timeline: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Photos Link */}
+      <section className="timeline-photos-link" style={{ marginTop: '2rem', marginBottom: '3rem' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <a
+            href="https://drive.google.com/drive/u/0/folders/1SASLgBECg8h7-37JtEGAVDpu0_5hwyHZ"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="photos-access-link"
+            style={{ fontSize: '1.15rem', fontWeight: 700, textDecoration: 'underline', color: '#2b2b2b' }}
+            aria-label="Open photos in Google Drive (opens in a new tab)"
+          >
+            Click here to access photos!!
+          </a>
+        </div>
+      </section>
     </div>
   );
 };
