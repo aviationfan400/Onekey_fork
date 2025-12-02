@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTeamStore } from '../store/teamStore';
+import { getRandomPhotos } from '../data/photos';
 
 const MeetOurTeam: React.FC = () => {
   const { getTeamMembersBySection } = useTeamStore();
+  const heroImage = useMemo(() => getRandomPhotos(1)[0], []);
 
   const leadershipMembers = getTeamMembersBySection('leadership');
   const communicationsMembers = getTeamMembersBySection('communications');
@@ -73,73 +75,59 @@ const MeetOurTeam: React.FC = () => {
     };
   }, []);
   return (
-    <div className="team-page">
+    <div className="bg-white">
       {/* Hero Section */}
-      <section className="team-hero">
-        <div className="hero-background">
-          <div
-            className="hero-bg-image"
-            style={{
-              backgroundImage: `url(${process.env.PUBLIC_URL}/pics/Slide_1.jpg)`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              backgroundAttachment: 'fixed',
-            }}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-surface-900">
+        <div className="absolute inset-0 z-0 opacity-30">
+          <div className="absolute inset-0 bg-gradient-to-b from-surface-900/50 to-surface-900"></div>
+          <img 
+            src={heroImage} 
+            alt="Team Hero" 
+            className="w-full h-full object-cover"
           />
-          <div className="hero-overlay" />
-          <div className="container">
-            <div className="hero-content">
-              <h1>Meet Our Team</h1>
-              <p className="hero-subtitle">
-                The passionate students and volunteers who bring OneKey's
-                mission to life through music, education, and community service
-              </p>
-              <div className="hero-accent-line" />
-            </div>
-          </div>
+        </div>
+        
+        <div className="container relative z-10 text-center">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">Meet Our Team</h1>
+          <p className="text-xl text-surface-300 max-w-2xl mx-auto leading-relaxed">
+            The passionate students and volunteers who bring OneKey's mission to life
+          </p>
         </div>
       </section>
   
       {/* Leadership Section */}
-      <section className="leadership-section">
-        <div
-          className="leadership-bg-image"
-          style={{
-            backgroundImage: `url(${process.env.PUBLIC_URL}/pics/Slide_2.jpg)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-          }}
-        />
-        <div className="leadership-overlay" />
+      <section className="py-24 bg-white">
         <div className="container">
-          <div className="section-header">
-            <h2>LEADERSHIP</h2>
-            <p>Founders driving OneKey's vision</p>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-surface-900 mb-4">Leadership</h2>
+            <p className="text-surface-600">Founders driving OneKey's vision</p>
           </div>
-          <div className="leadership-grid">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {leadershipMembers.map((member) => (
-              <div key={member.id} className="team-member-card">
-                <div className="member-image">
-                  <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
+              <div key={member.id} className="card overflow-hidden group">
+                <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
+                  <img 
+                    src={`${process.env.PUBLIC_URL}${member.image}`} 
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
-                <div className="member-info">
-                  <h3>{member.name}</h3>
-                  <div className="member-details">
-                    <span className="member-school">{member.school}</span>
-                    <span className="member-role">{member.role}</span>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-surface-900 mb-1">{member.name}</h3>
+                  <div className="flex justify-between items-center mb-4 text-sm">
+                    <span className="text-primary-600 font-medium">{member.role}</span>
+                    <span className="text-surface-500">{member.school}</span>
                   </div>
-                  <p className="member-bio">{member.bio}</p>
+                  <p className="text-surface-600 text-sm leading-relaxed mb-4">{member.bio}</p>
                   {member.instagram && (
                     <a
                       href={member.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="instagram-btn"
+                      className="text-surface-400 hover:text-primary-600 transition-colors"
                     >
-                      <i className="fab fa-instagram" />
+                      <i className="fab fa-instagram text-xl" />
                     </a>
                   )}
                 </div>
@@ -150,46 +138,29 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Communications Section */}
-      <section className="communications-section">
-        <div
-          className="communications-bg-image"
-          style={{
-            backgroundImage: `url(${process.env.PUBLIC_URL}/pics/Slide_3.JPG)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-          }}
-        />
-        <div className="communications-overlay" />
+      <section className="py-24 bg-surface-50">
         <div className="container">
-          <div className="section-header">
-            <h2>COMMUNICATIONS</h2>
-            <p>Managing outreach and community connections</p>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-surface-900 mb-4">Communications</h2>
+            <p className="text-surface-600">Managing outreach and community connections</p>
           </div>
-          <div className="communications-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {communicationsMembers.map((member) => (
-              <div key={member.id} className="team-member-card">
-                <div className="member-image">
-                  <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
+              <div key={member.id} className="card overflow-hidden group">
+                <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
+                  <img 
+                    src={`${process.env.PUBLIC_URL}${member.image}`} 
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
-                <div className="member-info">
-                  <h3>{member.name}</h3>
-                  <div className="member-details">
-                    <span className="member-school">{member.school}</span>
-                    <span className="member-role">{member.role}</span>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-surface-900 mb-1">{member.name}</h3>
+                  <div className="flex justify-between items-center mb-4 text-sm">
+                    <span className="text-primary-600 font-medium">{member.role}</span>
+                    <span className="text-surface-500">{member.school}</span>
                   </div>
-                  <p className="member-bio">{member.bio}</p>
-                  {member.instagram && (
-                    <a
-                      href={member.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="instagram-btn"
-                    >
-                      <i className="fab fa-instagram" />
-                    </a>
-                  )}
+                  <p className="text-surface-600 text-sm leading-relaxed mb-4">{member.bio}</p>
                 </div>
               </div>
             ))}
@@ -198,46 +169,29 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Coordinators Section */}
-      <section className="coordinators-section">
-        <div
-          className="coordinators-bg-image"
-          style={{
-            backgroundImage: `url(${process.env.PUBLIC_URL}/pics/Slide_4.JPG)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-          }}
-        />
-        <div className="coordinators-overlay" />
+      <section className="py-24 bg-white">
         <div className="container">
-          <div className="section-header">
-            <h2>COORDINATORS</h2>
-            <p>Leading our educational and musical programs</p>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-surface-900 mb-4">Coordinators</h2>
+            <p className="text-surface-600">Leading our educational and musical programs</p>
           </div>
-          <div className="coordinators-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {coordinatorsMembers.map((member) => (
-              <div key={member.id} className="team-member-card">
-                <div className="member-image">
-                  <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
+              <div key={member.id} className="card overflow-hidden group">
+                <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
+                  <img 
+                    src={`${process.env.PUBLIC_URL}${member.image}`} 
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
-                <div className="member-info">
-                  <h3>{member.name}</h3>
-                  <div className="member-details">
-                    <span className="member-school">{member.school}</span>
-                    <span className="member-role">{member.role}</span>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-surface-900 mb-1">{member.name}</h3>
+                  <div className="flex justify-between items-center mb-4 text-sm">
+                    <span className="text-primary-600 font-medium">{member.role}</span>
+                    <span className="text-surface-500">{member.school}</span>
                   </div>
-                  <p className="member-bio">{member.bio}</p>
-                  {member.instagram && (
-                    <a
-                      href={member.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="instagram-btn"
-                    >
-                      <i className="fab fa-instagram" />
-                    </a>
-                  )}
+                  <p className="text-surface-600 text-sm leading-relaxed mb-4">{member.bio}</p>
                 </div>
               </div>
             ))}
@@ -246,41 +200,32 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Alumni Section */}
-      <section className="alumni-section">
+      <section className="py-24 bg-surface-50">
         <div className="container">
-          <div className="section-header">
-            <h2>ALUMNI</h2>
-            <p>Founding members who continue to inspire our mission</p>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-surface-900 mb-4">Alumni</h2>
+            <p className="text-surface-600">Founding members who continue to inspire our mission</p>
           </div>
-          <div className="alumni-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {alumniMembers.map((member) => (
-              <div key={member.id} className="team-member-card">
-                <div className="member-image">
+              <div key={member.id} className="card overflow-hidden group">
+                <div className="aspect-w-1 aspect-h-1 bg-surface-100 relative overflow-hidden">
                   {member.image ? (
-                    <img src={`${process.env.PUBLIC_URL}${member.image}`} alt={member.name} />
+                    <img 
+                      src={`${process.env.PUBLIC_URL}${member.image}`} 
+                      alt={member.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
                   ) : (
-                    <div className="member-image-placeholder">
-                      <i className="fas fa-user" />
+                    <div className="w-full h-full flex items-center justify-center bg-surface-200 text-surface-400">
+                      <i className="fas fa-user text-4xl" />
                     </div>
                   )}
                 </div>
-                <div className="member-info">
-                  <h3>{member.name}</h3>
-                  <div className="member-details">
-                    <span className="member-school">{member.school}</span>
-                    <span className="member-role">{member.role}</span>
-                  </div>
-                  <p className="member-bio">{member.bio}</p>
-                  {member.instagram && (
-                    <a
-                      href={member.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="instagram-btn"
-                    >
-                      <i className="fab fa-instagram" />
-                    </a>
-                  )}
+                <div className="p-6 text-center">
+                  <h3 className="text-lg font-bold text-surface-900 mb-1">{member.name}</h3>
+                  <div className="text-sm text-primary-600 font-medium mb-2">{member.role}</div>
+                  <div className="text-xs text-surface-500">{member.school}</div>
                 </div>
               </div>
             ))}
@@ -289,54 +234,35 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Join Our Team Section */}
-      <section className="join-team-section" style={{ marginBottom: '0', paddingBottom: '6rem' }}>
+      <section className="py-24 bg-surface-900 text-white">
         <div className="container">
-          <div className="join-content">
-            <h2>Join Our Team</h2>
-            <p>
-              Ready to make a difference? OneKey is always looking for passionate
-              students who want to give back to their community through music and
-              education.
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">Join Our Team</h2>
+            <p className="text-xl text-surface-300 mb-12">
+              Ready to make a difference? OneKey is always looking for passionate students.
             </p>
-            <div className="join-opportunities">
-              <div className="opportunity-card">
-                <div className="opportunity-icon">
-                  <i className="fas fa-music" />
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {[
+                { icon: 'music', title: 'Musicians', desc: 'Share your musical talents with senior residents.' },
+                { icon: 'graduation-cap', title: 'Tutors', desc: 'Help students succeed academically.' },
+                { icon: 'users', title: 'Leaders', desc: 'Take on leadership roles and help expand impact.' }
+              ].map((item, index) => (
+                <div key={index} className="bg-surface-800 p-6 rounded-xl border border-surface-700">
+                  <div className="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center mx-auto mb-4 text-xl">
+                    <i className={`fas fa-${item.icon}`} />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2">{item.title}</h3>
+                  <p className="text-surface-400 text-sm">{item.desc}</p>
                 </div>
-                <h3>Musicians</h3>
-                <p>
-                  Share your musical talents with senior residents through weekly
-                  concerts and performances.
-                </p>
-              </div>
-              <div className="opportunity-card">
-                <div className="opportunity-icon">
-                  <i className="fas fa-graduation-cap" />
-                </div>
-                <h3>Tutors</h3>
-                <p>
-                  Help students succeed academically through our after-school
-                  tutoring programs.
-                </p>
-              </div>
-              <div className="opportunity-card">
-                <div className="opportunity-icon">
-                  <i className="fas fa-users" />
-                </div>
-                <h3>Leaders</h3>
-                <p>
-                  Take on leadership roles and help expand OneKey's impact in the
-                  community.
-                </p>
-              </div>
+              ))}
             </div>
-            <div className="join-actions">
+
+            <div className="flex justify-center gap-4">
               <Link to="/about" className="btn-primary">
-                <i className="fas fa-info-circle" />
                 About Us
               </Link>
-              <a href="mailto:on3keymusic@gmail.com" className="btn-secondary">
-                <i className="fas fa-envelope" />
+              <a href="mailto:on3keymusic@gmail.com" className="btn-secondary bg-transparent border-white text-white hover:bg-white hover:text-surface-900">
                 Contact Us
               </a>
             </div>

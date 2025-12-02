@@ -1214,21 +1214,10 @@ export const checkForDataLoss = () => {
     console.warn('[PERSISTENCE] WARNING: No current timeline data found!');
     
     if (emergencyBackups.length > 0) {
-      console.warn('[PERSISTENCE] Found emergency backups, attempting automatic recovery...');
-      return restoreTimelineData();
+      console.warn('[PERSISTENCE] Found emergency backups. Auto-restore is DISABLED to prevent conflicts.');
+      // return restoreTimelineData(); // DISABLED
     }
-    
-    // Check session storage for recovery clues
-    const reloadReason = sessionStorage.getItem('reload-reason');
-    if (reloadReason) {
-      console.warn(`[PERSISTENCE] Last reload reason: ${reloadReason}`);
-      const preReloadCount = sessionStorage.getItem('pre-reload-event-count');
-      if (preReloadCount) {
-        console.warn(`[PERSISTENCE] Expected ${preReloadCount} events but found none - data loss confirmed`);
-      }
-    }
-    
-    return restoreTimelineData();
+    return false;
   }
   
   // Check for partial data loss
@@ -1244,47 +1233,18 @@ export const checkForDataLoss = () => {
         const backupEvents = backupData.state?.events?.length || 0;
         
         if (currentEvents < backupEvents) {
-          console.warn(`[PERSISTENCE] WARNING: Partial data loss! Current: ${currentEvents}, Backup: ${backupEvents}`);
-          console.info('[PERSISTENCE] Attempting restoration...');
-          return restoreTimelineData();
+          console.warn(`[PERSISTENCE] WARNING: Potential partial data loss! Current: ${currentEvents}, Backup: ${backupEvents}`);
+          console.info('[PERSISTENCE] Auto-restore is DISABLED. Use persistenceDebug.restoreFromBackup() if needed.');
+          // return restoreTimelineData(); // DISABLED
         }
       }
     }
     
-    // Compare with metadata backup
-    const metadata = localStorage.getItem('onekey-backup-metadata');
-    if (metadata) {
-      try {
-        const meta = JSON.parse(metadata);
-        if (meta.eventCount > currentEvents) {
-          console.warn(`[PERSISTENCE] WARNING: Data loss detected via metadata! Expected: ${meta.eventCount}, Current: ${currentEvents}`);
-          return restoreTimelineData();
-        }
-      } catch (error) {
-        console.warn('[PERSISTENCE] Could not parse backup metadata:', error);
-      }
-    }
-    
-    // Check session indicators
-    const testId = sessionStorage.getItem('persistence-test-id');
-    if (testId) {
-      const hasTestEvent = current.state.events?.some((event: any) => event.id === testId);
-      if (!hasTestEvent) {
-        console.warn('[PERSISTENCE] WARNING: Test event missing - possible data loss');
-        return restoreTimelineData();
-      } else {
-        console.info('[PERSISTENCE] Persistence test event found - data integrity confirmed');
-      }
-    }
-    
-    console.info('[PERSISTENCE] No data loss detected');
+    console.info('[PERSISTENCE] Data check complete');
     console.info(`[PERSISTENCE] Current data: ${currentEvents} events`);
     
   } catch (error) {
     console.error('[PERSISTENCE] ERROR: Error analyzing current data:', error);
-    // Data is corrupted, try to restore
-    sessionStorage.setItem('corrupted-data-backup', currentData);
-    return restoreTimelineData();
   }
   
   return false;
@@ -1443,14 +1403,16 @@ console.info('');
 if (typeof window !== 'undefined') {
   // Run initial health check
   setTimeout(() => {
-    checkForDataLoss();
+    // checkForDataLoss(); // DISABLED: Causing cache conflicts
     
     // Show backup status on startup
     console.info('[PERSISTENCE] Startup Backup Status:');
     const backups = listBackups();
+    /*
     if (backups.length === 0) {
       console.warn('[PERSISTENCE] WARNING: No backups found! Creating initial backup...');
       forceBackup();
     }
+    */
   }, 1000);
 } 

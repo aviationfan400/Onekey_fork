@@ -1,14 +1,5 @@
-// Auto-detect API base URL based on environment
-const getApiBaseUrl = () => {
-  // In production, the API is served from the same domain
-  if (process.env.NODE_ENV === 'production') {
-    return '/api/v1';
-  }
-  // In development, use localhost
-  return 'http://localhost:3001/api/v1';
-};
-
-const API_BASE_URL = getApiBaseUrl();
+// Mock API Service using localStorage
+// This replaces the backend dependency to allow the app to function fully client-side
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -94,225 +85,311 @@ export interface CreateEventRequest {
 export interface ActivityLog {
   id: string;
   user_id: string;
-  userId?: string; // For compatibility with store
+  userId?: string;
   action: string;
   details: string;
   ip_address?: string;
-  ipAddress?: string; // For compatibility with store
+  ipAddress?: string;
   timestamp: string;
   username?: string;
   first_name?: string;
   last_name?: string;
 }
 
-class ApiService {
+// Storage Keys
+const STORAGE_KEYS = {
+  USERS: 'onekey_users',
+  EVENTS: 'onekey_events',
+  LOGS: 'onekey_logs',
+  TOKEN: 'onekey_auth_token'
+};
+
+// Default Admin User
+const DEFAULT_ADMIN: User & { passwordHash: string } = {
+  id: 'admin-1',
+  username: 'curtiswei',
+  email: 'curtiswei@onekey.com',
+  firstName: 'Curtis',
+  lastName: 'Wei',
+  role: 'super_admin',
+  isActive: true,
+  createdAt: new Date().toISOString(),
+  passwordHash: 'curtiswei' // Simple mock password
+};
+
+class MockApiService {
   private token: string | null = null;
+
+  constructor() {
+    this.initializeData();
+  }
+
+  private initializeData() {
+    // Initialize Users
+    let users: any[] = [];
+    try {
+      const storedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
+      users = storedUsers ? JSON.parse(storedUsers) : [];
+    } catch (e) {
+      users = [];
+    }
+
+    // cleanup old admin if exists
+    users = users.filter(u => u.username !== 'admin');
+
+    // Ensure current default admin exists and is up to date
+    const adminIndex = users.findIndex(u => u.username === DEFAULT_ADMIN.username);
+    if (adminIndex >= 0) {
+      // Update existing admin to ensure credentials are correct
+      users[adminIndex] = { ...users[adminIndex], ...DEFAULT_ADMIN };
+    } else {
+      // Add new admin
+      users.push(DEFAULT_ADMIN);
+    }
+    
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+    
+    // Initialize Events if empty
+    if (!localStorage.getItem(STORAGE_KEYS.EVENTS)) {
+      localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify([]));
+    }
+
+    // Initialize Logs if empty
+    if (!localStorage.getItem(STORAGE_KEYS.LOGS)) {
+      localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify([]));
+    }
+  }
 
   setToken(token: string) {
     this.token = token;
-    localStorage.setItem('auth_token', token);
+    localStorage.setItem(STORAGE_KEYS.TOKEN, token);
   }
 
   getToken(): string | null {
     if (!this.token) {
-      this.token = localStorage.getItem('auth_token');
+      this.token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     }
     return this.token;
   }
 
   clearToken() {
     this.token = null;
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem(STORAGE_KEYS.TOKEN);
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<ApiResponse<T>> {
-    const url = `${API_BASE_URL}${endpoint}`;
-    const token = this.getToken();
-
-    const config: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
-      },
-      ...options,
-    };
-
-    try {
-      const response = await fetch(url, config);
-      const data = await response.json();
-
-      if (!response.ok) {
-        return {
-          success: false,
-          error: data.error || `HTTP ${response.status}`,
-        };
-      }
-
-      return {
-        success: true,
-        data,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Network error',
-      };
-    }
+  // Helper to simulate async delay
+  private async delay(ms: number = 500): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   // Authentication
   async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
-    const response = await this.request<LoginResponse>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
+    await this.delay();
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+    const user = users.find((u: any) => u.username === credentials.username && u.passwordHash === credentials.password);
 
-    if (response.success && response.data) {
-      this.setToken(response.data.token);
+    if (user) {
+      const token = `mock-token-${Date.now()}`;
+      this.setToken(token);
+      
+      // Update last login
+      user.lastLoginAt = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+
+      return {
+        success: true,
+        data: {
+          token,
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role
+          }
+        }
+      };
     }
 
-    return response;
+    return { success: false, error: 'Invalid credentials' };
   }
 
   async getCurrentUser(): Promise<ApiResponse<{ user: User }>> {
-    return this.request<{ user: User }>('/auth/me');
+    await this.delay(200);
+    const token = this.getToken();
+    if (!token) return { success: false, error: 'Not authenticated' };
+
+    // For mock purposes, we'll just return the first admin user or the user associated with the token if we tracked it
+    // In a real mock, we'd store token->userId mapping. Here we'll simplify.
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+    // Return the admin user for now or the first active user
+    const user = users.find((u: User) => u.isActive) || users[0];
+
+    return { success: true, data: { user } };
   }
 
   // User Management
   async getUsers(): Promise<ApiResponse<{ users: User[] }>> {
-    return this.request<{ users: User[] }>('/users');
-  }
-
-  async getUser(userId: string): Promise<ApiResponse<{ user: User }>> {
-    return this.request<{ user: User }>(`/users/${userId}`);
+    await this.delay();
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+    // Remove password hash before returning
+    const safeUsers = users.map(({ passwordHash, ...user }: any) => user);
+    return { success: true, data: { users: safeUsers } };
   }
 
   async createUser(userData: CreateUserRequest): Promise<ApiResponse<{ userId: string; message: string }>> {
-    return this.request<{ userId: string; message: string }>('/users', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
+    await this.delay();
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+    
+    if (users.find((u: any) => u.username === userData.username)) {
+      return { success: false, error: 'Username already exists' };
+    }
+
+    const newUser = {
+      id: `user-${Date.now()}`,
+      ...userData,
+      passwordHash: userData.password, // In real app, hash this!
+      isActive: true,
+      createdAt: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+
+    return { success: true, data: { userId: newUser.id, message: 'User created' } };
   }
 
   async updateUser(userId: string, userData: UpdateUserRequest): Promise<ApiResponse<{ message: string }>> {
-    return this.request<{ message: string }>(`/users/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(userData),
-    });
+    await this.delay();
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+    const index = users.findIndex((u: any) => u.id === userId);
+
+    if (index === -1) return { success: false, error: 'User not found' };
+
+    users[index] = { ...users[index], ...userData };
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+
+    return { success: true, data: { message: 'User updated' } };
   }
 
   async deleteUser(userId: string): Promise<ApiResponse<{ message: string }>> {
-    return this.request<{ message: string }>(`/users/${userId}`, {
-      method: 'DELETE',
-    });
+    await this.delay();
+    let users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+    users = users.filter((u: any) => u.id !== userId);
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+
+    return { success: true, data: { message: 'User deleted' } };
   }
 
-  async getUserActivity(userId: string): Promise<ApiResponse<{ logs: ActivityLog[] }>> {
-    return this.request<{ logs: ActivityLog[] }>(`/users/${userId}/activity`);
-  }
-
+  // Activity Logs
   async getAllActivityLogs(page: number = 1, limit: number = 100, action: string = 'all'): Promise<ApiResponse<{ 
     logs: ActivityLog[], 
     pagination: { page: number, limit: number, total: number, totalPages: number } 
   }>> {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-      action: action
-    });
-    return this.request<{ 
-      logs: ActivityLog[], 
-      pagination: { page: number, limit: number, total: number, totalPages: number } 
-    }>(`/users/admin/activity-logs?${params}`);
+    await this.delay();
+    let logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOGS) || '[]');
+    
+    if (action !== 'all') {
+      logs = logs.filter((l: any) => l.action === action);
+    }
+
+    // Sort by timestamp desc
+    logs.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    const total = logs.length;
+    const totalPages = Math.ceil(total / limit);
+    const start = (page - 1) * limit;
+    const paginatedLogs = logs.slice(start, start + limit);
+
+    return {
+      success: true,
+      data: {
+        logs: paginatedLogs,
+        pagination: { page, limit, total, totalPages }
+      }
+    };
   }
 
   // Timeline Events
   async getEvents(): Promise<ApiResponse<{ events: TimelineEvent[] }>> {
-    return this.request<{ events: TimelineEvent[] }>('/timeline/events');
-  }
-
-  async getEvent(eventId: string): Promise<ApiResponse<{ event: TimelineEvent }>> {
-    return this.request<{ event: TimelineEvent }>(`/timeline/events/${eventId}`);
-  }
-
-  async getEventsByCategory(category: string): Promise<ApiResponse<{ events: TimelineEvent[] }>> {
-    return this.request<{ events: TimelineEvent[] }>(`/timeline/events/category/${category}`);
+    await this.delay();
+    const events = JSON.parse(localStorage.getItem(STORAGE_KEYS.EVENTS) || '[]');
+    return { success: true, data: { events } };
   }
 
   async createEvent(eventData: CreateEventRequest): Promise<ApiResponse<{ id: string; message: string }>> {
-    return this.request<{ id: string; message: string }>('/timeline/events', {
-      method: 'POST',
-      body: JSON.stringify(eventData),
-    });
+    await this.delay();
+    const events = JSON.parse(localStorage.getItem(STORAGE_KEYS.EVENTS) || '[]');
+    
+    const newEvent = {
+      id: `event-${Date.now()}`,
+      ...eventData,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    events.push(newEvent);
+    localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
+
+    return { success: true, data: { id: newEvent.id, message: 'Event created' } };
   }
 
   async updateEvent(eventId: string, eventData: CreateEventRequest): Promise<ApiResponse<{ message: string }>> {
-    return this.request<{ message: string }>(`/timeline/events/${eventId}`, {
-      method: 'PUT',
-      body: JSON.stringify(eventData),
-    });
+    await this.delay();
+    const events = JSON.parse(localStorage.getItem(STORAGE_KEYS.EVENTS) || '[]');
+    const index = events.findIndex((e: any) => e.id === eventId);
+
+    if (index === -1) return { success: false, error: 'Event not found' };
+
+    events[index] = { 
+      ...events[index], 
+      ...eventData, 
+      updated_at: new Date().toISOString() 
+    };
+    localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
+
+    return { success: true, data: { message: 'Event updated' } };
   }
 
   async deleteEvent(eventId: string): Promise<ApiResponse<{ message: string }>> {
-    return this.request<{ message: string }>(`/timeline/events/${eventId}`, {
-      method: 'DELETE',
-    });
+    await this.delay();
+    let events = JSON.parse(localStorage.getItem(STORAGE_KEYS.EVENTS) || '[]');
+    events = events.filter((e: any) => e.id !== eventId);
+    localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
+
+    return { success: true, data: { message: 'Event deleted' } };
   }
 
-  // File Upload
+  // File Upload (Mock)
   async uploadImage(file: File): Promise<ApiResponse<{ filePath: string; filename: string; originalName: string; size: number }>> {
-    const formData = new FormData();
-    formData.append('photo', file);
-
-    const url = `${API_BASE_URL}/upload/images`;
-    const token = this.getToken();
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        return {
-          success: false,
-          error: data.error || `HTTP ${response.status}`,
-        };
-      }
-
-      return {
-        success: true,
-        data,
+    await this.delay(1000);
+    
+    // In a real mock, we'd convert to base64 and store, but for now just return a fake URL or the base64 itself if small enough
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve({
+          success: true,
+          data: {
+            filePath: reader.result as string, // Return base64 as the "path"
+            filename: file.name,
+            originalName: file.name,
+            size: file.size
+          }
+        });
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Network error',
-      };
-    }
+      reader.readAsDataURL(file);
+    });
   }
 
   // Health Check
   async healthCheck(): Promise<ApiResponse<{ status: string; timestamp: string }>> {
-    const healthUrl = process.env.NODE_ENV === 'production' ? '/health' : 'http://localhost:3001/health';
-    const response = await fetch(healthUrl);
-    const data = await response.json();
-    
     return {
-      success: response.ok,
-      data: response.ok ? data : undefined,
-      error: response.ok ? undefined : 'Health check failed',
+      success: true,
+      data: { status: 'ok', timestamp: new Date().toISOString() }
     };
   }
 }
 
-export const apiService = new ApiService(); 
+export const apiService = new MockApiService();

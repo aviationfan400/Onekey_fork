@@ -1,202 +1,137 @@
-import React, { useEffect, useState } from 'react';
-import { getCurrentMonthYear } from '../utils/dateUtils';
+
+import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import Slideshow from '../components/Slideshow';
+import PhotoGallery from '../components/PhotoGallery';
+import { getRandomPhotos } from '../data/photos';
 
 const Home: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  
-  const slides = [
-    {
-      image: '/Onekey/pics/Slide_1.jpg',
-      title: 'OneKey',
-      subtitle: 'Student volunteers making a difference through music and community service'
-    },
-    {
-      image: '/Onekey/pics/Slide_2.jpg',
-      title: 'Our Mission',
-      subtitle: 'Bridging generations through the universal language of music'
-    },
-    {
-      image: '/Onekey/pics/Slide_3.JPG',
-      title: 'Community Impact',
-      subtitle: 'Creating lasting connections across our community'
-    }
-  ];
-
-  const handleScroll = () => {
-    const scrollY = window.scrollY;
-    
-    // Hero section parallax (background images)
-    const heroSlides = document.querySelectorAll('.hero-slide') as NodeListOf<HTMLElement>;
-    heroSlides.forEach((slide) => {
-      slide.style.transform = `translateY(${scrollY * 0.3}px)`;
-    });
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [slides.length]);
-
-  // Add scroll event listener for parallax
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  const heroImages = useMemo(() => getRandomPhotos(6), []);
+  const galleryImages = useMemo(() => getRandomPhotos(12), []);
 
   return (
-    <div className="home-new">
+    <div className="overflow-hidden bg-surface-50">
       {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-slideshow">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className={`hero-slide ${index === currentSlide ? 'active' : ''}`}
-              style={{ 
-                backgroundImage: `url(${slide.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                backgroundAttachment: 'fixed'
-              }}
+      <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+        {/* Slideshow Background */}
+        <div className="absolute inset-0 z-0">
+          <Slideshow images={heroImages} interval={6000} overlay={true} />
+        </div>
+
+        <div className="container relative z-10 pt-20">
+          <div className="max-w-4xl mx-auto text-center text-white">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2 }}
             >
-              <div className="hero-overlay"></div>
-              <div className="hero-content">
-                <h1>{slide.title}</h1>
-                <p>{slide.subtitle}</p>
+              <h1 className="text-6xl md:text-8xl font-display font-medium mb-8 leading-tight tracking-tight drop-shadow-lg">
+                Harmony in <span className="italic text-primary-300 drop-shadow-md">Service</span>
+              </h1>
+              <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-2xl mx-auto leading-relaxed font-light tracking-wide drop-shadow-md">
+                Bridging generations through the universal language of music. 
+                We are student volunteers making a difference.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link to="/about" className="btn-primary bg-white text-surface-900 hover:bg-surface-100 border-none px-10 shadow-lg">
+                  Our Mission
+                </Link>
+                <Link to="/timeline" className="btn-secondary text-white border-white/40 hover:bg-white/10 px-10 backdrop-blur-sm shadow-lg">
+                  Upcoming Events
+                </Link>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Philosophy Section
-      <section className="philosophy-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>OUR PHILOSOPHY</h2>
-          </div>
-          
-          <div className="philosophy-content">
-            <div className="philosophy-item">
-              <h3>Our DNA</h3>
-              <p className="highlight">A genuine passion for music and community service.</p>
-              <p>It is where we come from, our student heritage. We believe that our passion allows us to create connections.</p>
-            </div>
-            
-            <div className="philosophy-item">
-              <h3>Our Ambition</h3>
-              <p className="highlight">Be the reference of student-driven community impact.</p>
-              <p>Growing while keeping our volunteer spirit.</p>
-            </div>
-            
-            <div className="philosophy-item">
-              <h3>Where we come from</h3>
-              <p>OneKey was created in 2020, with music education as the main activity. A clear vision and determination enabled the diversification and progress of our organization.</p>
-              <p>In 2021, we took our first step in community service with senior home concerts. This ignited our passion and allowed us to discover our DNA: A genuine passion for bridging generations.</p>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* Service Areas Section */}
-      <section className="services-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Our Service Areas</h2>
-            <p>OneKey's activities are structured around 3 Principal Service Areas</p>
-          </div>
-          
-          <div className="services-grid">
-            <div className="service-card">
-              <div className="service-image">
-                <img src="/Onekey/pics/Slide_2.jpg" alt="Music Services" />
-              </div>
-              <div className="service-content">
-                <h3>Music</h3>
-                <p>Senior home concerts and community performances bringing joy through music</p>
-              </div>
-            </div>
-            
-            <div className="service-card">
-              <div className="service-image">
-                <img src="/Onekey/pics/Slide_3.JPG" alt="Education Services" />
-              </div>
-              <div className="service-content">
-                <h3>Education</h3>
-                <p>Tutoring and academic support for students across all grade levels</p>
-              </div>
-            </div>
-            
-            <div className="service-card">
-              <div className="service-image">
-                <img src="/Onekey/pics/Slide_4.JPG" alt="Community Services" />
-              </div>
-              <div className="service-content">
-                <h3>Community</h3>
-                <p>Fundraising and volunteer opportunities for meaningful community impact</p>
-              </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="stats-section">
+      {/* Introduction / Philosophy */}
+      <section className="py-32 bg-white">
         <div className="container">
-          <div className="section-header">
-            <h2>THE ORGANIZATION IN NUMBERS</h2>
-            <p>as of {(() => {
-              const date = getCurrentMonthYear();
-              console.log('Home component calling getCurrentMonthYear, got:', date);
-              return date;
-            })()}</p>
-          </div>
-          
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-number">3</div>
-              <div className="stat-label">Years of Impact</div>
-            </div>
-            
-            <div className="stat-card">
-              <div className="stat-number">3</div>
-              <div className="stat-label">Service Areas</div>
-            </div>
-            
-            <div className="stat-card">
-              <div className="stat-number">85+</div>
-              <div className="stat-label">Student Volunteers</div>
-            </div>
-            
-            <div className="stat-card">
-              <div className="stat-number">100+</div>
-              <div className="stat-label">Performances</div>
-            </div>
-            
-            <div className="stat-card">
-              <div className="stat-number">2,500+</div>
-              <div className="stat-label">Volunteer Hours</div>
-            </div>
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="text-primary-600 font-display italic text-xl mb-4 block">Our Philosophy</span>
+            <h2 className="text-4xl md:text-5xl font-display font-medium text-surface-900 mb-8 leading-tight">
+              More than just music. <br/> It's about connection.
+            </h2>
+            <p className="text-lg text-surface-600 leading-relaxed">
+              OneKey was founded on the belief that music has the power to heal, connect, and inspire. 
+              Our student volunteers dedicate their time and talent to bring joy to senior communities, 
+              fostering intergenerational bonds that enrich lives on both sides.
+            </p>
           </div>
         </div>
       </section>
+
+      {/* Impact / Services */}
+      <section className="py-32 bg-surface-50">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {[
+              {
+                title: "Music",
+                subtitle: "Senior Home Concerts",
+                image: heroImages[0],
+                desc: "Regular performances that bring the concert hall to the community."
+              },
+              {
+                title: "Education",
+                subtitle: "Academic Support",
+                image: heroImages[1],
+                desc: "Empowering younger students through peer tutoring and mentorship."
+              },
+              {
+                title: "Community",
+                subtitle: "Fundraising & Volunteering",
+                image: heroImages[2],
+                desc: "Active participation in local events to support those in need."
+              }
+            ].map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className="group"
+              >
+                <div className="aspect-[4/5] overflow-hidden rounded-sm mb-8 relative">
+                  <img 
+                    src={service.image} 
+                    alt={service.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
+                </div>
+                <h3 className="text-3xl font-display font-medium mb-2">{service.title}</h3>
+                <p className="text-primary-600 font-medium mb-4">{service.subtitle}</p>
+                <p className="text-surface-600 leading-relaxed">{service.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Photo Gallery Section */}
+      <section className="bg-white border-t border-surface-100">
+        <div className="container">
+          <PhotoGallery images={galleryImages} title="Our Community in Pictures" />
+        </div>
+      </section>
+
 
       {/* CTA Section */}
-      <section className="cta-section">
+      <section className="py-24 bg-white">
         <div className="container">
-          <div className="cta-content">
-            <h2>Ready to Make a Difference?</h2>
-            <p>Join OneKey and become part of a student-driven organization dedicated to creating positive change through music, education, and community service.</p>
-            <div className="cta-buttons">
-              <a href="/timeline" className="btn-primary">View Upcoming Events</a>
-            </div>
+          <div className="max-w-4xl mx-auto text-center bg-surface-50 rounded-3xl p-12 shadow-sm border border-surface-100">
+            <h2 className="text-3xl font-bold text-surface-900 mb-6">Ready to Make a Difference?</h2>
+            <p className="text-xl text-surface-600 mb-10 max-w-2xl mx-auto">
+              Join OneKey and become part of a student-driven organization dedicated to creating positive change.
+            </p>
+            <Link to="/timeline" className="btn-primary inline-flex items-center h-14 px-8 text-lg">
+              View Upcoming Events <ArrowRight size={20} className="ml-2" />
+            </Link>
           </div>
         </div>
       </section>
@@ -204,4 +139,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home; 
+export default Home;

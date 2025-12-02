@@ -7,11 +7,8 @@ A modern web application for managing student volunteer activities, built with R
 ### Development Mode (Local)
 
 ```bash
-# Start both frontend and backend together
-npm run start:dev
-
-# Or use npm scripts
-npm run dev
+# Start the application (Frontend + Backend)
+npm start
 ```
 
 This will start:

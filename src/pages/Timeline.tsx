@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { format } from 'date-fns';
+import Slideshow from '../components/Slideshow';
+import { getRandomPhotos } from '../data/photos';
 // Test functions removed
 
 const Timeline: React.FC = () => {
+  const heroImages = React.useMemo(() => getRandomPhotos(5), []);
   const [activeTab, setActiveTab] = useState<'performances' | 'homework' | 'charity'>('performances');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
@@ -71,15 +74,24 @@ const Timeline: React.FC = () => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('animate');
-          
-          // Add staggered animations for child elements
-          const children = entry.target.querySelectorAll('.timeline-item, .filter-btn, .timeline-event-card');
-          children.forEach((child, index) => {
-            setTimeout(() => {
-              child.classList.add('animate');
-            }, index * 100);
+          // Use requestAnimationFrame for smoother class addition
+          window.requestAnimationFrame(() => {
+            entry.target.classList.add('animate');
+            
+            // Add staggered animations for child elements
+            const children = entry.target.querySelectorAll('.timeline-item, .filter-btn, .timeline-event-card');
+            children.forEach((child, index) => {
+              // Use CSS custom properties for delay instead of setTimeout if possible, 
+              // but keeping setTimeout for now as it's logic-based. 
+              // Optimized to batch if needed, but simple timeout is okay for small lists.
+              setTimeout(() => {
+                child.classList.add('animate');
+              }, index * 50); // Reduced delay for snappier feel
+            });
           });
+          
+          // Stop observing once animated
+          observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
@@ -102,7 +114,7 @@ const Timeline: React.FC = () => {
     { id: 'charity', label: 'Charity Events', icon: 'fas fa-heart' }
   ];
 
-  const currentEvents = getEventsByCategory(activeTab);
+  const currentEvents = React.useMemo(() => getEventsByCategory(activeTab), [activeTab, getEventsByCategory]);
 
   // Debug: Log current events being displayed
   console.log('Current events for category', activeTab, ':', currentEvents);
@@ -207,173 +219,152 @@ const Timeline: React.FC = () => {
   });
 
   return (
-    <div className="timeline-page">
-      {/* Hero Section - Constance Style */}
-      <section className="timeline-hero">
-        <div className="hero-background">
-          <div className="hero-overlay"></div>
-          <div className="container">
-            <div className="hero-content">
-              <h1>Our Timeline</h1>
-              <p className="hero-subtitle">Explore our journey of community service, performances, and educational initiatives that bridge generations through music</p>
-              <div className="hero-accent-line"></div>
-            </div>
-          </div>
+    <div className="bg-white">
+      {/* Hero Section */}
+      <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-surface-900">
+        <div className="absolute inset-0 z-0">
+          <Slideshow 
+            images={heroImages} 
+            interval={5000} 
+            overlay={true} 
+          />
+        </div>
+        
+        <div className="container relative z-10 text-center">
+          <h1 className="mb-6 text-5xl font-bold tracking-tight text-white md:text-7xl drop-shadow-lg">Our Timeline</h1>
+          <p className="max-w-2xl mx-auto text-xl leading-relaxed text-white/90 drop-shadow-md">
+            Explore our journey of community service, performances, and educational initiatives
+          </p>
         </div>
       </section>
 
       {/* Timeline Filters Section */}
-      <section className="timeline-filters">
+      <section className="sticky z-40 py-12 bg-white border-b shadow-sm border-surface-100 top-20">
         <div className="container">
-          <div className="timeline-header">
-            <h2>EXPLORE OUR INITIATIVES</h2>
-            <p>Three pillars of community service</p>
-          </div>
+          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+            <div className="flex w-full gap-4 pb-2 overflow-x-auto md:pb-0 md:w-auto">
+              {categories.map(category => (
+                <button
+                  key={category.id}
+                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                    activeTab === category.id 
+                      ? 'bg-primary-600 text-white shadow-md' 
+                      : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
+                  }`}
+                  onClick={() => handleTabChange(category.id as typeof activeTab)}
+                >
+                  <i className={`${category.icon} mr-2`}></i>
+                  {category.label}
+                </button>
+              ))}
+            </div>
 
-          {/* Admin Controls */}
-          {canManageEvents && (
-            <div className="admin-controls">
+            {/* Admin Controls */}
+            {canManageEvents && (
               <button 
-                className="add-event-btn"
+                className="flex items-center gap-2 px-4 py-2 text-sm btn-primary"
                 onClick={() => setShowAddModal(true)}
               >
                 <i className="fas fa-plus"></i>
                 Add New Event
               </button>
-              
-              {/* Debug buttons removed */}
-            </div>
-          )}
-
-          {/* Category Filters */}
-          <div className="category-filters">
-            {categories.map(category => (
-              <button
-                key={category.id}
-                className={`filter-btn ${activeTab === category.id ? 'active' : ''}`}
-                onClick={() => handleTabChange(category.id as typeof activeTab)}
-              >
-                <i className={category.icon}></i>
-                <span>{category.label}</span>
-              </button>
-            ))}
+            )}
           </div>
         </div>
       </section>
 
       {/* Timeline Content Section */}
-      <section className="timeline-content-section">
-        <div className="container">
+      <section className="py-24 bg-surface-50">
+        <div className="container max-w-4xl">
           {currentEvents.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">
+            <div className="py-20 text-center">
+              <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 text-3xl rounded-full bg-surface-200 text-surface-400">
                 <i className={categories.find(c => c.id === activeTab)?.icon}></i>
               </div>
-              <h3>Coming Soon</h3>
-              <p>{categories.find(c => c.id === activeTab)?.label} events will be added here soon!</p>
+              <h3 className="mb-2 text-2xl font-bold text-surface-900">Coming Soon</h3>
+              <p className="text-surface-600">{categories.find(c => c.id === activeTab)?.label} events will be added here soon!</p>
             </div>
           ) : (
-            <div className="timeline-list">
-              {currentEvents.map(event => (
-                <div key={event.id} className="timeline-item">
-                  <div className="timeline-date">
-                    <span className="month">{format(new Date(event.date), 'MMM')}</span>
-                    <span className="day">{format(new Date(event.date), 'd')}</span>
-                    <span className="year">{format(new Date(event.date), 'yyyy')}</span>
-                  </div>
+            <div className="relative space-y-12 before:absolute before:left-8 md:before:left-1/2 before:top-0 before:bottom-0 before:w-px before:bg-surface-200">
+              {currentEvents.map((event, index) => (
+                <div key={event.id} className={`flex flex-col md:flex-row gap-8 relative ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                  {/* Date Bubble */}
+                  <div className="absolute z-10 w-4 h-4 mt-6 transform -translate-x-1/2 border-4 border-white rounded-full shadow-sm left-8 md:left-1/2 bg-primary-600"></div>
                   
-                  <div className="timeline-connector">
-                    <div className="timeline-icon">
-                      <i className={categories.find(c => c.id === event.category)?.icon}></i>
-                    </div>
-                    <div className="timeline-line"></div>
-                  </div>
-                  
-                  <div className="timeline-event-card">
-                    <div className="event-header">
-                      <h3>{event.name}</h3>
-                      {canManageEvents && (
-                        <button 
-                          className="delete-event-btn"
-                          onClick={() => setShowConfirmDelete(event.id)}
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      )}
-                    </div>
-                    
-                    {event.photo && (
-                      <div className="event-photo" style={{
-                        marginBottom: '1.5rem',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
-                        border: '1px solid rgba(0, 0, 0, 0.1)',
-                        background: '#f8f9fa',
-                        position: 'relative'
-                      }}>
-                        <img 
-                          src={event.photo} 
-                          alt={event.name}
-                          style={{ 
-                            width: '100%', 
-                            height: 'auto',
-                            maxHeight: '300px',
-                            objectFit: 'contain',
-                            display: 'block',
-                            transition: 'transform 0.3s ease'
-                          }}
-                          onError={(e) => {
-                            console.error('Failed to load image:', event.photo);
-                            console.error('Event:', event);
-                            // Hide the image container if image fails to load
-                            const container = e.currentTarget.parentElement;
-                            if (container) {
-                              container.style.display = 'none';
-                            }
-                          }}
-                          onLoad={(e) => {
-                            console.log('Image loaded successfully:', event.photo);
-                          }}
-                        />
+                  {/* Content */}
+                  <div className="flex-1 ml-16 md:ml-0">
+                    <div className="p-6 transition-shadow bg-white border shadow-sm rounded-2xl border-surface-100 hover:shadow-md">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <span className="block mb-1 text-sm font-bold tracking-wider uppercase text-primary-600">
+                            {format(new Date(event.date), 'MMMM d, yyyy')}
+                          </span>
+                          <h3 className="text-xl font-bold text-surface-900">{event.name}</h3>
+                        </div>
+                        {canManageEvents && (
+                          <button 
+                            className="transition-colors text-surface-400 hover:text-red-500"
+                            onClick={() => setShowConfirmDelete(event.id)}
+                          >
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        )}
                       </div>
-                    )}
-                    
-                    <div className="event-meta">
-                      {event.location && (
-                        <span className="event-meta-item">
-                          <i className="fas fa-map-marker-alt"></i> 
-                          {event.location}
-                        </span>
+
+                      {event.photo && (
+                        <div className="mb-6 overflow-hidden border rounded-xl bg-surface-50 border-surface-100">
+                          <img 
+                            src={event.photo} 
+                            alt={event.name}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-auto max-h-[300px] object-contain"
+                            onError={(e) => {
+                              const container = e.currentTarget.parentElement;
+                              if (container) container.style.display = 'none';
+                            }}
+                          />
+                        </div>
                       )}
-                      
-                      {event.time && (
-                        <span className="event-meta-item">
-                          <i className="fas fa-clock"></i> 
-                          {event.time}
-                        </span>
+
+                      <div className="flex flex-wrap gap-4 mb-4 text-sm text-surface-600">
+                        {event.location && (
+                          <span className="flex items-center gap-2">
+                            <i className="fas fa-map-marker-alt text-primary-500"></i> 
+                            {event.location}
+                          </span>
+                        )}
+                        {event.time && (
+                          <span className="flex items-center gap-2">
+                            <i className="fas fa-clock text-primary-500"></i> 
+                            {event.time}
+                          </span>
+                        )}
+                      </div>
+
+                      {event.description && (
+                        <p className="mb-4 leading-relaxed text-surface-600">{event.description}</p>
                       )}
-                    </div>
-                    
-                    {event.description && (
-                      <p className="event-description">{event.description}</p>
-                    )}
-                    
-                    <div className="event-details">
-                      {event.category !== 'homework' && event.attendees && (
-                        <span className="detail-item">
-                          <i className="fas fa-users"></i> 
-                          {event.attendees} attendees
-                        </span>
-                      )}
-                      {event.category !== 'homework' && event.performers && (
-                        <span className="detail-item">
-                          <i className="fas fa-user-friends"></i> 
-                          {event.performers} performers
-                        </span>
-                      )}
+
+                      <div className="flex gap-4 pt-4 text-sm font-medium border-t border-surface-100 text-surface-500">
+                        {event.category !== 'homework' && event.attendees && (
+                          <span className="flex items-center gap-2">
+                            <i className="fas fa-users"></i> 
+                            {event.attendees} attendees
+                          </span>
+                        )}
+                        {event.category !== 'homework' && event.performers && (
+                          <span className="flex items-center gap-2">
+                            <i className="fas fa-music"></i> 
+                            {event.performers} performers
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Empty space for the other side */}
+                  <div className="flex-1 hidden md:block"></div>
                 </div>
               ))}
             </div>

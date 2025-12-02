@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { useTeamStore, TeamMember } from '../store/teamStore';
-import { backupTimelineData } from '../utils/persistenceTest';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +23,10 @@ const AdminDashboard: React.FC = () => {
     fetchUsers,
     fetchAllActivityLogs
   } = useAuthStore();
+
+  // DEBUG LOGS
+  console.log('[AdminDashboard] Render', { isAuthenticated, user: user?.username, authLoading });
+
   const { 
     events, 
     addEvent, 
@@ -81,28 +84,83 @@ const AdminDashboard: React.FC = () => {
     section: 'leadership' as TeamMember['section']
   });
 
+  const [loginData, setLoginData] = useState({ username: '', password: '' });
+  const { login, error: loginError, isLoading: loginLoading } = useAuthStore();
+
   useEffect(() => {
-    if (!isAuthenticated || !user) {
-      navigate('/');
-      return;
+    if (isAuthenticated && user) {
+      // Fetch data from backend only when authenticated
+      console.log('[AdminDashboard] Fetching initial data');
+      fetchUsers();
+      fetchEvents();
+      fetchAllActivityLogs(currentPage, itemsPerPage, activityFilter);
     }
+  }, [isAuthenticated, user, fetchUsers, fetchEvents, fetchAllActivityLogs, currentPage, itemsPerPage, activityFilter]);
 
-    const urlParams = new URLSearchParams(location.search);
-    const tabParam = urlParams.get('tab');
-    
-    if (tabParam && ['overview', 'users', 'team', 'logs', 'timeline'].includes(tabParam)) {
-      setActiveTab(tabParam);
-    }
-
-    // Fetch data from backend
-    fetchUsers();
-    fetchEvents();
-    // Fetch activity logs with pagination
-    fetchAllActivityLogs(currentPage, itemsPerPage, activityFilter);
-  }, [isAuthenticated, user, navigate, location.search, fetchUsers, fetchEvents, fetchAllActivityLogs, currentPage, itemsPerPage, activityFilter]);
+  // Remove the redirect effect
+  
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('[AdminDashboard] Attempting login', loginData.username);
+    await login(loginData.username, loginData.password);
+  };
 
   if (!isAuthenticated || !user) {
-    return null;
+    console.log('[AdminDashboard] Showing login form. Auth:', isAuthenticated, 'User:', user);
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface-50 px-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-display font-bold text-surface-900 mb-2">Admin Login</h1>
+            <p className="text-surface-500">Please sign in to continue</p>
+          </div>
+
+          {loginError && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm">
+              {loginError}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-2">Username</label>
+              <input
+                type="text"
+                value={loginData.username}
+                onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
+                className="w-full px-4 py-3 rounded-lg border border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
+                placeholder="Enter your username"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-2">Password</label>
+              <input
+                type="password"
+                value={loginData.password}
+                onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                className="w-full px-4 py-3 rounded-lg border border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loginLoading}
+              className="w-full btn-primary py-3 flex justify-center items-center"
+            >
+              {loginLoading ? (
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                'Sign In'
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
   }
 
   const getActionIcon = (action: string) => {
@@ -154,9 +212,9 @@ const AdminDashboard: React.FC = () => {
       password: newUserData.password
     });
     
-    if (success && user) {
-      logActivity(user.id, 'add_user', `Created new user: ${newUserData.username} (${newUserData.role})`);
-    }
+    // if (success && user) {
+    //   logActivity(user.id, 'add_user', `Created new user: ${newUserData.username} (${newUserData.role})`);
+    // }
     
     setShowCreateUserModal(false);
     setNewUserData({
@@ -209,10 +267,10 @@ const AdminDashboard: React.FC = () => {
         createdBy: user.id
       });
       
-      if (newEvent) {
-        // Log the event creation
-        logActivity(user.id, 'add_event', `Created event: ${newEvent.name} (${newEvent.category})`);
-      }
+      // if (newEvent) {
+      //   // Log the event creation
+      //   logActivity(user.id, 'add_event', `Created event: ${newEvent.name} (${newEvent.category})`);
+      // }
       
       setShowCreateEventModal(false);
       setNewEventData({
@@ -231,8 +289,7 @@ const AdminDashboard: React.FC = () => {
       
       console.log('Event created:', newEvent);
       
-      // Create backup after adding event
-      backupTimelineData();
+      console.log('Event created:', newEvent);
     } catch (error) {
       console.error('Error creating event:', error);
       alert('Failed to create event');
@@ -265,9 +322,9 @@ const AdminDashboard: React.FC = () => {
       await removeEvent(eventId);
       
       // Log the event deletion
-      if (user && event) {
-        logActivity(user.id, 'delete_event', `Deleted event: ${event.name} (${event.category})`);
-      }
+      // if (user && event) {
+      //   logActivity(user.id, 'delete_event', `Deleted event: ${event.name} (${event.category})`);
+      // }
     }
   };
 
@@ -317,7 +374,7 @@ const AdminDashboard: React.FC = () => {
       });
       
       // Log the event update
-      logActivity(user.id, 'update_event', `Updated event: ${editingEvent.name} (${editingEvent.category})`);
+      // logActivity(user.id, 'update_event', `Updated event: ${editingEvent.name} (${editingEvent.category})`);
       
       setShowEditEventModal(false);
       setEditingEvent(null);
@@ -337,8 +394,7 @@ const AdminDashboard: React.FC = () => {
       
       console.log('Event updated successfully');
       
-      // Create backup after updating event
-      backupTimelineData();
+      console.log('Event updated successfully');
     } catch (error) {
       console.error('Error updating event:', error);
       alert('Failed to update event');
@@ -372,9 +428,9 @@ const AdminDashboard: React.FC = () => {
       const newMember = addTeamMember(newTeamData);
       
       // Log the team member creation
-      if (user) {
-        logActivity(user.id, 'add_team_member', `Added team member: ${newMember.name} (${newMember.section})`);
-      }
+      // if (user) {
+      //   logActivity(user.id, 'add_team_member', `Added team member: ${newMember.name} (${newMember.section})`);
+      // }
       
       setShowCreateTeamModal(false);
       setNewTeamData({
@@ -435,9 +491,9 @@ const AdminDashboard: React.FC = () => {
       removeTeamMember(memberId);
       
       // Log the team member deletion
-      if (user && member) {
-        logActivity(user.id, 'remove_team_member', `Removed team member: ${member.name} (${member.section})`);
-      }
+      // if (user && member) {
+      //   logActivity(user.id, 'remove_team_member', `Removed team member: ${member.name} (${member.section})`);
+      // }
     }
   };
 
@@ -497,9 +553,9 @@ const AdminDashboard: React.FC = () => {
       await removeUser(userId);
       
       // Log the user deletion
-      if (user && targetUser) {
-        logActivity(user.id, 'remove_user', `Deleted user: ${targetUser.username}`);
-      }
+      // if (user && targetUser) {
+      //   logActivity(user.id, 'remove_user', `Deleted user: ${targetUser.username}`);
+      // }
     }
   };
 

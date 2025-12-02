@@ -127,6 +127,7 @@ export const useAuthStore = create<AuthState>()(
       error: null,
 
       login: async (username: string, password: string) => {
+        console.log('[AuthStore] Login called', { username });
         set({ isLoading: true, error: null });
         
         try {
@@ -144,6 +145,7 @@ export const useAuthStore = create<AuthState>()(
               createdAt: new Date().toISOString(),
             };
             
+            console.log('[AuthStore] Login success', { user });
             set({ 
               user, 
               isAuthenticated: true, 
@@ -153,6 +155,7 @@ export const useAuthStore = create<AuthState>()(
             
             return true;
           } else {
+            console.log('[AuthStore] Login failed', response.error);
             set({ 
               isLoading: false, 
               error: response.error || 'Login failed' 
@@ -160,6 +163,7 @@ export const useAuthStore = create<AuthState>()(
             return false;
           }
         } catch (error) {
+          console.error('[AuthStore] Login error', error);
           set({ 
             isLoading: false, 
             error: error instanceof Error ? error.message : 'Login failed' 
@@ -169,6 +173,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
+        console.log('[AuthStore] Logout called');
         apiService.clearToken();
         set({ user: null, isAuthenticated: false, error: null });
       },

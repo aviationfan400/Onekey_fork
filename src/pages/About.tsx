@@ -1,8 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getCurrentMonthYear } from '../utils/dateUtils';
+import PhotoGallery from '../components/PhotoGallery';
+import { getRandomPhotos } from '../data/photos';
 
 const About: React.FC = () => {
+  const heroImage = useMemo(() => getRandomPhotos(1)[0], []);
+  const teamImage = useMemo(() => getRandomPhotos(1)[0], []);
+  const galleryImages = useMemo(() => getRandomPhotos(9), []);
+
   // Smooth scrolling animations - Constance style
   useEffect(() => {
     const observerOptions = {
@@ -39,187 +44,128 @@ const About: React.FC = () => {
   }, []);
 
   return (
-    <div className="about-page">
-      {/* Hero Section - Constance Style */}
-      <section className="about-hero">
-        <div className="hero-background">
-          <div className="hero-overlay"></div>
-          <div className="container">
-            <div className="hero-content">
-              <h1>About OneKey</h1>
-              <p className="hero-subtitle">A student-driven organization bridging generations through music, education, and community service</p>
-              <div className="hero-accent-line"></div>
-            </div>
-          </div>
+    <div className="bg-white">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 overflow-hidden lg:pt-48 lg:pb-32 bg-surface-900">
+        <div className="absolute inset-0 z-0 opacity-30">
+          <div className="absolute inset-0 bg-gradient-to-b from-surface-900/50 to-surface-900"></div>
+          <img 
+            src={heroImage} 
+            alt="About Hero" 
+            className="object-cover w-full h-full"
+          />
+        </div>
+        
+        <div className="container relative z-10 text-center">
+          <h1 className="mb-6 text-5xl font-bold tracking-tight text-white md:text-7xl">About OneKey</h1>
+          <p className="max-w-2xl mx-auto text-xl leading-relaxed text-surface-300">
+            A student-driven organization bridging generations through music, education, and community service
+          </p>
         </div>
       </section>
 
-      {/* Philosophy Section - Like Constance */}
-      <section className="philosophy-about">
+      {/* Philosophy Section */}
+      <section className="py-24 bg-white">
         <div className="container">
-          <div className="philosophy-header">
-            <h2>OUR STORY</h2>
+          <div className="max-w-3xl mx-auto mb-16 text-center">
+            <h2 className="mb-6 text-3xl font-bold text-surface-900">Our Story</h2>
+            <p className="text-lg leading-relaxed text-surface-600">
+              Where passion meets purpose.
+            </p>
           </div>
           
-          <div className="philosophy-content">
-            <div className="philosophy-main">
-              <h3>Where Passion Meets Purpose</h3>
-              <p className="lead-text">OneKey was born from a simple belief: that music has the power to bridge generations and create lasting connections in our community.</p>
+          <div className="grid items-center grid-cols-1 gap-16 lg:grid-cols-2">
+            <div className="space-y-6 text-lg leading-relaxed text-surface-600">
+              <h3 className="text-2xl font-bold text-surface-900">Where Passion Meets Purpose</h3>
+              <p>OneKey was born from a simple belief: that music has the power to bridge generations and create lasting connections in our community.</p>
               <p>Founded in 2020, our organization began as a small initiative to bring musical performances to local senior living facilities. What started as weekend concerts has grown into a comprehensive community service program touching the lives of hundreds of students and seniors alike.</p>
-              <p>Today, OneKey stands as a testament to the impact young people can make when given the opportunity to serve. Our volunteers don't just perform music—they create moments of joy, forge meaningful relationships, and develop leadership skills that will serve them throughout their lives.</p>
             </div>
-            <div className="story-image">
-              <img src={`${process.env.PUBLIC_URL}/pics/onekey.jpg`} alt="OneKey Team" />
+            <div className="relative overflow-hidden shadow-xl rounded-2xl">
+              <img src={teamImage} alt="OneKey Team" className="object-cover w-full h-full" />
             </div>
           </div>
         </div>
       </section>
-
-      {/* Story Timeline - Constance Landmark Style */}
-      <section className="story-timeline">
+      
+      {/* Story Timeline */}
+      <section className="py-24 bg-surface-50">
         <div className="container">
-          <div className="timeline-header">
-            <h2>Our Journey</h2>
-            <p>Milestones that shaped our mission</p>
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-surface-900">Our Journey</h2>
+            <p className="text-surface-600">Milestones that shaped our mission</p>
           </div>
           
-          <div className="timeline-milestones">
-            <div className="milestone-item">
-              <div className="milestone-year">2020</div>
-              <div className="milestone-content">
-                <h3>The Beginning</h3>
-                <p>OneKey organizes the first senior home concert with just 5 student volunteers, performing for 20 residents at Sunset Manor.</p>
-                <div className="milestone-tag">FOUNDING</div>
+          <div className="max-w-4xl mx-auto space-y-12">
+            {[
+              { year: '2020', title: 'The Beginning', desc: 'OneKey organizes the first senior home concert with just 5 student volunteers.', tag: 'FOUNDING' },
+              { year: '2021', title: 'Program Expansion', desc: 'Launch of weekly concert series across 3 senior facilities.', tag: 'GROWTH' },
+              { year: '2022', title: 'Educational Outreach', desc: 'Introduction of tutoring programs, expanding our mission beyond music.', tag: 'EDUCATION' },
+              { year: '2023', title: 'Community Recognition', desc: 'Received the Youth Volunteer Excellence Award and began major fundraising.', tag: 'RECOGNITION' }
+            ].map((item, index) => (
+              <div key={index} className="flex flex-col items-start gap-8 md:flex-row md:items-center group">
+                <div className="w-full text-4xl font-bold transition-colors md:w-32 text-primary-200 group-hover:text-primary-600">
+                  {item.year}
+                </div>
+                <div className="flex-1 p-8 transition-shadow bg-white border shadow-sm rounded-2xl border-surface-100 hover:shadow-md">
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-xl font-bold text-surface-900">{item.title}</h3>
+                    <span className="px-3 py-1 text-xs font-bold tracking-wider rounded-full bg-primary-50 text-primary-700">
+                      {item.tag}
+                    </span>
+                  </div>
+                  <p className="text-surface-600">{item.desc}</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="milestone-item reverse">
-              <div className="milestone-year">2021</div>
-              <div className="milestone-content">
-                <h3>Program Expansion</h3>
-                <p>Launch of weekly concert series across 3 senior facilities, establishing our signature blend of classical and contemporary performances.</p>
-                <div className="milestone-tag">GROWTH</div>
-              </div>
-            </div>
-            
-            <div className="milestone-item">
-              <div className="milestone-year">2022</div>
-              <div className="milestone-content">
-                <h3>Educational Outreach</h3>
-                <p>Introduction of tutoring programs, expanding our mission beyond music to include academic support for students of all ages.</p>
-                <div className="milestone-tag">EDUCATION</div>
-              </div>
-            </div>
-            
-            <div className="milestone-item reverse">
-              <div className="milestone-year">2023</div>
-              <div className="milestone-content">
-                <h3>Community Recognition</h3>
-                <p>Received the Youth Volunteer Excellence Award and began our major fundraising initiatives for local families in need.</p>
-                <div className="milestone-tag">RECOGNITION</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Impact Statistics - Dark Section */}
-      <section className="impact-stats">
+      {/* Photo Gallery Section */}
+      <section className="py-24 bg-white">
         <div className="container">
-          <div className="stats-header">
-            <h2>OUR IMPACT IN NUMBERS</h2>
-            <p>as of {getCurrentMonthYear()}</p>
+          <PhotoGallery 
+            images={galleryImages} 
+            title="Meet Our Team" 
+          />
+        </div>
+      </section>
+
+      {/* Impact Statistics */}
+      <section className="py-24 text-white bg-surface-900">
+        <div className="container">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold">Our Impact in Numbers</h2>
+            <p className="text-surface-400">as at December 2024</p>
           </div>
           
-          <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-number">200+</div>
-              <div className="stat-label">Seniors Served Weekly</div>
-            </div>
-            
-            <div className="stat-item">
-              <div className="stat-number">85+</div>
-              <div className="stat-label">Student Volunteers</div>
-            </div>
-            
-            <div className="stat-item">
-              <div className="stat-number">2,500+</div>
-              <div className="stat-label">Volunteer Hours</div>
-            </div>
-            
-            <div className="stat-item">
-              <div className="stat-number">$15,000+</div>
-              <div className="stat-label">Funds Raised</div>
-            </div>
-            
-            <div className="stat-item">
-              <div className="stat-number">5</div>
-              <div className="stat-label">Partner Facilities</div>
-            </div>
-            
-            <div className="stat-item">
-              <div className="stat-number">150+</div>
-              <div className="stat-label">Performances Given</div>
-            </div>
+          <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-3 lg:grid-cols-6">
+            {[
+              { number: "200+", label: "Seniors Served" },
+              { number: "85+", label: "Volunteers" },
+              { number: "2.5k+", label: "Hours" },
+              { number: "$15k+", label: "Raised" },
+              { number: "5", label: "Partners" },
+              { number: "150+", label: "Concerts" }
+            ].map((stat, index) => (
+              <div key={index} className="p-4">
+                <div className="mb-2 text-3xl font-bold text-primary-400">{stat.number}</div>
+                <div className="text-sm font-medium text-surface-400">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Values Grid - Constance Style */}
-      {/* 
-      <section className="values-about">
+      {/* Join Section */}
+      <section className="py-24 bg-white">
         <div className="container">
-          <div className="values-header">
-            <h2>Our Values</h2>
-            <p>The principles that guide our mission</p>
-          </div>
-          
-          <div className="values-grid-about">
-            <div className="value-card">
-              <div className="value-icon">
-                <i className="fas fa-heart"></i>
-              </div>
-              <h3>COMPASSION</h3>
-              <p>We lead with empathy and genuine care for every person we serve, creating meaningful connections across generations.</p>
-            </div>
-            
-            <div className="value-card">
-              <div className="value-icon">
-                <i className="fas fa-star"></i>
-              </div>
-              <h3>EXCELLENCE</h3>
-              <p>We strive for the highest standards in our performances, programs, and service to the community.</p>
-            </div>
-            
-            <div className="value-card">
-              <div className="value-icon">
-                <i className="fas fa-users"></i>
-              </div>
-              <h3>INCLUSIVITY</h3>
-              <p>We welcome volunteers from all backgrounds and ensure everyone has a place in our community of service.</p>
-            </div>
-            
-            <div className="value-card">
-              <div className="value-icon">
-                <i className="fas fa-seedling"></i>
-              </div>
-              <h3>GROWTH</h3>
-              <p>We believe in the power of service to develop character, leadership, and lifelong skills in our volunteers.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      */}
-
-      {/* Join Section - Luxury CTA */}
-      <section className="join-about">
-        <div className="container">
-          <div className="join-content">
-            <h2>Ready to Make a Difference?</h2>
-            <p>Join OneKey and become part of a student-driven organization that's transforming communities through music, education, and service. Whether you're a performer, tutor, or community supporter, there's a place for you in our mission.</p>
-            <div className="join-buttons">
-              <Link to="/contact" className="btn-secondary">Contact Us</Link>
-            </div>
+          <div className="max-w-4xl p-12 mx-auto text-center bg-surface-50 rounded-3xl">
+            <h2 className="mb-6 text-3xl font-bold text-surface-900">Ready to Make a Difference?</h2>
+            <p className="max-w-2xl mx-auto mb-8 text-lg text-surface-600">
+              Join OneKey and become part of a student-driven organization that's transforming communities.
+            </p>
+            <Link to="/contact" className="btn-primary">Contact Us</Link>
           </div>
         </div>
       </section>
