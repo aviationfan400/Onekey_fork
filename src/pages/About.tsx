@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import PhotoGallery from '../components/PhotoGallery';
 import { getRandomPhotos } from '../data/photos';
 
@@ -7,6 +8,9 @@ const About: React.FC = () => {
   const heroImage = useMemo(() => getRandomPhotos(1)[0], []);
   const teamImage = useMemo(() => getRandomPhotos(1)[0], []);
   const galleryImages = useMemo(() => getRandomPhotos(9), []);
+
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 200]);
 
   // Smooth scrolling animations - Constance style
   useEffect(() => {
@@ -47,14 +51,14 @@ const About: React.FC = () => {
     <div className="bg-white">
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden lg:pt-48 lg:pb-32 bg-surface-900">
-        <div className="absolute inset-0 z-0 opacity-30">
+        <motion.div style={{ y }} className="absolute inset-0 z-0 opacity-30">
           <div className="absolute inset-0 bg-gradient-to-b from-surface-900/50 to-surface-900"></div>
           <img 
             src={heroImage} 
             alt="About Hero" 
             className="object-cover w-full h-full"
           />
-        </div>
+        </motion.div>
         
         <div className="container relative z-10 text-center">
           <h1 className="mb-6 text-5xl font-bold tracking-tight text-white md:text-7xl">About OneKey</h1>

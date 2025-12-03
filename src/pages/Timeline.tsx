@@ -13,7 +13,7 @@ const Timeline: React.FC = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
   
   const { isAuthenticated, user, hasPermission } = useAuthStore();
-  const { addEvent, removeEvent, getEventsByCategory, events } = useTimelineStore();
+  const { addEvent, removeEvent, getEventsByCategory, events, fetchEvents } = useTimelineStore();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -27,6 +27,11 @@ const Timeline: React.FC = () => {
     description: '',
     photos: [] as File[]
   });
+
+  // Fetch events on mount
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   // Debug: Check localStorage and events on component mount
   useEffect(() => {

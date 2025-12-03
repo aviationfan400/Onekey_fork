@@ -64,11 +64,7 @@ const Navigation: React.FC = () => {
                 <Link to="/admin" onClick={closeMenu}>Admin Dashboard</Link>
               </li>
             )}
-            {isAuthenticated && user && (user.role === 'admin' || user.role === 'super_admin') && (
-              <li>
-                <Link to="/testing" onClick={closeMenu}>Testing</Link>
-              </li>
-            )}
+
           </ul>
         </nav>
       </header>

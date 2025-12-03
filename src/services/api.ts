@@ -392,4 +392,6 @@ class MockApiService {
   }
 }
 
-export const apiService = new MockApiService();
+// export const apiService = new MockApiService();
+import { apiService as firebaseService } from './firebaseService';
+export const apiService = firebaseService;

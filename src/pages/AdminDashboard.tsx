@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { useTeamStore, TeamMember } from '../store/teamStore';
+import { apiService } from '../services/api';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +33,8 @@ const AdminDashboard: React.FC = () => {
     addEvent, 
     removeEvent, 
     updateEvent, 
-    fetchEvents
+    fetchEvents,
+    isLoading: timelineLoading
   } = useTimelineStore();
   const { teamMembers, addTeamMember, updateTeamMember, removeTeamMember, toggleTeamMemberStatus } = useTeamStore();
   
@@ -108,39 +110,39 @@ const AdminDashboard: React.FC = () => {
   if (!isAuthenticated || !user) {
     console.log('[AdminDashboard] Showing login form. Auth:', isAuthenticated, 'User:', user);
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-50 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-display font-bold text-surface-900 mb-2">Admin Login</h1>
+      <div className="flex items-center justify-center min-h-screen px-4 bg-surface-50">
+        <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-xl">
+          <div className="mb-8 text-center">
+            <h1 className="mb-2 text-3xl font-bold font-display text-surface-900">Admin Login</h1>
             <p className="text-surface-500">Please sign in to continue</p>
           </div>
 
           {loginError && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm">
+            <div className="p-4 mb-6 text-sm text-red-600 rounded-lg bg-red-50">
               {loginError}
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-2">Username</label>
+              <label className="block mb-2 text-sm font-medium text-surface-700">Username</label>
               <input
                 type="text"
                 value={loginData.username}
                 onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
-                className="w-full px-4 py-3 rounded-lg border border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
+                className="w-full px-4 py-3 transition-all border rounded-lg outline-none border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
                 placeholder="Enter your username"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-2">Password</label>
+              <label className="block mb-2 text-sm font-medium text-surface-700">Password</label>
               <input
                 type="password"
                 value={loginData.password}
                 onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                className="w-full px-4 py-3 rounded-lg border border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
+                className="w-full px-4 py-3 transition-all border rounded-lg outline-none border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
                 placeholder="Enter your password"
                 required
               />
@@ -149,15 +151,48 @@ const AdminDashboard: React.FC = () => {
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full btn-primary py-3 flex justify-center items-center"
+              className="flex items-center justify-center w-full py-3 btn-primary"
             >
               {loginLoading ? (
-                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-5 h-5 border-2 rounded-full border-white/30 border-t-white animate-spin" />
               ) : (
                 'Sign In'
               )}
             </button>
           </form>
+          
+          <div className="pt-6 mt-6 text-center border-t border-surface-100">
+            <p className="mb-4 text-sm text-surface-500">First time setup?</p>
+            <button
+              type="button"
+              onClick={async () => {
+                if (window.confirm('This will create a default admin user (admin@onekey.com / admin123). Continue?')) {
+                  try {
+                    const { apiService } = await import('../services/api');
+                    const result = await apiService.createUser({
+                      username: 'admin',
+                      email: 'admin@onekey.com',
+                      password: 'admin123',
+                      role: 'super_admin',
+                      firstName: 'System',
+                      lastName: 'Admin'
+                    });
+                    
+                    if (result.success) {
+                      alert('Admin user created! You can now login with:\nEmail: admin@onekey.com\nPassword: admin123');
+                    } else {
+                      alert('Error: ' + result.error);
+                    }
+                  } catch (e) {
+                    alert('Error creating admin: ' + e);
+                  }
+                }
+              }}
+              className="text-sm font-medium text-primary-600 hover:text-primary-700"
+            >
+              Initialize Admin Account
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -247,16 +282,25 @@ const AdminDashboard: React.FC = () => {
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) return;
+    if (!user || timelineLoading) return;
     
     try {
       let photoUrls: string[] = [];
       
-      // Convert photo files to base64 if present
+      // Upload photos to Firebase Storage
       if (newEventData.photos.length > 0) {
         for (const photo of newEventData.photos) {
-          const photoUrl = await convertFileToBase64(photo);
-          photoUrls.push(photoUrl);
+          try {
+            const uploadResult = await apiService.uploadImage(photo);
+            if (uploadResult.success && uploadResult.data) {
+              photoUrls.push(uploadResult.data.filePath);
+            } else {
+              console.error('Failed to upload photo:', uploadResult.error);
+              alert(`Failed to upload photo: ${photo.name}`);
+            }
+          } catch (error) {
+            console.error('Error uploading photo:', error);
+          }
         }
       }
       
@@ -349,16 +393,25 @@ const AdminDashboard: React.FC = () => {
   const handleUpdateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !editingEvent) return;
+    if (!user || !editingEvent || timelineLoading) return;
     
     try {
       let photoUrls: string[] = [];
       
-      // Convert new photo files to base64 if present
+      // Upload new photos to Firebase Storage
       if (newEventData.photos.length > 0) {
         for (const photo of newEventData.photos) {
-          const photoUrl = await convertFileToBase64(photo);
-          photoUrls.push(photoUrl);
+          try {
+            const uploadResult = await apiService.uploadImage(photo);
+            if (uploadResult.success && uploadResult.data) {
+              photoUrls.push(uploadResult.data.filePath);
+            } else {
+              console.error('Failed to upload photo:', uploadResult.error);
+              alert(`Failed to upload photo: ${photo.name}`);
+            }
+          } catch (error) {
+            console.error('Error uploading photo:', error);
+          }
         }
       }
       
@@ -620,6 +673,38 @@ const AdminDashboard: React.FC = () => {
               <i className="fas fa-calendar"></i>
               Timeline
             </button>
+
+            <div className="mt-8 pt-4 border-t border-white/10">
+              <button
+                className="sidebar-item text-yellow-400 hover:text-yellow-300"
+                onClick={async () => {
+                  if (window.confirm('This will create a default admin user (admin@onekey.com / admin123). Continue?')) {
+                    try {
+                      const { apiService } = await import('../services/api');
+                      const result = await apiService.createUser({
+                        username: 'admin',
+                        email: 'admin@onekey.com',
+                        password: 'admin123',
+                        role: 'super_admin',
+                        firstName: 'System',
+                        lastName: 'Admin'
+                      });
+                      
+                      if (result.success) {
+                        alert('Admin user created! You can now login with:\nEmail: admin@onekey.com\nPassword: admin123');
+                      } else {
+                        alert('Error: ' + result.error);
+                      }
+                    } catch (e) {
+                      alert('Error creating admin: ' + e);
+                    }
+                  }
+                }}
+              >
+                <i className="fas fa-key"></i>
+                Setup Admin
+              </button>
+            </div>
           </nav>
         </aside>
 
@@ -1556,8 +1641,12 @@ const AdminDashboard: React.FC = () => {
                 <button type="button" className="btn btn-secondary" onClick={() => setShowCreateEventModal(false)}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  Create Event
+                <button type="submit" className="btn btn-primary" disabled={timelineLoading}>
+                  {timelineLoading ? (
+                    <span className="w-5 h-5 border-2 rounded-full border-white/30 border-t-white animate-spin" />
+                  ) : (
+                    'Create Event'
+                  )}
                 </button>
               </div>
             </form>
@@ -1808,8 +1897,12 @@ const AdminDashboard: React.FC = () => {
                 <button type="button" className="btn btn-secondary" onClick={() => setShowEditEventModal(false)}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  Update Event
+                <button type="submit" className="btn btn-primary" disabled={timelineLoading}>
+                  {timelineLoading ? (
+                    <span className="w-5 h-5 border-2 rounded-full border-white/30 border-t-white animate-spin" />
+                  ) : (
+                    'Update Event'
+                  )}
                 </button>
               </div>
             </form>

@@ -10,7 +10,6 @@ const Timeline = React.lazy(() => import('./pages/Timeline'));
 const MeetOurTeam = React.lazy(() => import('./pages/MeetOurTeam'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const Testing = React.lazy(() => import('./pages/Testing'));
 
 // Simple Loading Component
 const PageLoader = () => (
@@ -28,9 +27,6 @@ function App() {
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* Testing page without layout */}
-          <Route path="/testing" element={<Testing />} />
-          
           {/* All other pages with layout */}
           <Route path="/*" element={
             <Layout>

@@ -5,12 +5,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
   // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -20,7 +30,13 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed w-full z-50 bg-surface-900 py-4 shadow-md transition-all duration-300">
+    <nav 
+      className={`fixed w-full z-50 transition-all duration-500 ${
+        isScrolled 
+          ? 'bg-surface-900/90 backdrop-blur-md py-4 shadow-lg' 
+          : 'bg-transparent py-6'
+      }`}
+    >
       <div className="container mx-auto flex justify-between items-center">
         <Link 
           to="/" 
@@ -44,6 +60,16 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
+          <Link 
+            to="/admin" 
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              isScrolled
+                ? 'bg-primary-600 text-white hover:bg-primary-700'
+                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20'
+            }`}
+          >
+            Get Involved
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -76,6 +102,12 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+              <Link 
+                to="/admin"
+                className="inline-block text-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+              >
+                Get Involved
+              </Link>
             </div>
           </motion.div>
         )}
