@@ -12,7 +12,14 @@
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
       "Bash(timeout /t 20 /nobreak)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(npm outdated:*)",
+      "Bash(powershell -Command \"Remove-Item -Path node_modules -Recurse -Force\")",
+      "Bash(timeout /t 25 /nobreak)",
+      "Bash(timeout /t 30 /nobreak)",
+      "Bash(curl:*)"
     ]
   }
 }
