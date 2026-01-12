@@ -33,18 +33,14 @@ export const requireRole = (roles: string[]) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    // Check if user has the required role
-    db.get('SELECT role FROM users WHERE id = ?', [req.user.userId], (err: any, user: any) => {
-      if (err || !user) {
-        return res.status(403).json({ error: 'User not found' });
-      }
+    // Check role from JWT token instead of database for better performance
+    const userRole = req.user.role || 'user';
+    
+    if (!roles.includes(userRole)) {
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
 
-      if (!roles.includes(user.role || 'user')) {
-        return res.status(403).json({ error: 'Insufficient permissions' });
-      }
-
-      next();
-    });
+    next();
   };
 };
 

@@ -43,18 +43,25 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
             transition={{ delay: (index % 6) * 0.05 }}
             className="break-inside-avoid"
           >
-            <div 
-              className="relative group overflow-hidden rounded-sm cursor-pointer"
+            <motion.div 
+              className="relative group overflow-hidden rounded-sm cursor-pointer shadow-md"
               onClick={() => setSelectedImage(src)}
+              whileHover={{ scale: 1.02, y: -4 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <img
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+              />
+              <motion.img
                 src={src}
                 alt={`Gallery ${index + 1}`}
-                className="w-full h-auto object-cover transition-opacity duration-500 hover:opacity-90"
+                className="w-full h-auto object-cover"
                 loading="lazy"
                 decoding="async"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               />
-            </div>
+            </motion.div>
           </motion.div>
         ))}
       </div>

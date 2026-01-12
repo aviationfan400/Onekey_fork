@@ -31,16 +31,16 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed w-full z-50 transition-all duration-500 ${
+      className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-surface-900/90 backdrop-blur-md py-4 shadow-lg' 
-          : 'bg-transparent py-6'
+          ? 'bg-surface-900/95 backdrop-blur-md py-3 shadow-lg' 
+          : 'bg-surface-900/90 backdrop-blur-sm py-4 shadow-md'
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
         <Link 
           to="/" 
-          className="text-2xl font-display font-bold tracking-tight text-white transition-colors duration-300"
+          className="text-2xl font-display font-bold tracking-tight text-white drop-shadow-lg"
         >
           OneKey
         </Link>
@@ -51,10 +51,10 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              className={`text-sm font-medium tracking-wide transition-all duration-300 hover:text-primary-400 ${
+              className={`text-sm font-medium tracking-wide transition-all duration-300 drop-shadow-md ${
                 location.pathname === link.path
                   ? 'text-primary-400'
-                  : 'text-white/90'
+                  : 'text-white hover:text-primary-300'
               }`}
             >
               {link.name}
@@ -62,11 +62,7 @@ const Navbar = () => {
           ))}
           <Link 
             to="/admin" 
-            className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-              isScrolled
-                ? 'bg-primary-600 text-white hover:bg-primary-700'
-                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20'
-            }`}
+            className="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:shadow-lg hover:shadow-primary-500/50"
           >
             Get Involved
           </Link>
@@ -74,7 +70,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-white transition-colors"
+          className="md:hidden p-2 text-white transition-colors drop-shadow-lg"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useTeamStore } from '../store/teamStore';
 import { getRandomPhotos } from '../data/photos';
 
@@ -104,13 +105,29 @@ const MeetOurTeam: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {leadershipMembers.map((member) => (
-              <div key={member.id} className="card overflow-hidden group">
+            {leadershipMembers.map((member, index) => (
+              <motion.div 
+                key={member.id} 
+                className="card overflow-hidden group cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+              >
                 <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
-                  <img 
+                  <motion.img 
                     src={`${process.env.PUBLIC_URL}${member.image}`} 
                     alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  />
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                   />
                 </div>
                 <div className="p-6">
@@ -131,7 +148,7 @@ const MeetOurTeam: React.FC = () => {
                     </a>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -145,13 +162,29 @@ const MeetOurTeam: React.FC = () => {
             <p className="text-surface-600">Managing outreach and community connections</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {communicationsMembers.map((member) => (
-              <div key={member.id} className="card overflow-hidden group">
+            {communicationsMembers.map((member, index) => (
+              <motion.div 
+                key={member.id} 
+                className="card overflow-hidden group cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+              >
                 <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
-                  <img 
+                  <motion.img 
                     src={`${process.env.PUBLIC_URL}${member.image}`} 
                     alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  />
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                   />
                 </div>
                 <div className="p-6">
@@ -161,39 +194,18 @@ const MeetOurTeam: React.FC = () => {
                     <span className="text-surface-500">{member.school}</span>
                   </div>
                   <p className="text-surface-600 text-sm leading-relaxed mb-4">{member.bio}</p>
+                  {member.instagram && (
+                    <a
+                      href={member.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-surface-400 hover:text-primary-600 transition-colors"
+                    >
+                      <i className="fab fa-instagram text-xl" />
+                    </a>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-  
-      {/* Coordinators Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-surface-900 mb-4">Coordinators</h2>
-            <p className="text-surface-600">Leading our educational and musical programs</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {coordinatorsMembers.map((member) => (
-              <div key={member.id} className="card overflow-hidden group">
-                <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
-                  <img 
-                    src={`${process.env.PUBLIC_URL}${member.image}`} 
-                    alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-surface-900 mb-1">{member.name}</h3>
-                  <div className="flex justify-between items-center mb-4 text-sm">
-                    <span className="text-primary-600 font-medium">{member.role}</span>
-                    <span className="text-surface-500">{member.school}</span>
-                  </div>
-                  <p className="text-surface-600 text-sm leading-relaxed mb-4">{member.bio}</p>
-                </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

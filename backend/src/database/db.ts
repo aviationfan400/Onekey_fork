@@ -11,7 +11,19 @@ if (!fs.existsSync(dbDir)) {
 
 const db = new sqlite3.Database(dbPath);
 
+// Enable WAL mode and performance optimizations
 db.serialize(() => {
+  // Enable Write-Ahead Logging for better concurrency and performance
+  db.run('PRAGMA journal_mode = WAL;');
+  
+  // Optimize SQLite for better performance
+  db.run('PRAGMA synchronous = NORMAL;'); // Faster than FULL, still safe with WAL
+  db.run('PRAGMA cache_size = 10000;'); // Increase cache size (10MB)
+  db.run('PRAGMA temp_store = MEMORY;'); // Store temp tables in memory
+  db.run('PRAGMA mmap_size = 30000000000;'); // Use memory-mapped I/O (30GB)
+  db.run('PRAGMA page_size = 4096;'); // Optimal page size
+  
+  // Create tables
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
@@ -19,6 +31,7 @@ db.serialize(() => {
     password_hash TEXT NOT NULL,
     first_name TEXT,
     last_name TEXT,
+    role TEXT DEFAULT 'user',
     is_active INTEGER DEFAULT 1,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     last_login_at TEXT
@@ -48,6 +61,15 @@ db.serialize(() => {
     ip_address TEXT,
     timestamp TEXT DEFAULT CURRENT_TIMESTAMP
   )`);
+  
+  // Create indexes for better query performance
+  db.run('CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);');
+  db.run('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);');
+  db.run('CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active);');
+  db.run('CREATE INDEX IF NOT EXISTS idx_timeline_date ON timeline_events(date DESC);');
+  db.run('CREATE INDEX IF NOT EXISTS idx_timeline_category ON timeline_events(category);');
+  db.run('CREATE INDEX IF NOT EXISTS idx_activity_user ON activity_logs(user_id);');
+  db.run('CREATE INDEX IF NOT EXISTS idx_activity_timestamp ON activity_logs(timestamp DESC);');
 });
 
 export default db; 

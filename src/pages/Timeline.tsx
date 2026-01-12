@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { apiService } from '../services/firebaseService';
@@ -222,8 +223,8 @@ const Timeline: React.FC = () => {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-surface-900">
-        <div className="absolute inset-0 z-0">
+      <section className="relative h-[45vh] min-h-[380px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50">
+        <div className="absolute inset-0 z-0 opacity-30">
           <Slideshow 
             images={heroImages} 
             interval={5000} 
@@ -231,76 +232,109 @@ const Timeline: React.FC = () => {
           />
         </div>
         
+        {/* Decorative elements for organic feel */}
+        <div className="absolute top-10 left-10 w-32 h-32 bg-primary-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-40 h-40 bg-amber-200/30 rounded-full blur-3xl"></div>
+        
         <div className="container relative z-10 text-center">
-          <h1 className="mb-6 text-5xl font-bold tracking-tight text-white md:text-7xl drop-shadow-lg">Our Timeline</h1>
-          <p className="max-w-2xl mx-auto text-xl leading-relaxed text-white/90 drop-shadow-md">
-            Explore our journey of community service, performances, and educational initiatives
-          </p>
+          <motion.h1 
+            className="mb-4 text-4xl font-bold text-surface-900 md:text-6xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            Our Story
+          </motion.h1>
+          <motion.p 
+            className="max-w-2xl mx-auto text-lg leading-relaxed text-surface-700"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            Every performance, every act of service, every moment that brings us together
+          </motion.p>
         </div>
       </section>
 
       {/* Timeline Filters Section */}
-      <section className="sticky z-40 py-12 bg-white border-b shadow-sm border-surface-100 top-20">
+      <section className="sticky z-40 py-4 bg-white/80 backdrop-blur-md border-b border-surface-200/60 top-20">
         <div className="container">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex w-full gap-4 pb-2 overflow-x-auto md:pb-0 md:w-auto">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <div className="flex w-full gap-2 pb-2 overflow-x-auto md:pb-0 md:w-auto">
               {categories.map(category => (
-                <button
+                <motion.button
                   key={category.id}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap border-2 ${
                     activeTab === category.id 
-                      ? 'bg-primary-600 text-white shadow-md' 
-                      : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
+                      ? 'bg-primary-500 border-primary-600 text-white shadow-lg shadow-primary-200' 
+                      : 'bg-white border-surface-200 text-surface-700 hover:border-primary-300 hover:bg-primary-50'
                   }`}
                   onClick={() => handleTabChange(category.id as typeof activeTab)}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <i className={`${category.icon} mr-2`}></i>
                   {category.label}
-                </button>
+                </motion.button>
               ))}
             </div>
 
             {/* Admin Controls */}
             {canManageEvents && (
-              <button 
-                className="flex items-center gap-2 px-4 py-2 text-sm btn-primary"
+              <motion.button 
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl border-2 border-primary-600 shadow-lg shadow-primary-200 hover:shadow-xl hover:shadow-primary-300"
                 onClick={() => setShowAddModal(true)}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <i className="fas fa-plus"></i>
-                Add New Event
-              </button>
+                Add Event
+              </motion.button>
             )}
           </div>
         </div>
       </section>
 
       {/* Timeline Content Section */}
-      <section className="py-24 bg-surface-50">
-        <div className="container max-w-4xl">
+      <section className="py-12 bg-gradient-to-b from-white via-amber-50/30 to-orange-50/40">
+        <div className="container max-w-5xl">
           {currentEvents.length === 0 ? (
-            <div className="py-20 text-center">
-              <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 text-3xl rounded-full bg-surface-200 text-surface-400">
+            <div className="py-16 text-center">
+              <div className="flex items-center justify-center w-20 h-20 mx-auto mb-4 text-2xl rounded-2xl bg-gradient-to-br from-primary-100 to-amber-100 text-primary-600 shadow-lg">
                 <i className={categories.find(c => c.id === activeTab)?.icon}></i>
               </div>
-              <h3 className="mb-2 text-2xl font-bold text-surface-900">Coming Soon</h3>
-              <p className="text-surface-600">{categories.find(c => c.id === activeTab)?.label} events will be added here soon!</p>
+              <h3 className="mb-2 text-2xl font-bold text-surface-900">More Moments Coming</h3>
+              <p className="text-surface-600">We're collecting memories from {categories.find(c => c.id === activeTab)?.label.toLowerCase()}</p>
             </div>
           ) : (
-            <div className="relative space-y-12 before:absolute before:left-8 md:before:left-1/2 before:top-0 before:bottom-0 before:w-px before:bg-surface-200">
+            <div className="relative space-y-10 md:space-y-12 before:absolute before:left-8 md:before:left-1/2 before:top-0 before:bottom-0 before:w-0.5 before:bg-gradient-to-b before:from-primary-300 before:via-amber-300 before:to-orange-300">
               {currentEvents.map((event, index) => (
-                <div key={event.id} className={`flex flex-col md:flex-row gap-8 relative ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                  {/* Date Bubble */}
-                  <div className="absolute z-10 w-4 h-4 mt-6 transform -translate-x-1/2 border-4 border-white rounded-full shadow-sm left-8 md:left-1/2 bg-primary-600"></div>
+                <motion.div 
+                  key={event.id} 
+                  className={`flex flex-col md:flex-row gap-6 relative ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+                >
+                  {/* Date Bubble - More organic look */}
+                  <div className="absolute z-10 w-4 h-4 mt-4 transform -translate-x-1/2 border-3 border-white rounded-full shadow-lg left-8 md:left-1/2 bg-gradient-to-br from-primary-400 to-amber-400"></div>
                   
                   {/* Content */}
                   <div className="flex-1 ml-16 md:ml-0">
-                    <div className="p-6 transition-shadow bg-white border shadow-sm rounded-2xl border-surface-100 hover:shadow-md">
+                    <motion.div 
+                      className="p-5 bg-white border-2 border-surface-200/60 rounded-2xl shadow-lg hover:shadow-xl hover:border-primary-200 backdrop-blur-sm"
+                      whileHover={{ y: -4, scale: 1.01 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <span className="block mb-1 text-sm font-bold tracking-wider uppercase text-primary-600">
+                          <span className="inline-block px-2.5 py-0.5 mb-2 text-xs font-semibold text-primary-700 bg-gradient-to-r from-primary-100 to-amber-100 rounded-full border border-primary-200/50">
                             {format(new Date(event.date), 'MMMM d, yyyy')}
                           </span>
-                          <h3 className="text-xl font-bold text-surface-900">{event.name}</h3>
+                          <h3 className="text-xl font-bold text-surface-900 leading-tight">{event.name}</h3>
                         </div>
                         {canManageEvents && (
                           <button 
@@ -313,13 +347,15 @@ const Timeline: React.FC = () => {
                       </div>
 
                       {event.photo && (
-                        <div className="mb-6 overflow-hidden border rounded-xl bg-surface-50 border-surface-100">
-                          <img 
+                        <div className="mb-4 overflow-hidden border-2 rounded-xl bg-surface-50 border-surface-200/60 shadow-md">
+                          <motion.img 
                             src={event.photo} 
                             alt={event.name}
                             loading="lazy"
                             decoding="async"
-                            className="w-full h-auto max-h-[300px] object-contain"
+                            className="w-full h-auto max-h-[280px] object-cover"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
                             onError={(e) => {
                               const container = e.currentTarget.parentElement;
                               if (container) container.style.display = 'none';
@@ -328,45 +364,45 @@ const Timeline: React.FC = () => {
                         </div>
                       )}
 
-                      <div className="flex flex-wrap gap-4 mb-4 text-sm text-surface-600">
+                      <div className="flex flex-wrap gap-2 mb-3 text-xs">
                         {event.location && (
-                          <span className="flex items-center gap-2">
-                            <i className="fas fa-map-marker-alt text-primary-500"></i> 
+                          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 rounded-full border border-primary-100">
+                            <i className="fas fa-map-marker-alt"></i> 
                             {event.location}
                           </span>
                         )}
                         {event.time && (
-                          <span className="flex items-center gap-2">
-                            <i className="fas fa-clock text-primary-500"></i> 
+                          <span className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full border border-amber-100">
+                            <i className="fas fa-clock"></i> 
                             {event.time}
                           </span>
                         )}
                       </div>
 
                       {event.description && (
-                        <p className="mb-4 leading-relaxed text-surface-600">{event.description}</p>
+                        <p className="mb-3 text-sm leading-relaxed text-surface-700">{event.description}</p>
                       )}
 
-                      <div className="flex gap-4 pt-4 text-sm font-medium border-t border-surface-100 text-surface-500">
+                      <div className="flex flex-wrap gap-2 pt-3 border-t-2 border-surface-100">
                         {event.category !== 'homework' && event.attendees && (
-                          <span className="flex items-center gap-2">
-                            <i className="fas fa-users"></i> 
-                            {event.attendees} attendees
+                          <span className="flex items-center gap-1.5 text-xs font-medium text-surface-700 bg-surface-50 px-2.5 py-1 rounded-full">
+                            <i className="fas fa-users text-primary-500"></i> 
+                            {event.attendees} attended
                           </span>
                         )}
                         {event.category !== 'homework' && event.performers && (
-                          <span className="flex items-center gap-2">
-                            <i className="fas fa-music"></i> 
-                            {event.performers} performers
+                          <span className="flex items-center gap-1.5 text-xs font-medium text-surface-700 bg-surface-50 px-2.5 py-1 rounded-full">
+                            <i className="fas fa-music text-primary-500"></i> 
+                            {event.performers}
                           </span>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                   
                   {/* Empty space for the other side */}
                   <div className="flex-1 hidden md:block"></div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}

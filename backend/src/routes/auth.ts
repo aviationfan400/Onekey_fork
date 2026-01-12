@@ -24,7 +24,11 @@ router.post('/login', (req, res) => {
       }
 
       const token = jwt.sign(
-        { userId: user.id, username: user.username },
+        { 
+          userId: user.id, 
+          username: user.username,
+          role: user.role || 'user'
+        },
         process.env['JWT_SECRET'] || 'fallback-secret'
       );
 
