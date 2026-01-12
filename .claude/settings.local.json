@@ -5,7 +5,14 @@
       "Bash(npm audit fix:*)",
       "Bash(npm run dev:*)",
       "Bash(timeout /t 10 /nobreak)",
-      "Bash(del nul)"
+      "Bash(del nul)",
+      "Bash(test:*)",
+      "Bash(timeout /t 15 /nobreak)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout /t 20 /nobreak)",
+      "Bash(git add:*)"
     ]
   }
 }

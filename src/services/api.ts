@@ -1,6 +1,8 @@
 // Mock API Service using localStorage
 // This replaces the backend dependency to allow the app to function fully client-side
 
+import { apiService as firebaseService } from './firebaseService';
+
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
@@ -393,5 +395,4 @@ class MockApiService {
 }
 
 // export const apiService = new MockApiService();
-import { apiService as firebaseService } from './firebaseService';
 export const apiService = firebaseService;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
+import { apiService } from '../services/firebaseService';
 import { format } from 'date-fns';
 import Slideshow from '../components/Slideshow';
 import { getRandomPhotos } from '../data/photos';
@@ -141,27 +142,30 @@ const Timeline: React.FC = () => {
     const createEvent = async () => {
       try {
         let photoUrls: string[] = [];
-        
-        // Convert photo files to base64 if present
+
+        // Upload photos to Firebase Storage if present
         if (formData.photos.length > 0) {
-          console.log('Converting photos to base64...', formData.photos.length, 'files');
+          console.log('Uploading photos to Firebase Storage...', formData.photos.length, 'files');
           for (const photo of formData.photos) {
-            const photoUrl = await convertFileToBase64(photo);
-            photoUrls.push(photoUrl);
+            const response = await apiService.uploadImage(photo);
+            if (response.success && response.data) {
+              photoUrls.push(response.data.filePath);
+              console.log('Photo uploaded successfully:', response.data.filename);
+            } else {
+              console.error('Failed to upload photo:', response.error);
+            }
           }
-          console.log('Photos converted successfully:', photoUrls.length, 'photos');
+          console.log('Photos uploaded successfully:', photoUrls.length, 'photos');
         }
 
         const newEvent = await addEvent({
           ...formData,
           photo: photoUrls[0] || null, // Keep first photo as main photo for now
-          photos: photoUrls, // Store all photos
+          photos: photoUrls, // Store all photo URLs
           createdBy: user.id
         });
 
         console.log('Event created with photos:', newEvent?.photo ? 'Yes' : 'No', 'Total photos:', photoUrls.length);
-
-        // Backup removed
 
         setShowAddModal(false);
         setFormData({
@@ -185,14 +189,6 @@ const Timeline: React.FC = () => {
     createEvent();
   };
 
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

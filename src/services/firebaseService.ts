@@ -96,6 +96,11 @@ export class FirebaseService {
     }
   }
 
+  clearToken() {
+    // Sign out from Firebase
+    signOut(auth).catch(error => console.error('Signout error:', error));
+  }
+
   // User Management
   async getUsers(): Promise<ApiResponse<{ users: User[] }>> {
     try {
