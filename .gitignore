@@ -3,6 +3,9 @@
 /backend/node_modules
 /.pnp
 .pnp.js
+/.claude
+/.vscode
+/.vs
 
 # Testing
 /coverage

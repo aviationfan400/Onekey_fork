@@ -6,6 +6,16 @@ A modern web application for managing student volunteer activities, built with R
 
 ### Development Mode (Local)
 
+#### Windows
+```bash
+# Option 1: Use the Windows batch script
+scripts\start-dev.bat
+
+# Option 2: Use npm directly
+npm start
+```
+
+#### Mac/Linux
 ```bash
 # Start the application (Frontend + Backend)
 npm start
@@ -18,7 +28,7 @@ This will start:
 ### Production Deployment
 
 ```bash
-# Set up production deployment
+# Set up production deployment (Mac/Linux only)
 npm run deploy:setup
 
 # Start production server
@@ -78,21 +88,22 @@ cd backend && npm install
 ### Available Scripts
 ```bash
 # Development
-npm run dev                    # Start both servers
-npm run start:dev             # Alternative start command
-npm run dev:frontend          # Frontend only
-npm run dev:backend           # Backend only
+npm start                      # Start both servers (recommended)
+npm run dev                    # Alternative: Start both servers
+scripts\start-dev.bat          # Windows: Use batch script
+npm run dev:frontend           # Frontend only
+npm run dev:backend            # Backend only
 
 # Building
-npm run build:all            # Build both frontend and backend
-npm run build                # Build frontend only
+npm run build:all              # Build both frontend and backend
+npm run build                  # Build frontend only
 
 # Production
-npm run deploy:setup         # Full production setup
-npm run deploy:start         # Start production server
+npm run deploy:setup           # Full production setup (Mac/Linux)
+npm run deploy:start           # Start production server
 
 # Testing & Debug
-npm run test:integration     # Run integration tests
+npm run test:integration       # Run integration tests
 ```
 
 ## 📁 Project Structure
