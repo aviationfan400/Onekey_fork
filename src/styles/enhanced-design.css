@@ -1,0 +1,150 @@
+/* Enhanced Design System - Following Anthropic's Frontend Aesthetics Principles */
+
+/* Staggered Animation System */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-1 {
+  animation: fadeInUp 0.8s ease-out 0.1s both;
+}
+
+.stagger-2 {
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.stagger-3 {
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.stagger-4 {
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.stagger-5 {
+  animation: fadeInUp 0.8s ease-out 0.5s both;
+}
+
+.stagger-6 {
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+/* Enhanced Gradient Buttons with Atmospheric Glow */
+.btn-primary-enhanced {
+  background: linear-gradient(135deg, #f59e0b 0%, #fb923c 50%, #f97316 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-enhanced:hover {
+  background-position: 100% 0;
+  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.5);
+  transform: translateY(-2px);
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Distinctive Card Hover Effects */
+.card-enhanced {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.card-enhanced::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(251, 146, 60, 0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card-enhanced:hover::before {
+  opacity: 1;
+}
+
+.card-enhanced:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(245, 158, 11, 0.2);
+}
+
+/* Atmospheric Background Layers */
+.atmospheric-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.atmospheric-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(251, 146, 60, 0.1) 0%, transparent 50%);
+  animation: atmosphericMove 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes atmosphericMove {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Text Glow Effect for Emphasis */
+.text-glow-amber {
+  text-shadow: 
+    0 0 20px rgba(245, 158, 11, 0.3),
+    0 0 40px rgba(245, 158, 11, 0.2),
+    0 0 60px rgba(245, 158, 11, 0.1);
+}
+
+.text-glow-orange {
+  text-shadow: 
+    0 0 20px rgba(251, 146, 60, 0.3),
+    0 0 40px rgba(251, 146, 60, 0.2),
+    0 0 60px rgba(251, 146, 60, 0.1);
+}
+
+/* Monospace accent for technical touches */
+.mono-accent {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* High contrast typography pairing */
+.display-contrast {
+  font-weight: 700;
+}
+
+.display-contrast span {
+  font-weight: 300;
+}

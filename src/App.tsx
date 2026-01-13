@@ -1,7 +1,8 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import ScrollToTop from './components/ScrollToTop';
+import { useAuthStore } from './store/authStore';
 
 // Lazy load pages to improve initial load performance
 const Home = React.lazy(() => import('./pages/Home'));
@@ -22,6 +23,13 @@ const PageLoader = () => (
 );
 
 function App() {
+  const getCurrentUser = useAuthStore(state => state.getCurrentUser);
+
+  // Restore session on app load
+  useEffect(() => {
+    getCurrentUser();
+  }, [getCurrentUser]);
+
   return (
     <>
       <ScrollToTop />

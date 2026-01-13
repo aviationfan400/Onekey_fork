@@ -28,7 +28,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
   return (
     <div className={`py-24 ${className}`}>
       {title && (
-        <h3 className="text-4xl font-display font-medium text-surface-900 mb-12 text-center">
+        <h3 className="text-4xl font-bold text-white mb-12 text-center">
           {title}
         </h3>
       )}

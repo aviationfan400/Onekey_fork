@@ -1,305 +1,178 @@
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Music, GraduationCap, Heart, Calendar, Users, Clock, Book, Award, TrendingUp } from 'lucide-react';
+import { getRandomPhotos } from '../data/photos';
 
 const Projects: React.FC = () => {
-  // Smooth scrolling animations - Constance style
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate');
-          
-          // Add staggered animations for child elements
-          const children = entry.target.querySelectorAll('.project-card, .impact-item, .feature-item');
-          children.forEach((child, index) => {
-            setTimeout(() => {
-              child.classList.add('animate');
-            }, index * 100);
-          });
-        }
-      });
-    }, observerOptions);
-
-    // Add animation classes to sections
-    const animateElements = document.querySelectorAll('.projects-hero, .projects-showcase, .impact-overview, .featured-programs, .testimonials-projects, .get-involved-projects');
-    
-    animateElements.forEach((el, index) => {
-      el.classList.add('animate-on-scroll');
-      el.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
-      observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
+  const projectImages = useMemo(() => getRandomPhotos(3), []);
+  
   return (
-    <div className="projects-page">
-      {/* Hero Section - Constance Style */}
-      <section className="projects-hero">
-        <div className="hero-background">
-          <div className="hero-overlay"></div>
-          <div className="container">
-            <div className="hero-content">
-              <h1>Our Projects</h1>
-              <p className="hero-subtitle">Transforming communities through music, education, and service initiatives that create lasting impact</p>
-              <div className="hero-accent-line"></div>
-            </div>
-          </div>
+    <div className="relative bg-gradient-to-br from-surface-900 via-surface-800 to-surface-900">
+      {/* Layered Atmospheric Background */}
+      <div className="fixed inset-0 opacity-[0.03]">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `linear-gradient(45deg, rgba(245, 158, 11, 0.05) 25%, transparent 25%), linear-gradient(-45deg, rgba(251, 146, 60, 0.05) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(245, 158, 11, 0.05) 75%), linear-gradient(-45deg, transparent 75%, rgba(251, 146, 60, 0.05) 75%)`,
+          backgroundSize: '60px 60px',
+          backgroundPosition: '0 0, 0 30px, 30px -30px, -30px 0px'
+        }}></div>
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-16 overflow-hidden lg:pt-40 lg:pb-20">
+        <div className="container relative z-10 text-center">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 text-4xl font-bold tracking-tight text-white md:text-6xl"
+          >
+            Our <span className="font-light text-amber-300">Projects</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-2xl mx-auto text-lg leading-relaxed text-gray-200"
+          >
+            Transforming communities through music, education, and service initiatives that create lasting impact
+          </motion.p>
         </div>
       </section>
 
-      {/* Projects Showcase - Main Programs */}
-      <section className="projects-showcase">
-        <div className="container">
-          <div className="showcase-header">
-            <h2>OUR PROGRAMS</h2>
-            <p>Three pillars of community service</p>
+      {/* Main Programs */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="container relative">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 text-2xl font-bold text-white">Our Programs</h2>
+            <p className="text-surface-400">Three pillars of community service</p>
           </div>
           
-          <div className="projects-grid">
-            <div className="project-card featured">
-              <div className="project-image">
-                <img src="/Onekey/pics/alexzhang.jpg" alt="Music Program" />
-                <div className="project-overlay">
-                  <div className="project-icon">
-                    <i className="fas fa-music"></i>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {[
+              {
+                icon: Music,
+                title: 'Senior Home Concerts',
+                subtitle: 'Music Program',
+                image: projectImages[0],
+                desc: 'Weekly musical performances bringing joy and connection to 200+ seniors across 5 partner facilities. Our student volunteers perform classical, contemporary, and nostalgic pieces that create meaningful intergenerational bonds.',
+                stats: [
+                  { label: 'Performances', value: '150+' },
+                  { label: 'Facilities', value: '5' },
+                  { label: 'Seniors', value: '200+' }
+                ]
+              },
+              {
+                icon: GraduationCap,
+                title: 'Academic Support',
+                subtitle: 'Education Initiative',
+                image: projectImages[1],
+                desc: 'Comprehensive tutoring and homework assistance for students from elementary through high school. Our volunteer tutors provide personalized support across all subjects, fostering academic confidence and success.',
+                stats: [
+                  { label: 'Students', value: '85+' },
+                  { label: 'Schools', value: '3' },
+                  { label: 'Levels', value: 'All' }
+                ]
+              },
+              {
+                icon: Heart,
+                title: 'Community Fundraising',
+                subtitle: 'Service Initiative',
+                image: projectImages[2],
+                desc: 'Organizing fundraising events and donation drives to support local families and organizations in need. Our efforts have raised over $15,000 for community causes, providing essential support where it\'s needed most.',
+                stats: [
+                  { label: 'Raised', value: '$15k+' },
+                  { label: 'Families', value: '50+' },
+                  { label: 'Events', value: '12' }
+                ]
+              }
+            ].map((program, index) => {
+              const Icon = program.icon;
+              return (
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="overflow-hidden transition-all duration-300 border backdrop-blur-sm bg-white/5 border-white/10 rounded-2xl group hover:bg-white/10"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={program.image} 
+                      alt={program.title}
+                      className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-surface-900 to-transparent"></div>
+                    <div className="absolute flex items-center justify-center w-12 h-12 rounded-full top-4 left-4 bg-gradient-to-r from-amber-500 to-orange-600">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="project-content">
-                <h3>Senior Home Concerts</h3>
-                <p className="project-subtitle">Music Program</p>
-                <p>Weekly musical performances bringing joy and connection to 200+ seniors across 5 partner facilities. Our student volunteers perform classical, contemporary, and nostalgic pieces that create meaningful intergenerational bonds.</p>
-                <div className="project-stats">
-                  <div className="stat">
-                    <span className="stat-number">150+</span>
-                    <span className="stat-label">Performances</span>
+                  <div className="p-5">
+                    <h3 className="mb-1 text-lg font-bold text-white">{program.title}</h3>
+                    <p className="mb-3 text-xs font-medium text-amber-400">{program.subtitle}</p>
+                    <p className="mb-4 text-xs leading-relaxed text-gray-200">{program.desc}</p>
+                    <div className="flex gap-4 pt-4 border-t border-white/10">
+                      {program.stats.map((stat, i) => (
+                        <div key={i} className="flex-1 text-center">
+                          <div className="text-sm font-bold text-amber-400">{stat.value}</div>
+                          <div className="text-xs text-surface-400">{stat.label}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="stat">
-                    <span className="stat-number">5</span>
-                    <span className="stat-label">Facilities</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-number">200+</span>
-                    <span className="stat-label">Seniors Served</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="project-card featured">
-              <div className="project-image">
-                <img src="/Onekey/pics/shanezhang.jpg" alt="Education Program" />
-                <div className="project-overlay">
-                  <div className="project-icon">
-                    <i className="fas fa-graduation-cap"></i>
-                  </div>
-                </div>
-              </div>
-              <div className="project-content">
-                <h3>Academic Support Program</h3>
-                <p className="project-subtitle">Education Initiative</p>
-                <p>Comprehensive tutoring and homework assistance for students from elementary through high school. Our volunteer tutors provide personalized support across all subjects, fostering academic confidence and success.</p>
-                <div className="project-stats">
-                  <div className="stat">
-                    <span className="stat-number">85+</span>
-                    <span className="stat-label">Students Helped</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-number">3</span>
-                    <span className="stat-label">Partner Schools</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-number">All</span>
-                    <span className="stat-label">Grade Levels</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="project-card featured">
-              <div className="project-image">
-                <img src="/Onekey/pics/elizasun.jpg" alt="Community Program" />
-                <div className="project-overlay">
-                  <div className="project-icon">
-                    <i className="fas fa-heart"></i>
-                  </div>
-                </div>
-              </div>
-              <div className="project-content">
-                <h3>Community Fundraising</h3>
-                <p className="project-subtitle">Service Initiative</p>
-                <p>Organizing fundraising events and donation drives to support local families and organizations in need. Our efforts have raised over $15,000 for community causes, providing essential support where it's needed most.</p>
-                <div className="project-stats">
-                  <div className="stat">
-                    <span className="stat-number">$15,000+</span>
-                    <span className="stat-label">Funds Raised</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-number">50+</span>
-                    <span className="stat-label">Families Helped</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-number">12</span>
-                    <span className="stat-label">Events Organized</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Impact Overview - Statistics Section */}
-      <section className="impact-overview">
-        <div className="container">
-          <div className="impact-header">
-            <h2>COLLECTIVE IMPACT</h2>
-            <p>Measuring our community reach</p>
+      {/* Impact Statistics */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="container relative">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 text-2xl font-bold text-white">Collective Impact</h2>
+            <p className="text-surface-400">Measuring our community reach</p>
           </div>
           
-          <div className="impact-grid">
-            <div className="impact-item">
-              <div className="impact-number">2,500+</div>
-              <div className="impact-label">Total Volunteer Hours</div>
-              <p>Hours dedicated to community service across all our programs</p>
-            </div>
-            
-            <div className="impact-item">
-              <div className="impact-number">285+</div>
-              <div className="impact-label">Lives Directly Impacted</div>
-              <p>Seniors, students, and families who benefit from our services</p>
-            </div>
-            
-            <div className="impact-item">
-              <div className="impact-number">85+</div>
-              <div className="impact-label">Student Volunteers</div>
-              <p>Young people actively contributing to positive change</p>
-            </div>
-            
-            <div className="impact-item">
-              <div className="impact-number">8</div>
-              <div className="impact-label">Community Partners</div>
-              <p>Schools and facilities we collaborate with regularly</p>
-            </div>
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {[
+              { number: '2,500+', label: 'Volunteer Hours' },
+              { number: '285+', label: 'Lives Impacted' },
+              { number: '85+', label: 'Volunteers' },
+              { number: '8', label: 'Partners' }
+            ].map((stat, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.05 }}
+                className="p-5 text-center transition-all duration-300 border backdrop-blur-sm bg-white/5 border-white/10 rounded-2xl hover:bg-white/10"
+              >
+                <div className="mb-2 text-3xl font-bold text-amber-400">{stat.number}</div>
+                <div className="text-xs font-bold text-white">{stat.label}</div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Programs - Detailed Showcase */}
-      <section className="featured-programs">
-        <div className="container">
-          <div className="featured-header">
-            <h2>Program Highlights</h2>
-            <p>Spotlight on our most impactful initiatives</p>
-          </div>
-          
-          <div className="program-details">
-            <div className="program-feature">
-              <div className="feature-content">
-                <h3>Weekly Concert Series</h3>
-                <p className="feature-subtitle">Every Thursday at 3:00 PM</p>
-                <p>Our flagship program brings live music to senior living facilities across the region. Each performance is carefully curated to include a mix of classical pieces, popular songs from the residents' youth, and contemporary music that bridges generational gaps.</p>
-                <div className="feature-highlights">
-                  <div className="highlight">
-                    <i className="fas fa-calendar-alt"></i>
-                    <span>52 concerts annually per facility</span>
-                  </div>
-                  <div className="highlight">
-                    <i className="fas fa-users"></i>
-                    <span>20-30 residents per session</span>
-                  </div>
-                  <div className="highlight">
-                    <i className="fas fa-clock"></i>
-                    <span>45-minute performances</span>
-                  </div>
-                </div>
-              </div>
-              <div className="feature-image">
-                <img src="/Onekey/pics/curtiswei.jpg" alt="Concert Series" />
-              </div>
-            </div>
-            
-            <div className="program-feature reverse">
-              <div className="feature-content">
-                <h3>After-School Tutoring</h3>
-                <p className="feature-subtitle">Monday through Friday, 3:30-5:30 PM</p>
-                <p>Comprehensive academic support program offering one-on-one and small group tutoring sessions. Our volunteer tutors are carefully matched with students based on subject expertise and learning style compatibility.</p>
-                <div className="feature-highlights">
-                  <div className="highlight">
-                    <i className="fas fa-book"></i>
-                    <span>All subjects covered</span>
-                  </div>
-                  <div className="highlight">
-                    <i className="fas fa-award"></i>
-                    <span>95% improvement rate</span>
-                  </div>
-                  <div className="highlight">
-                    <i className="fas fa-graduation-cap"></i>
-                    <span>K-12 grade levels</span>
-                  </div>
-                </div>
-              </div>
-              <div className="feature-image">
-                <img src="/pics/jessicayu.jpg" alt="Tutoring Program" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="testimonials-projects">
-        <div className="container">
-          <div className="testimonials-header">
-            <h2>Community Voices</h2>
-            <p>Hear from those we serve</p>
-          </div>
-          
-          <div className="testimonials-grid">
-            <div className="testimonial-card">
-              <div className="testimonial-quote">
-                <p>"The OneKey volunteers have become like family to our residents. Every Thursday, you can see the joy and anticipation on their faces as they prepare for the concert."</p>
-              </div>
-              <div className="testimonial-author">
-                <img src="/pics/gabbyliu.jpg" alt="Facility Director" />
-                <div className="author-info">
-                  <h4>Margaret Thompson</h4>
-                  <span>Activities Director, Sunrise Senior Living</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="testimonial-card">
-              <div className="testimonial-quote">
-                <p>"My daughter's grades improved dramatically thanks to the tutoring program. The volunteers are patient, knowledgeable, and truly care about the students' success."</p>
-              </div>
-              <div className="testimonial-author">
-                <img src="/pics/selenayu.jpg" alt="Parent" />
-                <div className="author-info">
-                  <h4>David Chen</h4>
-                  <span>Parent, Lincoln Elementary</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Get Involved CTA */}
-      <section className="get-involved-projects">
-        <div className="container">
-          <div className="involved-content">
-            <h2>Join Our Mission</h2>
-            <p>Whether you're a musician, tutor, or simply passionate about community service, there's a place for you in OneKey. Help us expand our impact and create more meaningful connections in our community.</p>
-            <div className="involved-buttons">
-              <Link to="/get-involved" className="btn-primary">Become a Volunteer</Link>
-              <Link to="/contact" className="btn-secondary">Partner With Us</Link>
+      {/* CTA */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="container relative">
+          <div className="max-w-3xl p-8 mx-auto text-center border backdrop-blur-md bg-white/5 rounded-2xl border-white/10">
+            <h2 className="mb-4 text-2xl font-bold text-white">Join Our Mission</h2>
+            <p className="mb-6 text-base text-gray-200">
+              Whether you're a musician, tutor, or simply passionate about community service, there's a place for you in OneKey. Help us expand our impact and create more meaningful connections in our community.
+            </p>
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link to="/get-involved" className="inline-block px-6 py-3 text-sm font-semibold text-white transition-all duration-300 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 hover:shadow-lg hover:shadow-amber-500/25">
+                Become a Volunteer
+              </Link>
+              <Link to="/contact" className="inline-block px-6 py-3 text-sm font-semibold text-white transition-all duration-300 border rounded-full backdrop-blur-sm bg-white/10 border-white/20 hover:bg-white/20">
+                Partner With Us
+              </Link>
             </div>
           </div>
         </div>
@@ -308,4 +181,4 @@ const Projects: React.FC = () => {
   );
 };
 
-export default Projects; 
+export default Projects;

@@ -7,6 +7,7 @@ import './styles/home-new.css';
 import './styles/modal.css';
 import './styles/admin-dashboard.css';
 import './styles/navigation-fixes.css';
+import './styles/enhanced-design.css';
 // Import Tailwind last so existing styles take precedence
 import './styles/tailwind.css';
 

@@ -33,8 +33,9 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Lato', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Playfair Display', 'serif'],
+        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       fontSize: {
         'display-2xl': ['4.5rem', { lineHeight: '1.1' }],

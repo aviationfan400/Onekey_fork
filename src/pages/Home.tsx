@@ -15,11 +15,16 @@ const Home: React.FC = () => {
   const y = useTransform(scrollY, [0, 500], [0, 200]);
 
   return (
-    <div className="overflow-hidden bg-surface-50">
+    <div className="relative overflow-hidden bg-gradient-to-br from-surface-900 via-surface-800 to-surface-900">
+      {/* Geometric Pattern Overlay */}
+      <div className="fixed inset-0 opacity-[0.02]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+
       {/* Hero Section */}
-      <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
         {/* Slideshow Background */}
-        <motion.div style={{ y }} className="absolute inset-0 z-0">
+        <motion.div style={{ y }} className="absolute inset-0 z-0 opacity-20">
           <Slideshow images={heroImages} interval={6000} overlay={true} />
         </motion.div>
 
@@ -30,18 +35,18 @@ const Home: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <h1 className="text-6xl md:text-8xl font-display font-medium mb-8 leading-tight tracking-tight drop-shadow-lg">
-                Harmony in <span className="italic text-primary-300 drop-shadow-md">Service</span>
+              <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight md:text-7xl font-display drop-shadow-lg">
+                Harmony in <span className="font-light italic text-amber-300 drop-shadow-md">Service</span>
               </h1>
-              <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-2xl mx-auto leading-relaxed font-light tracking-wide drop-shadow-md">
+              <p className="max-w-2xl mx-auto mb-10 text-lg font-light leading-relaxed tracking-wide md:text-xl text-white/90 drop-shadow-md">
                 Bridging generations through the universal language of music. 
                 We are student volunteers making a difference.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <Link to="/about" className="btn-primary bg-white text-surface-900 hover:bg-surface-100 border-none px-10 shadow-lg">
+              <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link to="/about" className="inline-block px-8 py-3 text-sm font-semibold text-white transition-all duration-300 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 hover:shadow-lg hover:shadow-amber-500/25">
                   Our Mission
                 </Link>
-                <Link to="/timeline" className="btn-secondary text-white border-white/40 hover:bg-white/10 px-10 backdrop-blur-sm shadow-lg">
+                <Link to="/timeline" className="inline-block px-8 py-3 text-sm font-semibold text-white transition-all duration-300 border rounded-full backdrop-blur-sm bg-white/10 border-white/20 hover:bg-white/20">
                   Upcoming Events
                 </Link>
               </div>
@@ -53,10 +58,10 @@ const Home: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ delay: 1, duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/50"
+            className="absolute transform -translate-x-1/2 bottom-10 left-1/2 text-white/50"
           >
             <div className="flex flex-col items-center gap-2">
-              <span className="text-xs uppercase tracking-widest">Scroll</span>
+              <span className="text-xs tracking-widest uppercase">Scroll</span>
               <ArrowRight className="rotate-90" size={20} />
             </div>
           </motion.div>
@@ -64,14 +69,14 @@ const Home: React.FC = () => {
       </section>
 
       {/* Introduction / Philosophy */}
-      <section className="py-32 bg-white">
-        <div className="container">
+      <section className="relative py-20 overflow-hidden">
+        <div className="container relative">
           <div className="max-w-3xl mx-auto text-center">
-            <span className="text-primary-600 font-display italic text-xl mb-4 block">Our Philosophy</span>
-            <h2 className="text-4xl md:text-5xl font-display font-medium text-surface-900 mb-8 leading-tight">
+            <span className="block mb-3 text-lg italic text-amber-400 font-display">Our Philosophy</span>
+            <h2 className="mb-6 text-3xl font-medium leading-tight text-white md:text-4xl font-display">
               More than just music. <br/> It's about connection.
             </h2>
-            <p className="text-lg text-surface-600 leading-relaxed">
+            <p className="text-base leading-relaxed text-gray-200">
               OneKey was founded on the belief that music has the power to heal, connect, and inspire. 
               Our student volunteers dedicate their time and talent to bring joy to senior communities, 
               fostering intergenerational bonds that enrich lives on both sides.
@@ -81,9 +86,9 @@ const Home: React.FC = () => {
       </section>
 
       {/* Impact / Services */}
-      <section className="py-32 bg-surface-50">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <section className="relative py-20 overflow-hidden">
+        <div className="container relative">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
             {[
               {
                 title: "Music",
@@ -112,17 +117,17 @@ const Home: React.FC = () => {
                 transition={{ delay: index * 0.2 }}
                 className="group"
               >
-                <div className="aspect-[4/5] overflow-hidden rounded-sm mb-8 relative">
+                <div className="aspect-[4/5] overflow-hidden rounded-2xl mb-6 relative">
                   <img 
                     src={service.image} 
                     alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
+                  <div className="absolute inset-0 transition-opacity duration-500 opacity-0 bg-gradient-to-br from-amber-500/20 to-orange-500/20 group-hover:opacity-100" />
                 </div>
-                <h3 className="text-3xl font-display font-medium mb-2">{service.title}</h3>
-                <p className="text-primary-600 font-medium mb-4">{service.subtitle}</p>
-                <p className="text-surface-600 leading-relaxed">{service.desc}</p>
+                <h3 className="mb-2 text-2xl font-medium text-white font-display">{service.title}</h3>
+                <p className="mb-3 text-sm font-medium text-amber-400">{service.subtitle}</p>
+                <p className="text-sm leading-relaxed text-gray-200">{service.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -130,7 +135,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Photo Gallery Section */}
-      <section className="bg-white border-t border-surface-100">
+      <section className="relative py-16">
         <div className="container">
           <PhotoGallery images={galleryImages} title="Our Community in Pictures" />
         </div>
@@ -138,15 +143,15 @@ const Home: React.FC = () => {
 
 
       {/* CTA Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="max-w-4xl mx-auto text-center bg-surface-50 rounded-3xl p-12 shadow-sm border border-surface-100">
-            <h2 className="text-3xl font-bold text-surface-900 mb-6">Ready to Make a Difference?</h2>
-            <p className="text-xl text-surface-600 mb-10 max-w-2xl mx-auto">
+      <section className="relative py-16">
+        <div className="container relative">
+          <div className="max-w-4xl p-8 mx-auto text-center border shadow-2xl backdrop-blur-md bg-white/5 rounded-2xl border-white/10">
+            <h2 className="mb-4 text-2xl font-bold text-white">Ready to Make a Difference?</h2>
+            <p className="max-w-2xl mx-auto mb-6 text-base text-gray-200">
               Join OneKey and become part of a student-driven organization dedicated to creating positive change.
             </p>
-            <Link to="/timeline" className="btn-primary inline-flex items-center h-14 px-8 text-lg">
-              View Upcoming Events <ArrowRight size={20} className="ml-2" />
+            <Link to="/timeline" className="inline-flex items-center px-6 py-3 text-sm font-semibold text-white transition-all duration-300 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 hover:shadow-lg hover:shadow-amber-500/25">
+              View Upcoming Events <ArrowRight size={18} className="ml-2" />
             </Link>
           </div>
         </div>

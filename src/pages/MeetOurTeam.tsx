@@ -76,75 +76,90 @@ const MeetOurTeam: React.FC = () => {
     };
   }, []);
   return (
-    <div className="bg-white">
+    <div className="relative bg-gradient-to-br from-surface-900 via-surface-800 to-surface-900">
+      {/* Hexagon Pattern Overlay */}
+      <div className="fixed inset-0 opacity-[0.02]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fb923c' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-surface-900">
-        <div className="absolute inset-0 z-0 opacity-30">
-          <div className="absolute inset-0 bg-gradient-to-b from-surface-900/50 to-surface-900"></div>
+      <section className="relative pt-32 pb-16 overflow-hidden lg:pt-40 lg:pb-20">
+        <div className="absolute inset-0 z-0 opacity-20">
           <img 
             src={heroImage} 
             alt="Team Hero" 
-            className="w-full h-full object-cover"
+            className="object-cover w-full h-full"
           />
         </div>
         
         <div className="container relative z-10 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">Meet Our Team</h1>
-          <p className="text-xl text-surface-300 max-w-2xl mx-auto leading-relaxed">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 text-4xl font-semibold tracking-tight text-gray-100 md:text-6xl"
+          >
+            Meet Our <span className="font-light text-amber-200">Team</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-2xl mx-auto text-lg leading-relaxed text-gray-200"
+          >
             The passionate students and volunteers who bring OneKey's mission to life
-          </p>
+          </motion.p>
         </div>
       </section>
   
       {/* Leadership Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-surface-900 mb-4">Leadership</h2>
-            <p className="text-surface-600">Founders driving OneKey's vision</p>
+      <section className="relative py-16 overflow-hidden">
+        <div className="container relative">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-100">Leadership</h2>
+            <p className="text-gray-400">Founders driving OneKey's vision</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {leadershipMembers.map((member, index) => (
               <motion.div 
                 key={member.id} 
-                className="card overflow-hidden group cursor-pointer"
+                className="overflow-hidden transition-all duration-300 border cursor-pointer card-enhanced backdrop-blur-sm bg-white/5 border-white/5 rounded-2xl group hover:bg-white/8 hover:border-amber-400/20"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
-                whileHover={{ y: -8, scale: 1.02 }}
               >
-                <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
+                <div className="relative overflow-hidden aspect-w-3 aspect-h-4 bg-black/20">
                   <motion.img 
                     src={`${process.env.PUBLIC_URL}${member.image}`} 
                     alt={member.name}
-                    className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="object-cover w-full h-full"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
                   <motion.div 
-                    className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-t from-amber-500/20 to-transparent"
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-surface-900 mb-1">{member.name}</h3>
-                  <div className="flex justify-between items-center mb-4 text-sm">
-                    <span className="text-primary-600 font-medium">{member.role}</span>
-                    <span className="text-surface-500">{member.school}</span>
+                  <h3 className="mb-2 text-xl font-semibold tracking-tight text-gray-100">{member.name}</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-mono text-xs font-medium tracking-wider uppercase text-amber-300">{member.role}</span>
+                    <span className="text-xs text-gray-400">{member.school}</span>
                   </div>
-                  <p className="text-surface-600 text-sm leading-relaxed mb-4">{member.bio}</p>
+                  <p className="mb-4 text-sm leading-relaxed text-gray-300">{member.bio}</p>
                   {member.instagram && (
                     <a
                       href={member.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-surface-400 hover:text-primary-600 transition-colors"
+                      className="text-gray-400 transition-colors hover:text-amber-400"
                     >
-                      <i className="fab fa-instagram text-xl" />
+                      <i className="text-lg fab fa-instagram" />
                     </a>
                   )}
                 </div>
@@ -155,53 +170,116 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Communications Section */}
-      <section className="py-24 bg-surface-50">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-surface-900 mb-4">Communications</h2>
-            <p className="text-surface-600">Managing outreach and community connections</p>
+      <section className="relative py-16 overflow-hidden">
+        <div className="container relative">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-100">Communications</h2>
+            <p className="text-gray-400">Managing outreach and community connections</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {communicationsMembers.map((member, index) => (
               <motion.div 
                 key={member.id} 
-                className="card overflow-hidden group cursor-pointer"
+                className="overflow-hidden transition-all duration-300 border cursor-pointer card-enhanced backdrop-blur-sm bg-white/5 border-white/5 rounded-2xl group hover:bg-white/8 hover:border-amber-400/20"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
-                whileHover={{ y: -8, scale: 1.02 }}
               >
-                <div className="aspect-w-3 aspect-h-4 bg-surface-100 relative overflow-hidden">
+                <div className="relative overflow-hidden aspect-w-3 aspect-h-4 bg-black/20">
                   <motion.img 
                     src={`${process.env.PUBLIC_URL}${member.image}`} 
                     alt={member.name}
-                    className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="object-cover w-full h-full"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
                   <motion.div 
-                    className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-t from-amber-500/20 to-transparent"
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-surface-900 mb-1">{member.name}</h3>
-                  <div className="flex justify-between items-center mb-4 text-sm">
-                    <span className="text-primary-600 font-medium">{member.role}</span>
-                    <span className="text-surface-500">{member.school}</span>
+                  <h3 className="mb-2 text-xl font-semibold tracking-tight text-gray-100">{member.name}</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-mono text-xs font-medium tracking-wider uppercase text-amber-300">{member.role}</span>
+                    <span className="text-xs text-gray-400">{member.school}</span>
                   </div>
-                  <p className="text-surface-600 text-sm leading-relaxed mb-4">{member.bio}</p>
+                  <p className="mb-4 text-sm leading-relaxed text-gray-300">{member.bio}</p>
                   {member.instagram && (
                     <a
                       href={member.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-surface-400 hover:text-primary-600 transition-colors"
+                      className="text-gray-400 transition-colors hover:text-amber-400"
                     >
-                      <i className="fab fa-instagram text-xl" />
+                      <i className="text-lg fab fa-instagram" />
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+  
+      {/* Homework Help Coordinators Section */}
+      <section className="relative py-16 overflow-hidden bg-surface-900 coordinators-section">
+        <div className="container relative">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-100">Homework Help Coordinators</h2>
+            <p className="text-gray-400">Supporting students through tutoring and academic assistance</p>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {coordinatorsMembers.map((member, index) => (
+              <motion.div 
+                key={member.id} 
+                className="overflow-hidden transition-all duration-300 border cursor-pointer card-enhanced backdrop-blur-sm bg-white/5 border-white/5 rounded-2xl group hover:bg-white/8 hover:border-amber-400/20"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+              >
+                <div className="relative overflow-hidden aspect-w-3 aspect-h-4 bg-black/20">
+                  {member.image ? (
+                    <motion.img 
+                      src={`${process.env.PUBLIC_URL}${member.image}`} 
+                      alt={member.name}
+                      className="object-cover w-full h-full"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-full text-4xl text-gray-500 bg-black/30">
+                      <i className="fas fa-user" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-t from-amber-500/20 to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="mb-2 text-xl font-semibold tracking-tight text-gray-100">{member.name}</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-mono text-xs font-medium tracking-wider uppercase text-amber-300">{member.role}</span>
+                    <span className="text-xs text-gray-400">{member.school}</span>
+                  </div>
+                  <p className="mb-4 text-sm leading-relaxed text-gray-300">{member.bio}</p>
+                  {member.instagram && (
+                    <a
+                      href={member.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 transition-colors hover:text-amber-400"
+                    >
+                      <i className="text-lg fab fa-instagram" />
                     </a>
                   )}
                 </div>
@@ -212,32 +290,32 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Alumni Section */}
-      <section className="py-24 bg-surface-50">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-surface-900 mb-4">Alumni</h2>
-            <p className="text-surface-600">Founding members who continue to inspire our mission</p>
+      <section className="relative py-16 overflow-hidden">
+        <div className="container relative">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 text-2xl font-semibold text-gray-100">Alumni</h2>
+            <p className="text-gray-400">Founding members who continue to inspire our mission</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {alumniMembers.map((member) => (
-              <div key={member.id} className="card overflow-hidden group">
-                <div className="aspect-w-1 aspect-h-1 bg-surface-100 relative overflow-hidden">
+              <div key={member.id} className="overflow-hidden transition-all duration-300 border card-enhanced backdrop-blur-sm bg-white/5 border-white/5 rounded-2xl group hover:bg-white/8 hover:border-orange-400/20">
+                <div className="relative overflow-hidden aspect-w-1 aspect-h-1 bg-black/20">
                   {member.image ? (
                     <img 
                       src={`${process.env.PUBLIC_URL}${member.image}`} 
                       alt={member.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-surface-200 text-surface-400">
-                      <i className="fas fa-user text-4xl" />
+                    <div className="flex items-center justify-center w-full h-full text-4xl text-gray-500 bg-black/30">
+                      <i className="fas fa-user" />
                     </div>
                   )}
                 </div>
-                <div className="p-6 text-center">
-                  <h3 className="text-lg font-bold text-surface-900 mb-1">{member.name}</h3>
-                  <div className="text-sm text-primary-600 font-medium mb-2">{member.role}</div>
-                  <div className="text-xs text-surface-500">{member.school}</div>
+                <div className="p-5 text-center">
+                  <h3 className="mb-2 text-lg font-semibold text-gray-100">{member.name}</h3>
+                  <div className="mb-2 font-mono text-xs font-medium tracking-wider uppercase text-amber-300">{member.role}</div>
+                  <div className="text-xs text-gray-400">{member.school}</div>
                 </div>
               </div>
             ))}
@@ -246,35 +324,35 @@ const MeetOurTeam: React.FC = () => {
       </section>
   
       {/* Join Our Team Section */}
-      <section className="py-24 bg-surface-900 text-white">
-        <div className="container">
+      <section className="relative py-16 overflow-hidden">
+        <div className="container relative">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">Join Our Team</h2>
-            <p className="text-xl text-surface-300 mb-12">
+            <h2 className="mb-4 text-2xl font-semibold text-gray-100">Join Our Team</h2>
+            <p className="mb-8 text-base text-gray-300">
               Ready to make a difference? OneKey is always looking for passionate students.
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
               {[
                 { icon: 'music', title: 'Musicians', desc: 'Share your musical talents with senior residents.' },
                 { icon: 'graduation-cap', title: 'Tutors', desc: 'Help students succeed academically.' },
                 { icon: 'users', title: 'Leaders', desc: 'Take on leadership roles and help expand impact.' }
               ].map((item, index) => (
-                <div key={index} className="bg-surface-800 p-6 rounded-xl border border-surface-700">
-                  <div className="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center mx-auto mb-4 text-xl">
+                <div key={index} className="p-6 transition-all duration-300 border card-enhanced backdrop-blur-sm bg-white/5 rounded-xl border-white/5 hover:bg-white/8 hover:border-amber-400/20">
+                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 text-xl text-white rounded-lg bg-gradient-to-r from-amber-400 to-orange-500">
                     <i className={`fas fa-${item.icon}`} />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                  <p className="text-surface-400 text-sm">{item.desc}</p>
+                  <h3 className="mb-2 text-base font-semibold text-gray-100">{item.title}</h3>
+                  <p className="text-sm text-gray-300">{item.desc}</p>
                 </div>
               ))}
             </div>
 
             <div className="flex justify-center gap-4">
-              <Link to="/about" className="btn-primary">
+              <Link to="/about" className="inline-block px-6 py-3 text-sm font-medium text-white transition-all duration-300 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 hover:shadow-md hover:shadow-amber-500/15">
                 About Us
               </Link>
-              <a href="mailto:on3keymusic@gmail.com" className="btn-secondary bg-transparent border-white text-white hover:bg-white hover:text-surface-900">
+              <a href="mailto:on3keymusic@gmail.com" className="inline-block px-6 py-3 text-sm font-medium text-gray-100 transition-all duration-300 border rounded-full backdrop-blur-sm bg-white/5 border-white/10 hover:bg-white/10">
                 Contact Us
               </a>
             </div>
