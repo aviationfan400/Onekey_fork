@@ -203,7 +203,7 @@ const Timeline: React.FC = () => {
     <div className="min-h-screen bg-stone-900">
 
       {/* ── Hero ── */}
-      <section className="hero-section">
+      <section className="hero-section hero-section--short">
         <motion.div className="hero-section__media">
           <Slideshow images={heroImages} interval={5500} overlay={false} />
         </motion.div>
@@ -217,12 +217,10 @@ const Timeline: React.FC = () => {
           >
             <p className="hero-section__eyebrow">Our Chronicle</p>
             <h1 className="hero-section__title">
-              Every Moment,<br />
-              <em className="hero-section__accent">Remembered</em>
+              text
             </h1>
             <p className="hero-section__subtitle">
-              A living record of every performance, tutoring session, and act of service —
-              the story of OneKey told through the moments that shaped us.
+              text
             </p>
           </motion.div>
         </div>

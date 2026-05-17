@@ -307,6 +307,11 @@
   padding-top: 4.5rem;
 }
 
+.hero-section--short {
+  min-height: 42vh;
+  min-height: 42dvh;
+}
+
 .hero-section__media {
   position: absolute;
   inset: 0;
