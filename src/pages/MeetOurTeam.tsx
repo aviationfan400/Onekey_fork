@@ -1,26 +1,33 @@
 import React from 'react';
 import { useTeamStore, TeamMember } from '../store/teamStore';
 import TeamMemberCard from '../components/TeamMemberCard';
+import TeamCarousel from '../components/TeamCarousel';
 
 interface TeamSectionProps {
   title: string;
   description?: string;
   members: TeamMember[];
   compact?: boolean;
+  grid?: boolean; // use flat grid instead of carousel
 }
 
-const TeamSection: React.FC<TeamSectionProps> = ({ title, description, members, compact }) => (
+const TeamSection: React.FC<TeamSectionProps> = ({ title, description, members, compact, grid }) => (
   <section className="team-section">
     <div className="container">
       <header className="team-section__intro">
         <h2 className="team-section__heading">{title}</h2>
         {description && <p className="team-section__desc">{description}</p>}
       </header>
-      <div className={compact ? 'team-grid team-grid--compact' : 'team-grid'}>
-        {members.map((member) => (
-          <TeamMemberCard key={member.id} member={member} compact={compact} />
-        ))}
-      </div>
+
+      {grid ? (
+        <div className={compact ? 'team-grid team-grid--compact' : 'team-grid'}>
+          {members.map((m) => (
+            <TeamMemberCard key={m.id} member={m} compact={compact} />
+          ))}
+        </div>
+      ) : (
+        <TeamCarousel members={members} compact={compact} />
+      )}
     </div>
   </section>
 );
@@ -58,6 +65,7 @@ const MeetOurTeam: React.FC = () => {
         description="Founding members who continue to inspire our mission"
         members={getTeamMembersBySection('alumni')}
         compact
+        grid
       />
     </div>
   );
