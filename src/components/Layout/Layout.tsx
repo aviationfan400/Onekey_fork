@@ -9,11 +9,12 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const isHome = location.pathname === '/';
 
   return (
-    <div className="flex flex-col min-h-screen bg-luxury-50">
+    <div className="flex flex-col min-h-screen bg-stone-950">
       <Navbar />
-      <main className="flex-grow pt-20">
+      <main className={`flex-grow ${isHome ? '' : 'pt-[4.5rem]'}`}>
         {children}
       </main>
       <Footer />
@@ -21,4 +22,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default Layout; 
+export default Layout;

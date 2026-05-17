@@ -7,17 +7,17 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const isHome = location.pathname === '/';
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 16);
     };
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -29,83 +29,101 @@ const Navbar = () => {
     { name: 'Team', path: '/team' },
   ];
 
+  const navShellClass = [
+    'site-nav',
+    isScrolled ? 'site-nav--scrolled' : '',
+    !isHome ? 'site-nav--solid' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <nav 
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-surface-900/95 backdrop-blur-md py-3 shadow-lg' 
-          : 'bg-surface-900/90 backdrop-blur-sm py-4 shadow-md'
-      }`}
-    >
-      <div className="container mx-auto flex justify-between items-center">
-        <Link 
-          to="/" 
-          className="text-2xl font-display font-bold tracking-tight text-white drop-shadow-lg"
-        >
-          OneKey
+    <nav className={navShellClass}>
+      <motion.div
+        className="site-nav__inner"
+        initial={false}
+        animate={{ paddingTop: isScrolled ? 12 : 16, paddingBottom: isScrolled ? 12 : 16 }}
+        transition={{ duration: 0.25 }}
+      >
+        <Link to="/" className="site-nav__logo">
+          One<span className="text-earth-300">Key</span>
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className={`text-sm font-medium tracking-wide transition-all duration-300 drop-shadow-md ${
-                location.pathname === link.path
-                  ? 'text-primary-400'
-                  : 'text-white hover:text-primary-300'
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-          <Link 
-            to="/admin" 
-            className="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:shadow-lg hover:shadow-primary-500/50"
-          >
+        <motion.div
+          className="site-nav__desktop"
+          initial={false}
+          animate={{ opacity: isOpen ? 0.4 : 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={`site-nav__link ${isActive ? 'site-nav__link--active' : ''}`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
+          <Link to="/admin" className="site-nav__cta">
             Get Involved
           </Link>
-        </div>
+        </motion.div>
 
-        {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-white transition-colors drop-shadow-lg"
+          type="button"
+          className="site-nav__toggle md:hidden"
           onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-label={isOpen ? 'Close menu' : 'Open menu'}
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={22} strokeWidth={2.25} /> : <Menu size={22} strokeWidth={2.25} />}
         </button>
-      </div>
+      </motion.div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-surface-900 border-t border-surface-800 overflow-hidden"
-          >
-            <div className="container mx-auto py-8 flex flex-col space-y-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`text-lg font-display font-medium ${
-                    location.pathname === link.path ? 'text-primary-400' : 'text-white'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Link 
+          <>
+            <motion.button
+              type="button"
+              className="site-nav__backdrop md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              aria-label="Close menu"
+              onClick={() => setIsOpen(false)}
+            />
+            <motion.div
+              className="site-nav__mobile md:hidden"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className={`site-nav__mobile-link ${isActive ? 'site-nav__mobile-link--active' : ''}`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
+              <Link
                 to="/admin"
-                className="inline-block text-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                className="site-nav__cta site-nav__cta--mobile"
+                onClick={() => setIsOpen(false)}
               >
                 Get Involved
               </Link>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>
