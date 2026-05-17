@@ -125,13 +125,13 @@ const AdminDashboard: React.FC = () => {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block mb-2 text-sm font-medium text-surface-700">Username</label>
+              <label className="block mb-2 text-sm font-medium text-surface-700">Email</label>
               <input
-                type="text"
+                type="email"
                 value={loginData.username}
                 onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
                 className="w-full px-4 py-3 transition-all border rounded-lg outline-none border-surface-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 required
               />
             </div>

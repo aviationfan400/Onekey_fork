@@ -69,9 +69,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           )}
           
           <div className="form-group">
-            <label htmlFor="loginUsername">Username</label>
+            <label htmlFor="loginUsername">Email</label>
             <input
-              type="text"
+              type="email"
               id="loginUsername"
               value={username}
               onChange={(e) => setUsername(e.target.value)}

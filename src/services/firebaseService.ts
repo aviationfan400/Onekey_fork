@@ -39,24 +39,75 @@ import {
 } from './api';
 
 export class FirebaseService {
+  private friendlyAuthError(code: string): string {
+    switch (code) {
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+      case 'auth/invalid-email':
+        return 'Invalid email or password.';
+      case 'auth/too-many-requests':
+        return 'Too many failed attempts. Please try again later.';
+      case 'auth/network-request-failed':
+        return 'Network error. Please check your connection.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
+      default:
+        return 'Login failed. Please check your credentials.';
+    }
+  }
+
+  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<Record<string, any> | undefined> {
+    const userRef = doc(db, 'users', firebaseUser.uid);
+    let userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      const isKnownAdmin = firebaseUser.email === 'on3keymusic@gmail.com';
+      await setDoc(userRef, {
+        username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || firebaseUser.uid,
+        email: firebaseUser.email || '',
+        role: isKnownAdmin ? 'super_admin' : 'user',
+        isActive: true,
+        createdAt: new Date().toISOString()
+      });
+      userDoc = await getDoc(userRef);
+    }
+
+    return userDoc.data();
+  }
+
   // Authentication
   async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, credentials.username, credentials.password); // Note: username field should be email for Firebase
-      const user = userCredential.user;
-      
-      // Get user details from Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      const userData = userDoc.data();
+      let email = credentials.username.trim();
+
+      // If not an email, look up by username in Firestore
+      if (!email.includes('@')) {
+        try {
+          const q = query(collection(db, 'users'), where('username', '==', email));
+          const snapshot = await getDocs(q);
+          if (!snapshot.empty) {
+            email = snapshot.docs[0].data().email;
+          } else {
+            return { success: false, error: 'User not found. Please sign in with your email address.' };
+          }
+        } catch {
+          return { success: false, error: 'Please sign in with your email address.' };
+        }
+      }
+
+      const userCredential = await signInWithEmailAndPassword(auth, email, credentials.password);
+      const firebaseUser = userCredential.user;
+      const userData = await this.ensureFirestoreUser(firebaseUser);
 
       return {
         success: true,
         data: {
-          token: await user.getIdToken(),
+          token: await firebaseUser.getIdToken(),
           user: {
-            id: user.uid,
-            username: userData?.username || user.email?.split('@')[0] || '',
-            email: user.email || '',
+            id: firebaseUser.uid,
+            username: userData?.username || firebaseUser.email?.split('@')[0] || '',
+            email: firebaseUser.email || '',
             firstName: userData?.firstName,
             lastName: userData?.lastName,
             role: userData?.role || 'user'
@@ -64,7 +115,7 @@ export class FirebaseService {
         }
       };
     } catch (error: any) {
-      return { success: false, error: error.message };
+      return { success: false, error: this.friendlyAuthError(error.code) };
     }
   }
 
@@ -73,8 +124,7 @@ export class FirebaseService {
       const currentUser = auth.currentUser;
       if (!currentUser) return { success: false, error: 'Not authenticated' };
 
-      const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-      const userData = userDoc.data();
+      const userData = await this.ensureFirestoreUser(currentUser);
 
       return {
         success: true,
