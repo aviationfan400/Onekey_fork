@@ -51,7 +51,7 @@ const Footer = () => {
             <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/about" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Our Story</Link></motion.div></li>
             <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/team" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Meet the Team</Link></motion.div></li>
             <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/timeline" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Events & Timeline</Link></motion.div></li>
-            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/admin" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Volunteer Portal</Link></motion.div></li>
+            <li><motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}><Link to="/vanstring" className="transition-all duration-300 text-stone-300/80 hover:text-earth-300 inline-block">Vanstring</Link></motion.div></li>
           </ul>
         </div>
 

@@ -10,6 +10,7 @@ import Timeline from './pages/Timeline';
 import MeetOurTeam from './pages/MeetOurTeam';
 import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
+import VanstringHome from './pages/VanstringHome';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -27,6 +28,7 @@ function AnimatedRoutes() {
           <Route path="/about"     element={<About />} />
           <Route path="/timeline"  element={<Timeline />} />
           <Route path="/team"      element={<MeetOurTeam />} />
+          <Route path="/vanstring" element={<VanstringHome />} />
           <Route path="/admin"     element={<AdminDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>

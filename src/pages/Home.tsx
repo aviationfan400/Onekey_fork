@@ -152,8 +152,8 @@ const Home: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <Link 
-                to="/timeline" 
+              <Link
+                to="/timeline"
                 className="inline-flex items-center px-6 py-3 text-sm font-semibold text-white transition-all duration-300 rounded-full bg-earth-600 hover:bg-earth-700 hover:shadow-lg"
               >
                 text

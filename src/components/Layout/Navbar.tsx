@@ -9,33 +9,27 @@ const Navbar = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location]);
+  useEffect(() => { setIsOpen(false); }, [location]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 16);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 16);
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Timeline', path: '/timeline' },
-    { name: 'Team', path: '/team' },
+    { name: 'About',      path: '/about' },
+    { name: 'Timeline',   path: '/timeline' },
+    { name: 'Team',       path: '/team' },
+    { name: 'Vanstring',  path: '/vanstring' },
   ];
 
   const navShellClass = [
     'site-nav',
     isScrolled ? 'site-nav--scrolled' : '',
     !isHome ? 'site-nav--solid' : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  ].filter(Boolean).join(' ');
 
   return (
     <nav className={navShellClass}>
