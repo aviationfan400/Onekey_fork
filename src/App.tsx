@@ -1,22 +1,15 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Layout from './components/Layout/Layout';
 import ScrollToTop from './components/ScrollToTop';
 import { useAuthStore } from './store/authStore';
-
-const Home          = React.lazy(() => import('./pages/Home'));
-const About         = React.lazy(() => import('./pages/About'));
-const Timeline      = React.lazy(() => import('./pages/Timeline'));
-const MeetOurTeam   = React.lazy(() => import('./pages/MeetOurTeam'));
-const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
-const Dashboard     = React.lazy(() => import('./pages/Dashboard'));
-
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-stone-900">
-    <div className="w-8 h-8 rounded-full border-2 border-stone-700 border-t-earth-400 animate-spin" />
-  </div>
-);
+import Home from './pages/Home';
+import About from './pages/About';
+import Timeline from './pages/Timeline';
+import MeetOurTeam from './pages/MeetOurTeam';
+import AdminDashboard from './pages/AdminDashboard';
+import Dashboard from './pages/Dashboard';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -52,15 +45,13 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/*" element={
-            <Layout>
-              <AnimatedRoutes />
-            </Layout>
-          } />
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route path="/*" element={
+          <Layout>
+            <AnimatedRoutes />
+          </Layout>
+        } />
+      </Routes>
     </>
   );
 }
