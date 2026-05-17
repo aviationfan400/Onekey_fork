@@ -463,3 +463,250 @@
   letter-spacing: 0.25em;
   text-transform: uppercase;
 }
+
+/* ——— Team page (simple, readable) ——— */
+/* Override legacy index.css white wash on .team-page */
+.team-page::before {
+  display: none !important;
+}
+
+.team-page {
+  background: #0c0a09;
+  color: #fafaf9;
+  text-align: left;
+  min-height: auto;
+}
+
+.team-page .container {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.team-hero {
+  padding: 1.5rem 0 1.25rem;
+  text-align: center;
+  border-bottom: 1px solid #292524;
+}
+
+.team-hero__title {
+  margin: 0 0 0.35rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.team-hero__subtitle {
+  margin: 0 auto;
+  max-width: 28rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #f5f5f4;
+}
+
+.team-section {
+  padding: 1.75rem 0;
+}
+
+.team-section__intro {
+  max-width: 40rem;
+  margin: 0 auto 1rem;
+  text-align: center;
+}
+
+.team-section__heading {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.team-section__desc {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #e7e5e4;
+}
+
+/* Flex + center so 1–2 cards in a row sit centered, not left-aligned */
+.team-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1.25rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.team-grid > .team-card {
+  flex: 1 1 20rem;
+  width: min(100%, 24rem);
+  max-width: 24rem;
+}
+
+.team-grid--compact > .team-card {
+  flex: 1 1 9.5rem;
+  width: min(100%, 11.5rem);
+  max-width: 11.5rem;
+}
+
+/* Simple member card */
+.team-card {
+  display: flex;
+  flex-direction: column;
+  background: #fafaf9;
+  border: 1px solid #a8a29e;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.team-card__photo-wrap {
+  aspect-ratio: 1;
+  background: #e7e5e4;
+  overflow: hidden;
+}
+
+.team-card--compact .team-card__photo-wrap {
+  aspect-ratio: 1;
+}
+
+.team-card__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.team-card__photo-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #78716c;
+  background: #e7e5e4;
+}
+
+.team-card__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.25rem 1.35rem 1.125rem;
+}
+
+.team-card__name {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1c1917;
+}
+
+.team-card__role {
+  margin: 0 0 0.15rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #292524;
+}
+
+.team-card__school {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #44403c;
+}
+
+.team-card--compact .team-card__school {
+  margin-bottom: 0;
+}
+
+.team-card--compact .team-card__name {
+  font-size: 1.05rem;
+}
+
+.team-card__bio {
+  margin: 0;
+  font-size: 0.975rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #1c1917;
+}
+
+.team-card__ig-btn {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 0.15rem 0;
+  color: #0c0a09;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.team-card__ig-btn:hover {
+  opacity: 1;
+  color: #57534e;
+}
+
+.team-card--compact .team-card__ig-btn {
+  margin-top: 0.5rem;
+}
+
+.team-join {
+  padding: 1.75rem 0 2.5rem;
+  border-top: 1px solid #292524;
+  text-align: center;
+}
+
+.team-join__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+
+.team-join__text {
+  margin: 0 auto 1.5rem;
+  max-width: 32rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #e7e5e4;
+  text-align: center;
+}
+
+.team-join__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.team-join__btn {
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.team-join__btn--primary {
+  color: #1c1917;
+  background: #e8dcc8;
+}
+
+.team-join__btn--ghost {
+  color: #fafaf9;
+  border: 1px solid #57534e;
+}
