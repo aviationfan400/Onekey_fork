@@ -89,7 +89,7 @@ const Navbar = () => {
             onMouseLeave={() => setAboutOpen(false)}
           >
             <button
-              className={`site-nav__link flex items-center gap-1 bg-transparent border-0 cursor-pointer ${isAboutActive ? 'site-nav__link--active' : ''}`}
+              className={`site-nav__link flex items-center gap-1 border-0 cursor-pointer ${isAboutActive ? 'site-nav__link--active' : ''}`}
               onClick={() => setAboutOpen(o => !o)}
               aria-expanded={aboutOpen}
             >
