@@ -10,21 +10,18 @@ import { resolveTeamImageSrc } from '../utils/teamImageUrl';
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { 
-    isAuthenticated, 
-    user, 
-    users, 
-    activityLogs, 
-    activityLogsPagination,
+  const {
+    isAuthenticated,
+    user,
+    users,
+    activityLogs,
     isLoading: authLoading,
-    addUser, 
-    removeUser, 
-    updateUserRole, 
-    updateUserStatus, 
+    addUser,
+    removeUser,
+    updateUserRole,
+    updateUserStatus,
     changePassword,
-    logActivity,
     fetchUsers,
-    fetchAllActivityLogs
   } = useAuthStore();
 
   // DEBUG LOGS
@@ -53,9 +50,7 @@ const AdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [activityFilter, setActivityFilter] = useState('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(50);
+  const [teamSortBy, setTeamSortBy] = useState('name-asc');
   const [newUserData, setNewUserData] = useState({
     username: '',
     email: '',
@@ -102,9 +97,8 @@ const AdminDashboard: React.FC = () => {
       fetchUsers();
       fetchEvents();
       fetchTeamMembers();
-      fetchAllActivityLogs(currentPage, itemsPerPage, activityFilter);
     }
-  }, [isAuthenticated, user, fetchUsers, fetchEvents, fetchTeamMembers, fetchAllActivityLogs, currentPage, itemsPerPage, activityFilter]);
+  }, [isAuthenticated, user, fetchUsers, fetchEvents, fetchTeamMembers]);
 
   // Remove the redirect effect
   
@@ -168,38 +162,6 @@ const AdminDashboard: React.FC = () => {
             </button>
           </form>
           
-          <div className="pt-6 mt-6 text-center border-t border-surface-100">
-            <p className="mb-4 text-sm text-surface-500">First time setup?</p>
-            <button
-              type="button"
-              onClick={async () => {
-                if (window.confirm('This will create a default admin user (admin@onekey.com / admin123). Continue?')) {
-                  try {
-                    const { apiService } = await import('../services/api');
-                    const result = await apiService.createUser({
-                      username: 'admin',
-                      email: 'admin@onekey.com',
-                      password: 'admin123',
-                      role: 'super_admin',
-                      firstName: 'System',
-                      lastName: 'Admin'
-                    });
-                    
-                    if (result.success) {
-                      alert('Admin user created! You can now login with:\nEmail: admin@onekey.com\nPassword: admin123');
-                    } else {
-                      alert('Error: ' + result.error);
-                    }
-                  } catch (e) {
-                    alert('Error creating admin: ' + e);
-                  }
-                }
-              }}
-              className="text-sm font-medium text-primary-600 hover:text-primary-700"
-            >
-              Initialize Admin Account
-            </button>
-          </div>
         </div>
       </div>
     );
@@ -678,53 +640,13 @@ const AdminDashboard: React.FC = () => {
               Edit Team
             </button>
             
-            <button 
-              className={`sidebar-item ${activeTab === 'logs' ? 'active' : ''}`}
-              onClick={() => setActiveTab('logs')}
-            >
-              <i className="fas fa-list"></i>
-              Activity
-            </button>
-            
-            <button 
+            <button
               className={`sidebar-item ${activeTab === 'timeline' ? 'active' : ''}`}
               onClick={() => setActiveTab('timeline')}
             >
               <i className="fas fa-calendar"></i>
               Timeline
             </button>
-
-            <div className="mt-8 pt-4 border-t border-white/10">
-              <button
-                className="sidebar-item text-yellow-400 hover:text-yellow-300"
-                onClick={async () => {
-                  if (window.confirm('This will create a default admin user (admin@onekey.com / admin123). Continue?')) {
-                    try {
-                      const { apiService } = await import('../services/api');
-                      const result = await apiService.createUser({
-                        username: 'admin',
-                        email: 'admin@onekey.com',
-                        password: 'admin123',
-                        role: 'super_admin',
-                        firstName: 'System',
-                        lastName: 'Admin'
-                      });
-                      
-                      if (result.success) {
-                        alert('Admin user created! You can now login with:\nEmail: admin@onekey.com\nPassword: admin123');
-                      } else {
-                        alert('Error: ' + result.error);
-                      }
-                    } catch (e) {
-                      alert('Error creating admin: ' + e);
-                    }
-                  }
-                }}
-              >
-                <i className="fas fa-key"></i>
-                Setup Admin
-              </button>
-            </div>
           </nav>
         </aside>
 
@@ -820,13 +742,13 @@ const AdminDashboard: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <select 
+                <select
                   className="filter-select"
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
                 >
                   <option value="all">All Roles</option>
-                  <option value="super_admin">Admin</option>
+                  <option value="super_admin">Super Admin</option>
                   <option value="admin">Admin</option>
                   <option value="user">User</option>
                 </select>
@@ -868,26 +790,23 @@ const AdminDashboard: React.FC = () => {
                       <td>{formatDate(user.createdAt)}</td>
                       <td>
                         <div className="content-actions">
-                          <button 
-                            className="btn btn-sm btn-icon"
+                          <button
+                            className="btn btn-sm btn-ghost"
                             onClick={() => handleEditUser(user)}
-                            title="Edit User"
                           >
-                            <i className="fas fa-edit"></i>
+                            <i className="fas fa-edit"></i> Edit
                           </button>
-                          <button 
-                            className={`btn btn-sm btn-icon ${user.isActive ? 'btn-warning' : 'btn-success'}`}
+                          <button
+                            className={`btn btn-sm ${user.isActive ? 'btn-warning' : 'btn-success'}`}
                             onClick={() => handleToggleUserStatus(user.id)}
-                            title={user.isActive ? 'Deactivate User' : 'Activate User'}
                           >
-                            <i className={`fas ${user.isActive ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                            {user.isActive ? 'Deactivate' : 'Activate'}
                           </button>
-                          <button 
-                            className="btn btn-sm btn-icon btn-danger"
+                          <button
+                            className="btn btn-sm btn-danger"
                             onClick={() => handleDeleteUser(user.id)}
-                            title="Delete User"
                           >
-                            <i className="fas fa-trash"></i>
+                            <i className="fas fa-trash"></i> Delete
                           </button>
                         </div>
                       </td>
@@ -895,154 +814,6 @@ const AdminDashboard: React.FC = () => {
                   ))}
                 </tbody>
               </table>
-            </>
-          )}
-
-          {/* Activity Logs Tab */}
-          {activeTab === 'logs' && (
-            <>
-              <div className="content-header">
-                <h2 className="content-title">Activity Logs</h2>
-                <div className="content-actions">
-                  <button 
-                    className="btn btn-secondary"
-                    onClick={() => fetchAllActivityLogs(currentPage, itemsPerPage, activityFilter)}
-                    disabled={authLoading}
-                  >
-                    <i className="fas fa-sync-alt"></i>
-                    {authLoading ? 'Refreshing...' : 'Refresh'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="search-bar">
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Search logs..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <select 
-                  className="filter-select"
-                  value={activityFilter}
-                  onChange={(e) => {
-                    setActivityFilter(e.target.value);
-                    setCurrentPage(1); // Reset to first page when filtering
-                  }}
-                >
-                  <option value="all">All Actions</option>
-                  <option value="login">Login</option>
-                  <option value="logout">Logout</option>
-                  <option value="add_user">Add User</option>
-                  <option value="update_user">Update User</option>
-                  <option value="delete_user">Delete User</option>
-                  <option value="add_event">Add Event</option>
-                  <option value="update_event">Update Event</option>
-                  <option value="delete_event">Delete Event</option>
-                  <option value="add_team_member">Add Team Member</option>
-                  <option value="update_team_member">Update Team Member</option>
-                  <option value="delete_team_member">Delete Team Member</option>
-                </select>
-                <select 
-                  className="filter-select"
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                >
-                  <option value={25}>25 per page</option>
-                  <option value={50}>50 per page</option>
-                  <option value={100}>100 per page</option>
-                </select>
-              </div>
-
-              {authLoading ? (
-                <div className="loading-state">
-                  <i className="fas fa-spinner fa-spin"></i>
-                  <p>Loading activity logs...</p>
-                </div>
-              ) : (
-                <>
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Time</th>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Details</th>
-                        <th>IP Address</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {activityLogs
-                        .filter(log => 
-                          searchTerm === '' || 
-                          log.details.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (log.username && log.username.toLowerCase().includes(searchTerm.toLowerCase()))
-                        )
-                        .map((log) => (
-                        <tr key={log.id}>
-                          <td>{formatDate(log.timestamp)}</td>
-                          <td>
-                            {log.username ? (
-                              <div>
-                                <strong>{log.username}</strong>
-                                {log.firstName && log.lastName && (
-                                  <>
-                                    <br />
-                                    <small>{log.firstName} {log.lastName}</small>
-                                  </>
-                                )}
-                              </div>
-                            ) : (
-                              'Unknown User'
-                            )}
-                          </td>
-                          <td>
-                            <span className="role-badge admin">
-                              <i className={getActionIcon(log.action)}></i>
-                              {log.action.replace(/_/g, ' ').toUpperCase()}
-                            </span>
-                          </td>
-                          <td>{log.details}</td>
-                          <td>{log.ipAddress || 'N/A'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-
-                  {/* Pagination */}
-                  {activityLogsPagination && activityLogsPagination.totalPages > 1 && (
-                    <div className="pagination">
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        disabled={currentPage === 1 || authLoading}
-                      >
-                        <i className="fas fa-chevron-left"></i>
-                        Previous
-                      </button>
-                      
-                      <span className="pagination-info">
-                        Page {activityLogsPagination.page} of {activityLogsPagination.totalPages} 
-                        ({activityLogsPagination.total} total logs)
-                      </span>
-                      
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, activityLogsPagination.totalPages))}
-                        disabled={currentPage === activityLogsPagination.totalPages || authLoading}
-                      >
-                        Next
-                        <i className="fas fa-chevron-right"></i>
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
             </>
           )}
 
@@ -1070,7 +841,7 @@ const AdminDashboard: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <select 
+                <select
                   className="filter-select"
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
@@ -1079,9 +850,19 @@ const AdminDashboard: React.FC = () => {
                   <option value="leadership">Leadership</option>
                   <option value="communications">Communications</option>
                   <option value="coordinators">Coordinators</option>
+                  <option value="finance">Financial Managers</option>
                   <option value="concertmasters">Concertmasters</option>
                   <option value="techdesign">Tech & Design</option>
                   <option value="alumni">Alumni</option>
+                </select>
+                <select
+                  className="filter-select"
+                  value={teamSortBy}
+                  onChange={(e) => setTeamSortBy(e.target.value)}
+                >
+                  <option value="name-asc">Name A→Z</option>
+                  <option value="name-desc">Name Z→A</option>
+                  <option value="section">Section</option>
                 </select>
               </div>
 
@@ -1106,44 +887,29 @@ const AdminDashboard: React.FC = () => {
                       const matchesSection = roleFilter === 'all' || member.section === roleFilter;
                       return matchesSearch && matchesSection;
                     })
+                    .sort((a, b) => {
+                      if (teamSortBy === 'name-asc') return a.name.localeCompare(b.name);
+                      if (teamSortBy === 'name-desc') return b.name.localeCompare(a.name);
+                      if (teamSortBy === 'section') return a.section.localeCompare(b.section) || a.name.localeCompare(b.name);
+                      return 0;
+                    })
                     .map((member) => (
                     <tr key={member.id}>
                       <td>
-                        <img
-                          src={resolveTeamImageSrc(member.image) ?? ''}
-                          alt={member.name}
-                          style={{ 
-                            width: '60px', 
-                            height: '60px', 
-                            objectFit: 'cover',
-                            borderRadius: '8px',
-                            border: '2px solid #e2e8f0',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                          }}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (nextElement) {
-                              nextElement.style.display = 'flex';
-                            }
-                          }}
-                        />
-                        <div 
-                          style={{ 
-                            width: '60px', 
-                            height: '60px', 
-                            background: '#f7fafc',
-                            borderRadius: '8px',
-                            display: 'none',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '10px',
-                            color: '#a0aec0',
-                            border: '2px solid #e2e8f0'
-                          }}
-                        >
-                          No img
-                        </div>
+                        {resolveTeamImageSrc(member.image) ? (
+                          <img
+                            src={resolveTeamImageSrc(member.image) ?? ''}
+                            alt={member.name}
+                            className="member-thumb"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <div className="member-thumb-fallback">
+                            {member.name.charAt(0)}
+                          </div>
+                        )}
                       </td>
                       <td>
                         <div>
@@ -1165,23 +931,23 @@ const AdminDashboard: React.FC = () => {
                       </td>
                       <td>
                         <div className="content-actions">
-                          <button 
-                            className="btn btn-sm btn-icon"
+                          <button
+                            className="btn btn-sm btn-ghost"
                             onClick={() => handleEditTeamMember(member)}
                           >
-                            <i className="fas fa-edit"></i>
+                            <i className="fas fa-edit"></i> Edit
                           </button>
                           <button
-                            className="btn btn-sm btn-icon btn-warning"
+                            className={`btn btn-sm ${member.isActive ? 'btn-warning' : 'btn-success'}`}
                             onClick={() => updateTeamMember(member.id, { isActive: !member.isActive })}
                           >
-                            <i className={`fas ${member.isActive ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                            {member.isActive ? 'Hide' : 'Show'}
                           </button>
-                          <button 
-                            className="btn btn-sm btn-icon btn-danger"
+                          <button
+                            className="btn btn-sm btn-danger"
                             onClick={() => handleDeleteTeamMember(member.id)}
                           >
-                            <i className="fas fa-trash"></i>
+                            <i className="fas fa-trash"></i> Delete
                           </button>
                         </div>
                       </td>
