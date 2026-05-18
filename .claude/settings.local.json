@@ -19,7 +19,20 @@
       "Bash(powershell -Command \"Remove-Item -Path node_modules -Recurse -Force\")",
       "Bash(timeout /t 25 /nobreak)",
       "Bash(timeout /t 30 /nobreak)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\Yuqiao Wei\\\\code\\\\onekey\" -Force | Select-Object -Property Name, @{Name=\"IsDirectory\"; Expression={$_.PSIsContainer}} | Sort-Object Name)",
+      "Bash(npx tsc *)",
+      "Bash(firebase --version)",
+      "Bash(firebase projects:list)",
+      "Bash(git push *)",
+      "Bash(del *)",
+      "Bash(Read \"C:\\\\Users\\\\YUQIAO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Yuqiao-Wei-code-onekey\\\\6a8f7bfc-963b-42bf-b74b-0acfe1098983\\\\tasks\\\\b9efykbcg.output\")",
+      "Bash(npm run *)",
+      "Bash(Test-Path *)",
+      "Read(//c/c/Users/Yuqiao Wei/code/onekey/**)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(k,':',v\\) for k,v in d.get\\('scripts',{}\\).items\\(\\)]\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); [print\\(f'{k}: {v}'\\) for k,v in d['scripts'].items\\(\\)]\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); print\\('DEPS:', list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)\\); print\\('DEVDEPS:', list\\(d.get\\('devDependencies',{}\\).keys\\(\\)\\)\\)\")"
     ]
   }
 }

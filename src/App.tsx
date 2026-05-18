@@ -11,7 +11,6 @@ import About from './pages/About';
 import Timeline from './pages/Timeline';
 import MeetOurTeam from './pages/MeetOurTeam';
 import AdminDashboard from './pages/AdminDashboard';
-import Dashboard from './pages/Dashboard';
 import VanstringHome from './pages/VanstringHome';
 
 function AnimatedRoutes() {
@@ -32,7 +31,6 @@ function AnimatedRoutes() {
           <Route path="/team"      element={<MeetOurTeam />} />
           <Route path="/vanstring" element={<VanstringHome />} />
           <Route path="/admin"     element={<AdminDashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </motion.div>
     </AnimatePresence>

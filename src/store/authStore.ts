@@ -74,18 +74,6 @@ export interface AuthState {
   clearError: () => void;
 }
 
-// Default admin credentials
-const DEFAULT_ADMIN: User = {
-  id: 'admin-1',
-  username: 'admin',
-  email: 'on3keymusic@gmail.com',
-  role: 'super_admin',
-  createdAt: new Date().toISOString(),
-  isActive: true,
-  firstName: 'System',
-  lastName: 'Administrator',
-  department: 'IT'
-};
 
 
 // Permission definitions
