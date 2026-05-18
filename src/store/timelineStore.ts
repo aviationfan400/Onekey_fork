@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiService, CreateEventRequest } from '../services/api';
+import { apiService } from '../services/firebaseService';
+import { CreateEventRequest } from '../services/api';
 
 export interface TimelineEvent {
   id: string;

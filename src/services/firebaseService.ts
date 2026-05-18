@@ -291,7 +291,7 @@ export class FirebaseService {
   async createEvent(eventData: CreateEventRequest): Promise<ApiResponse<{ id: string; message: string }>> {
     try {
       const docRef = await addDoc(collection(db, 'events'), {
-        ...eventData,
+        ...this.stripUndefined(eventData as any),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -305,7 +305,7 @@ export class FirebaseService {
   async updateEvent(eventId: string, eventData: CreateEventRequest): Promise<ApiResponse<{ message: string }>> {
     try {
       await updateDoc(doc(db, 'events', eventId), {
-        ...eventData,
+        ...this.stripUndefined(eventData as any),
         updated_at: new Date().toISOString()
       });
       return { success: true, data: { message: 'Event updated' } };
@@ -357,10 +357,14 @@ export class FirebaseService {
     }
   }
 
+  private stripUndefined(obj: Record<string, any>): Record<string, any> {
+    return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+  }
+
   async createTeamMember(data: Record<string, any>): Promise<ApiResponse<{ id: string }>> {
     try {
       const docRef = await addDoc(collection(db, 'teamMembers'), {
-        ...data,
+        ...this.stripUndefined(data),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
@@ -372,7 +376,7 @@ export class FirebaseService {
 
   async updateTeamMember(id: string, data: Record<string, any>): Promise<ApiResponse<{ message: string }>> {
     try {
-      await updateDoc(doc(db, 'teamMembers', id), { ...data, updatedAt: new Date().toISOString() });
+      await updateDoc(doc(db, 'teamMembers', id), { ...this.stripUndefined(data), updatedAt: new Date().toISOString() });
       return { success: true, data: { message: 'Updated' } };
     } catch (error: any) {
       return { success: false, error: error.message };

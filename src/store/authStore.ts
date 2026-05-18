@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiService } from '../services/api';
+import { apiService } from '../services/firebaseService';
 
 export interface User {
   id: string;
@@ -450,7 +450,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'onekey-auth',
+      name: 'onekey-auth-v2',
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
