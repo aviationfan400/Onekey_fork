@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { useTeamStore, TeamMember } from '../store/teamStore';
-import { apiService } from '../services/firebaseService';
+import { apiService, OWNER_EMAIL } from '../services/firebaseService';
 import TeamPhotoField from '../components/Admin/TeamPhotoField';
 import { resolveTeamImageSrc } from '../utils/teamImageUrl';
 
@@ -51,12 +51,14 @@ const AdminDashboard: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [teamSortBy, setTeamSortBy] = useState('name-asc');
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const [newUserData, setNewUserData] = useState({
     username: '',
     email: '',
     firstName: '',
     lastName: '',
     role: 'user',
+    currentPassword: '',
     password: '',
     confirmPassword: ''
   });
@@ -227,6 +229,7 @@ const AdminDashboard: React.FC = () => {
       firstName: '',
       lastName: '',
       role: 'user',
+      currentPassword: '',
       password: '',
       confirmPassword: ''
     });
@@ -534,12 +537,14 @@ const AdminDashboard: React.FC = () => {
 
   const handleEditUser = (user: User) => {
     setEditingUser(user);
+    setShowChangePassword(false);
     setNewUserData({
       username: user.username,
       email: user.email,
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       role: user.role,
+      currentPassword: '',
       password: '',
       confirmPassword: ''
     });
@@ -548,34 +553,26 @@ const AdminDashboard: React.FC = () => {
 
   const handleUpdateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!editingUser) return;
 
-    if (newUserData.password && newUserData.password !== newUserData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
+    if (showChangePassword) {
+      if (!newUserData.currentPassword) { alert('Enter your current password'); return; }
+      if (!newUserData.password) { alert('Enter a new password'); return; }
+      if (newUserData.password !== newUserData.confirmPassword) { alert('Passwords do not match'); return; }
+      const ok = await changePassword(editingUser.id, newUserData.currentPassword, newUserData.password);
+      if (!ok) {
+        const storeError = useAuthStore.getState().error;
+        alert(storeError || 'Failed to change password');
+        return;
+      }
     }
 
     try {
-      // Update user role
       await updateUserRole(editingUser.id, newUserData.role as User['role']);
-      
-      // Update password if provided
-      if (newUserData.password) {
-        await changePassword(editingUser.id, newUserData.password);
-      }
-
       setShowEditUserModal(false);
+      setShowChangePassword(false);
       setEditingUser(null);
-      setNewUserData({
-        username: '',
-        email: '',
-        firstName: '',
-        lastName: '',
-        role: 'user',
-        password: '',
-        confirmPassword: ''
-      });
+      setNewUserData({ username: '', email: '', firstName: '', lastName: '', role: 'user', currentPassword: '', password: '', confirmPassword: '' });
     } catch (error) {
       console.error('Error updating user:', error);
       alert('Failed to update user');
@@ -789,26 +786,39 @@ const AdminDashboard: React.FC = () => {
                       </td>
                       <td>{formatDate(user.createdAt)}</td>
                       <td>
-                        <div className="content-actions">
-                          <button
-                            className="btn btn-sm btn-ghost"
-                            onClick={() => handleEditUser(user)}
-                          >
-                            <i className="fas fa-edit"></i> Edit
-                          </button>
-                          <button
-                            className={`btn btn-sm ${user.isActive ? 'btn-warning' : 'btn-success'}`}
-                            onClick={() => handleToggleUserStatus(user.id)}
-                          >
-                            {user.isActive ? 'Deactivate' : 'Activate'}
-                          </button>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDeleteUser(user.id)}
-                          >
-                            <i className="fas fa-trash"></i> Delete
-                          </button>
-                        </div>
+                        {user.email === OWNER_EMAIL ? (
+                          <div className="content-actions">
+                            <span className="role-badge" style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fbbf24' }}>
+                              <i className="fas fa-crown" style={{ marginRight: '4px' }}></i>Owner
+                            </span>
+                            {useAuthStore.getState().user?.email === OWNER_EMAIL && (
+                              <button className="btn btn-sm btn-ghost" onClick={() => handleEditUser(user)}>
+                                <i className="fas fa-key"></i> Password
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="content-actions">
+                            <button
+                              className="btn btn-sm btn-ghost"
+                              onClick={() => handleEditUser(user)}
+                            >
+                              <i className="fas fa-edit"></i> Edit
+                            </button>
+                            <button
+                              className={`btn btn-sm ${user.isActive ? 'btn-warning' : 'btn-success'}`}
+                              onClick={() => handleToggleUserStatus(user.id)}
+                            >
+                              {user.isActive ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => handleDeleteUser(user.id)}
+                            >
+                              <i className="fas fa-trash"></i> Delete
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -2144,101 +2154,86 @@ const AdminDashboard: React.FC = () => {
             </div>
             <form onSubmit={handleUpdateUser} className="modal-form">
               <div className="form-group">
-                <label htmlFor="editUsername">Username *</label>
-                <input
-                  type="text"
-                  id="editUsername"
-                  name="username"
-                  value={newUserData.username}
-                  onChange={handleInputChange}
-                  required
-                  disabled
-                />
-                <small>Username cannot be changed</small>
+                <label>Username</label>
+                <input type="text" value={newUserData.username} disabled />
               </div>
-              
+
               <div className="form-group">
-                <label htmlFor="editEmail">Email *</label>
-                <input
-                  type="email"
-                  id="editEmail"
-                  name="email"
-                  value={newUserData.email}
-                  onChange={handleInputChange}
-                  required
-                  disabled
-                />
-                <small>Email cannot be changed</small>
+                <label>Email</label>
+                <input type="email" value={newUserData.email} disabled />
               </div>
-              
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="editFirstName">First Name</label>
-                  <input
-                    type="text"
-                    id="editFirstName"
-                    name="firstName"
-                    value={newUserData.firstName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="editLastName">Last Name</label>
-                  <input
-                    type="text"
-                    id="editLastName"
-                    name="lastName"
-                    value={newUserData.lastName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              
+
               <div className="form-group">
-                <label htmlFor="editRole">Role *</label>
-                <select
-                  id="editRole"
-                  name="role"
-                  value={newUserData.role}
-                  onChange={handleInputChange}
-                  required
-                >
+                <label htmlFor="editRole">Role</label>
+                <select id="editRole" name="role" value={newUserData.role} onChange={handleInputChange} required>
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
                   <option value="super_admin">Super Admin</option>
                 </select>
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="editPassword">New Password (leave blank to keep current)</label>
-                <input
-                  type="password"
-                  id="editPassword"
-                  name="password"
-                  value={newUserData.password}
-                  onChange={handleInputChange}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="editConfirmPassword">Confirm New Password</label>
-                <input
-                  type="password"
-                  id="editConfirmPassword"
-                  name="confirmPassword"
-                  value={newUserData.confirmPassword}
-                  onChange={handleInputChange}
-                />
-              </div>
-              
+
+              {editingUser?.id === user?.id && (
+                <div className="form-group">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={showChangePassword}
+                      onChange={e => {
+                        setShowChangePassword(e.target.checked);
+                        if (!e.target.checked) setNewUserData(prev => ({ ...prev, currentPassword: '', password: '', confirmPassword: '' }));
+                      }}
+                    />
+                    <span style={{ fontWeight: 600 }}>Change password</span>
+                  </label>
+                </div>
+              )}
+
+              {showChangePassword && editingUser?.id === user?.id && (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="editCurrentPassword">Current Password *</label>
+                    <input
+                      type="password"
+                      id="editCurrentPassword"
+                      name="currentPassword"
+                      value={newUserData.currentPassword}
+                      onChange={handleInputChange}
+                      required
+                      autoComplete="current-password"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="editPassword">New Password *</label>
+                    <input
+                      type="password"
+                      id="editPassword"
+                      name="password"
+                      value={newUserData.password}
+                      onChange={handleInputChange}
+                      required
+                      minLength={6}
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="editConfirmPassword">Confirm New Password *</label>
+                    <input
+                      type="password"
+                      id="editConfirmPassword"
+                      name="confirmPassword"
+                      value={newUserData.confirmPassword}
+                      onChange={handleInputChange}
+                      required
+                      minLength={6}
+                      autoComplete="new-password"
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="modal-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowEditUserModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Update User
-                </button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditUserModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Update User</button>
               </div>
             </form>
           </div>

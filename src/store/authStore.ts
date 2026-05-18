@@ -57,7 +57,7 @@ export interface AuthState {
   removeUser: (userId: string) => Promise<boolean>;
   updateUserRole: (userId: string, role: string) => Promise<boolean>;
   updateUserStatus: (userId: string, isActive: boolean) => Promise<boolean>;
-  changePassword: (userId: string, newPassword: string) => Promise<boolean>;
+  changePassword: (userId: string, currentPassword: string, newPassword: string) => Promise<boolean>;
   
   // Activity logging
   logActivity: (userId: string, action: string, details: string) => void;
@@ -363,19 +363,26 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      changePassword: async (userId, newPassword) => {
+      changePassword: async (userId, currentPassword, newPassword) => {
         set({ isLoading: true, error: null });
-        
         try {
-          // Note: Backend doesn't have a change password endpoint yet
-          // This would need to be implemented in the backend
-          set({ isLoading: false, error: 'Password change not implemented in backend yet' });
-          return false;
-        } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Failed to change password'
-          });
+          const { auth } = await import('../lib/firebase');
+          const { updatePassword, reauthenticateWithCredential, EmailAuthProvider } = await import('firebase/auth');
+          const firebaseUser = auth.currentUser;
+          if (!firebaseUser || firebaseUser.uid !== userId) {
+            set({ isLoading: false, error: 'You can only change your own password' });
+            return false;
+          }
+          const credential = EmailAuthProvider.credential(firebaseUser.email!, currentPassword);
+          await reauthenticateWithCredential(firebaseUser, credential);
+          await updatePassword(firebaseUser, newPassword);
+          set({ isLoading: false });
+          return true;
+        } catch (error: any) {
+          const msg = error?.code === 'auth/wrong-password' || error?.code === 'auth/invalid-credential'
+            ? 'Current password is incorrect'
+            : error instanceof Error ? error.message : 'Failed to change password';
+          set({ isLoading: false, error: msg });
           return false;
         }
       },

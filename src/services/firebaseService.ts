@@ -38,6 +38,8 @@ import {
   ActivityLog 
 } from './api';
 
+export const OWNER_EMAIL = 'iscurt.w@gmail.com';
+
 export class FirebaseService {
   private friendlyAuthError(code: string): string {
     switch (code) {
@@ -62,7 +64,7 @@ export class FirebaseService {
     let userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
-      const isKnownAdmin = firebaseUser.email === 'on3keymusic@gmail.com';
+      const isKnownAdmin = firebaseUser.email === OWNER_EMAIL || firebaseUser.email === 'on3keymusic@gmail.com';
       await setDoc(userRef, {
         username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || firebaseUser.uid,
         email: firebaseUser.email || '',
@@ -70,6 +72,9 @@ export class FirebaseService {
         isActive: true,
         createdAt: new Date().toISOString()
       });
+      userDoc = await getDoc(userRef);
+    } else if (firebaseUser.email === OWNER_EMAIL && userDoc.data()?.role !== 'super_admin') {
+      await updateDoc(userRef, { role: 'super_admin' });
       userDoc = await getDoc(userRef);
     }
 
@@ -217,6 +222,12 @@ export class FirebaseService {
 
   async updateUser(userId: string, userData: UpdateUserRequest): Promise<ApiResponse<{ message: string }>> {
     try {
+      const targetDoc = await getDoc(doc(db, 'users', userId));
+      if (targetDoc.exists() && targetDoc.data()?.email === OWNER_EMAIL) {
+        if (userData.role !== undefined || userData.isActive !== undefined) {
+          return { success: false, error: 'The owner account cannot be modified.' };
+        }
+      }
       await updateDoc(doc(db, 'users', userId), {
         ...userData
       });
@@ -228,6 +239,10 @@ export class FirebaseService {
 
   async deleteUser(userId: string): Promise<ApiResponse<{ message: string }>> {
     try {
+      const targetDoc = await getDoc(doc(db, 'users', userId));
+      if (targetDoc.exists() && targetDoc.data()?.email === OWNER_EMAIL) {
+        return { success: false, error: 'The owner account cannot be deleted.' };
+      }
       await deleteDoc(doc(db, 'users', userId));
       // Note: This doesn't delete the Auth user without Cloud Functions
       return { success: true, data: { message: 'User deleted' } };
