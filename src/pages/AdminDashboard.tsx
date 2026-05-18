@@ -3,8 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
 import { useTeamStore, TeamMember } from '../store/teamStore';
-import { apiService } from '../services/api';
+import { apiService } from '../services/firebaseService';
 import TeamPhotoField from '../components/Admin/TeamPhotoField';
+import { resolveTeamImageSrc } from '../utils/teamImageUrl';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -85,7 +86,11 @@ const AdminDashboard: React.FC = () => {
     instagram: '',
     image: '',
     section: 'leadership' as TeamMember['section'],
-    extraSections: [] as TeamMember['section'][]
+    group: undefined as 'onekey' | 'vanstring' | undefined,
+    concertmasterType: undefined as TeamMember['concertmasterType'],
+    extraSections: [] as TeamMember['section'][],
+    extraSectionsGroups: {} as Partial<Record<TeamMember['section'], 'onekey' | 'vanstring'>>,
+    extraSectionsConcertmasterTypes: {} as Partial<Record<TeamMember['section'], NonNullable<TeamMember['concertmasterType']>>>
   });
 
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -480,7 +485,12 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
 
     try {
-      await addTeamMember(newTeamData);
+      const result = await addTeamMember(newTeamData);
+      if (!result) {
+        const storeError = useTeamStore.getState().error;
+        alert(`Failed to create member: ${storeError || 'Unknown error — try logging out and back in.'}`);
+        return;
+      }
       setShowCreateTeamModal(false);
       setNewTeamData({
         name: '',
@@ -490,7 +500,11 @@ const AdminDashboard: React.FC = () => {
         instagram: '',
         image: '',
         section: 'leadership',
-        extraSections: []
+        group: undefined,
+        concertmasterType: undefined,
+        extraSections: [],
+        extraSectionsGroups: {},
+        extraSectionsConcertmasterTypes: {}
       });
     } catch (error) {
       console.error('Error creating team member:', error);
@@ -508,7 +522,11 @@ const AdminDashboard: React.FC = () => {
       instagram: member.instagram,
       image: member.image,
       section: member.section,
-      extraSections: member.extraSections ?? []
+      group: member.group,
+      concertmasterType: member.concertmasterType,
+      extraSections: member.extraSections ?? [],
+      extraSectionsGroups: member.extraSectionsGroups ?? {},
+      extraSectionsConcertmasterTypes: member.extraSectionsConcertmasterTypes ?? {}
     });
     setShowEditTeamModal(true);
   };
@@ -518,7 +536,12 @@ const AdminDashboard: React.FC = () => {
     if (!editingTeamMember) return;
 
     try {
-      await updateTeamMember(editingTeamMember.id, newTeamData);
+      const ok = await updateTeamMember(editingTeamMember.id, newTeamData);
+      if (!ok) {
+        const storeError = useTeamStore.getState().error;
+        alert(`Failed to save: ${storeError || 'Unknown error — try logging out and back in.'}`);
+        return;
+      }
       setShowEditTeamModal(false);
       setEditingTeamMember(null);
       setNewTeamData({
@@ -529,7 +552,11 @@ const AdminDashboard: React.FC = () => {
         instagram: '',
         image: '',
         section: 'leadership',
-        extraSections: []
+        group: undefined,
+        concertmasterType: undefined,
+        extraSections: [],
+        extraSectionsGroups: {},
+        extraSectionsConcertmasterTypes: {}
       });
     } catch (error) {
       console.error('Error updating team member:', error);
@@ -1053,6 +1080,7 @@ const AdminDashboard: React.FC = () => {
                   <option value="communications">Communications</option>
                   <option value="coordinators">Coordinators</option>
                   <option value="concertmasters">Concertmasters</option>
+                  <option value="techdesign">Tech & Design</option>
                   <option value="alumni">Alumni</option>
                 </select>
               </div>
@@ -1081,8 +1109,8 @@ const AdminDashboard: React.FC = () => {
                     .map((member) => (
                     <tr key={member.id}>
                       <td>
-                        <img 
-                          src={member.image} 
+                        <img
+                          src={resolveTeamImageSrc(member.image) ?? ''}
                           alt={member.name}
                           style={{ 
                             width: '60px', 
@@ -1955,42 +1983,123 @@ const AdminDashboard: React.FC = () => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="teamSection">Section *</label>
-                <select
-                  id="teamSection"
-                  name="section"
-                  value={newTeamData.section}
-                  onChange={handleTeamInputChange}
-                  required
-                >
-                  <option value="leadership">Leadership</option>
-                  <option value="communications">Communications</option>
-                  <option value="coordinators">Coordinators</option>
-                  <option value="concertmasters">Concertmasters</option>
-                  <option value="alumni">Alumni</option>
-                </select>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={newTeamData.section === 'alumni'}
+                    onChange={e => setNewTeamData(prev => ({
+                      ...prev,
+                      section: e.target.checked ? 'alumni' : 'leadership',
+                      group: undefined,
+                      extraSections: [],
+                      extraSectionsGroups: {}
+                    }))}
+                  />
+                  <span style={{ fontWeight: 600 }}>Mark as Alumni</span>
+                  <span style={{ fontSize: '0.8rem', color: '#a8a29e', fontWeight: 400 }}>overrides section — only shows in Alumni</span>
+                </label>
               </div>
+
+              {newTeamData.section !== 'alumni' && (
+                <div className="form-group">
+                  <label htmlFor="teamSection">Section *</label>
+                  <select
+                    id="teamSection"
+                    name="section"
+                    value={newTeamData.section}
+                    onChange={handleTeamInputChange}
+                    required
+                  >
+                    <option value="leadership">Leadership</option>
+                    <option value="communications">Communications</option>
+                    <option value="coordinators">Coordinators</option>
+                    <option value="finance">Financial Managers</option>
+                    <option value="concertmasters">Concertmasters</option>
+                    <option value="techdesign">Tech & Design</option>
+                  </select>
+                </div>
+              )}
+
+              {(newTeamData.section === 'leadership' || newTeamData.section === 'communications') && (
+                <div className="form-group">
+                  <label>OneKey or Vanstring?</label>
+                  <select
+                    value={newTeamData.group ?? 'onekey'}
+                    onChange={e => setNewTeamData(prev => ({ ...prev, group: e.target.value as 'onekey' | 'vanstring' }))}
+                  >
+                    <option value="onekey">OneKey</option>
+                    <option value="vanstring">Vanstring</option>
+                  </select>
+                </div>
+              )}
+
+              {newTeamData.section === 'concertmasters' && (
+                <div className="form-group">
+                  <label>Concertmaster Type</label>
+                  <select
+                    value={newTeamData.concertmasterType ?? ''}
+                    onChange={e => setNewTeamData(prev => ({ ...prev, concertmasterType: (e.target.value as TeamMember['concertmasterType']) || undefined }))}
+                  >
+                    <option value="">-- Select type --</option>
+                    <option value="concertmaster">Concertmaster</option>
+                    <option value="associate">Associate Concertmaster</option>
+                    <option value="principal_second">Principal Second Violin</option>
+                  </select>
+                </div>
+              )}
 
               <div className="form-group">
                 <label>Also appears in</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.25rem' }}>
-                  {(['leadership','communications','coordinators','concertmasters','alumni'] as TeamMember['section'][])
+                  {(['leadership','communications','coordinators','finance','concertmasters','techdesign','alumni'] as TeamMember['section'][])
                     .filter(s => s !== newTeamData.section)
-                    .map(s => (
-                      <label key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 400, cursor: 'pointer' }}>
-                        <input
-                          type="checkbox"
-                          checked={newTeamData.extraSections.includes(s)}
-                          onChange={e => setNewTeamData(prev => ({
-                            ...prev,
-                            extraSections: e.target.checked
-                              ? [...prev.extraSections, s]
-                              : prev.extraSections.filter(x => x !== s)
-                          }))}
-                        />
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
-                      </label>
-                    ))}
+                    .map(s => {
+                      const checked = newTeamData.extraSections.includes(s);
+                      const isSplit = s === 'leadership' || s === 'communications';
+                      const sectionLabel = {'leadership':'Leadership','communications':'Communications','coordinators':'Coordinators','finance':'Financial Managers','concertmasters':'Concertmasters','techdesign':'Tech & Design','alumni':'Alumni'}[s];
+                      return (
+                        <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 400, cursor: 'pointer' }}>
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={e => setNewTeamData(prev => {
+                                const next = { ...prev };
+                                next.extraSections = e.target.checked ? [...prev.extraSections, s] : prev.extraSections.filter(x => x !== s);
+                                if (!e.target.checked) {
+                                  const g = { ...prev.extraSectionsGroups }; delete g[s]; next.extraSectionsGroups = g;
+                                  const ct = { ...prev.extraSectionsConcertmasterTypes }; delete ct[s]; next.extraSectionsConcertmasterTypes = ct;
+                                }
+                                return next;
+                              })}
+                            />
+                            {sectionLabel}
+                          </label>
+                          {isSplit && checked && (
+                            <select
+                              value={newTeamData.extraSectionsGroups?.[s] ?? 'onekey'}
+                              onChange={e => setNewTeamData(prev => ({ ...prev, extraSectionsGroups: { ...prev.extraSectionsGroups, [s]: e.target.value as 'onekey' | 'vanstring' } }))}
+                              style={{ fontSize: '0.8rem', padding: '0.1rem 0.3rem' }}
+                            >
+                              <option value="onekey">OneKey</option>
+                              <option value="vanstring">Vanstring</option>
+                            </select>
+                          )}
+                          {s === 'concertmasters' && checked && (
+                            <select
+                              value={newTeamData.extraSectionsConcertmasterTypes?.[s] ?? ''}
+                              onChange={e => setNewTeamData(prev => ({ ...prev, extraSectionsConcertmasterTypes: { ...prev.extraSectionsConcertmasterTypes, [s]: e.target.value as NonNullable<TeamMember['concertmasterType']> || undefined } }))}
+                              style={{ fontSize: '0.8rem', padding: '0.1rem 0.3rem' }}
+                            >
+                              <option value="">-- type --</option>
+                              <option value="concertmaster">Concertmaster</option>
+                              <option value="associate">Assoc. Concertmaster</option>
+                              <option value="principal_second">Principal 2nd</option>
+                            </select>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
 
@@ -2089,42 +2198,123 @@ const AdminDashboard: React.FC = () => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="editTeamSection">Section *</label>
-                <select
-                  id="editTeamSection"
-                  name="section"
-                  value={newTeamData.section}
-                  onChange={handleTeamInputChange}
-                  required
-                >
-                  <option value="leadership">Leadership</option>
-                  <option value="communications">Communications</option>
-                  <option value="coordinators">Coordinators</option>
-                  <option value="concertmasters">Concertmasters</option>
-                  <option value="alumni">Alumni</option>
-                </select>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={newTeamData.section === 'alumni'}
+                    onChange={e => setNewTeamData(prev => ({
+                      ...prev,
+                      section: e.target.checked ? 'alumni' : 'leadership',
+                      group: undefined,
+                      extraSections: [],
+                      extraSectionsGroups: {}
+                    }))}
+                  />
+                  <span style={{ fontWeight: 600 }}>Mark as Alumni</span>
+                  <span style={{ fontSize: '0.8rem', color: '#a8a29e', fontWeight: 400 }}>overrides section — only shows in Alumni</span>
+                </label>
               </div>
+
+              {newTeamData.section !== 'alumni' && (
+                <div className="form-group">
+                  <label htmlFor="editTeamSection">Section *</label>
+                  <select
+                    id="editTeamSection"
+                    name="section"
+                    value={newTeamData.section}
+                    onChange={handleTeamInputChange}
+                    required
+                  >
+                    <option value="leadership">Leadership</option>
+                    <option value="communications">Communications</option>
+                    <option value="coordinators">Coordinators</option>
+                    <option value="finance">Financial Managers</option>
+                    <option value="concertmasters">Concertmasters</option>
+                    <option value="techdesign">Tech & Design</option>
+                  </select>
+                </div>
+              )}
+
+              {(newTeamData.section === 'leadership' || newTeamData.section === 'communications') && (
+                <div className="form-group">
+                  <label>OneKey or Vanstring?</label>
+                  <select
+                    value={newTeamData.group ?? 'onekey'}
+                    onChange={e => setNewTeamData(prev => ({ ...prev, group: e.target.value as 'onekey' | 'vanstring' }))}
+                  >
+                    <option value="onekey">OneKey</option>
+                    <option value="vanstring">Vanstring</option>
+                  </select>
+                </div>
+              )}
+
+              {newTeamData.section === 'concertmasters' && (
+                <div className="form-group">
+                  <label>Concertmaster Type</label>
+                  <select
+                    value={newTeamData.concertmasterType ?? ''}
+                    onChange={e => setNewTeamData(prev => ({ ...prev, concertmasterType: (e.target.value as TeamMember['concertmasterType']) || undefined }))}
+                  >
+                    <option value="">-- Select type --</option>
+                    <option value="concertmaster">Concertmaster</option>
+                    <option value="associate">Associate Concertmaster</option>
+                    <option value="principal_second">Principal Second Violin</option>
+                  </select>
+                </div>
+              )}
 
               <div className="form-group">
                 <label>Also appears in</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.25rem' }}>
-                  {(['leadership','communications','coordinators','concertmasters','alumni'] as TeamMember['section'][])
+                  {(['leadership','communications','coordinators','finance','concertmasters','techdesign','alumni'] as TeamMember['section'][])
                     .filter(s => s !== newTeamData.section)
-                    .map(s => (
-                      <label key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 400, cursor: 'pointer' }}>
-                        <input
-                          type="checkbox"
-                          checked={newTeamData.extraSections.includes(s)}
-                          onChange={e => setNewTeamData(prev => ({
-                            ...prev,
-                            extraSections: e.target.checked
-                              ? [...prev.extraSections, s]
-                              : prev.extraSections.filter(x => x !== s)
-                          }))}
-                        />
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
-                      </label>
-                    ))}
+                    .map(s => {
+                      const checked = newTeamData.extraSections.includes(s);
+                      const isSplit = s === 'leadership' || s === 'communications';
+                      const sectionLabel = {'leadership':'Leadership','communications':'Communications','coordinators':'Coordinators','finance':'Financial Managers','concertmasters':'Concertmasters','techdesign':'Tech & Design','alumni':'Alumni'}[s];
+                      return (
+                        <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 400, cursor: 'pointer' }}>
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={e => setNewTeamData(prev => {
+                                const next = { ...prev };
+                                next.extraSections = e.target.checked ? [...prev.extraSections, s] : prev.extraSections.filter(x => x !== s);
+                                if (!e.target.checked) {
+                                  const g = { ...prev.extraSectionsGroups }; delete g[s]; next.extraSectionsGroups = g;
+                                  const ct = { ...prev.extraSectionsConcertmasterTypes }; delete ct[s]; next.extraSectionsConcertmasterTypes = ct;
+                                }
+                                return next;
+                              })}
+                            />
+                            {sectionLabel}
+                          </label>
+                          {isSplit && checked && (
+                            <select
+                              value={newTeamData.extraSectionsGroups?.[s] ?? 'onekey'}
+                              onChange={e => setNewTeamData(prev => ({ ...prev, extraSectionsGroups: { ...prev.extraSectionsGroups, [s]: e.target.value as 'onekey' | 'vanstring' } }))}
+                              style={{ fontSize: '0.8rem', padding: '0.1rem 0.3rem' }}
+                            >
+                              <option value="onekey">OneKey</option>
+                              <option value="vanstring">Vanstring</option>
+                            </select>
+                          )}
+                          {s === 'concertmasters' && checked && (
+                            <select
+                              value={newTeamData.extraSectionsConcertmasterTypes?.[s] ?? ''}
+                              onChange={e => setNewTeamData(prev => ({ ...prev, extraSectionsConcertmasterTypes: { ...prev.extraSectionsConcertmasterTypes, [s]: e.target.value as NonNullable<TeamMember['concertmasterType']> || undefined } }))}
+                              style={{ fontSize: '0.8rem', padding: '0.1rem 0.3rem' }}
+                            >
+                              <option value="">-- type --</option>
+                              <option value="concertmaster">Concertmaster</option>
+                              <option value="associate">Assoc. Concertmaster</option>
+                              <option value="principal_second">Principal 2nd</option>
+                            </select>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
 
@@ -2157,6 +2347,7 @@ const AdminDashboard: React.FC = () => {
                 label="Photo"
                 value={newTeamData.image}
                 onChange={(path) => setNewTeamData(prev => ({ ...prev, image: path }))}
+                onSave={editingTeamMember ? async (path) => { await updateTeamMember(editingTeamMember.id, { image: path }); } : undefined}
               />
 
               <div className="modal-actions">
