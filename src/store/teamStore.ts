@@ -9,9 +9,12 @@ export interface TeamMember {
   bio: string;
   instagram: string;
   image: string;
-  section: 'leadership' | 'communications' | 'coordinators' | 'concertmasters' | 'alumni';
-  extraSections?: Array<'leadership' | 'communications' | 'coordinators' | 'concertmasters' | 'alumni'>;
+  section: 'leadership' | 'communications' | 'coordinators' | 'finance' | 'concertmasters' | 'techdesign' | 'alumni';
+  extraSections?: Array<'leadership' | 'communications' | 'coordinators' | 'finance' | 'concertmasters' | 'techdesign' | 'alumni'>;
+  extraSectionsGroups?: Partial<Record<TeamMember['section'], 'onekey' | 'vanstring'>>;
   group?: 'onekey' | 'vanstring';
+  concertmasterType?: 'concertmaster' | 'associate' | 'principal_second';
+  extraSectionsConcertmasterTypes?: Partial<Record<TeamMember['section'], NonNullable<TeamMember['concertmasterType']>>>;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -179,13 +182,14 @@ const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
-    name: 'Concertmaster 1',
+    name: 'Rachel Xu',
     role: 'Concertmaster',
-    school: '',
-    bio: '',
+    school: 'Collingwood School',
+    bio: "Hi, I'm Rachel, a grade 10 student at Collingwood school. Ever since beginning my musical journey at the age of 9 with the piano and violin, it has become an integral part of my life that I cannot live without. I am thrilled to be given the opportunity to be the concertmaster of Vanstring and coordinate with senior homes as the communications exec, allowing me to share my passion for the arts to others. In my free time, I enjoy travelling the world, reading new novels, and exploring new fields in both the tech world and biology.",
     instagram: '',
     image: '',
     section: 'concertmasters',
+    group: 'vanstring',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
@@ -306,16 +310,29 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
     }
   },
 
-  getTeamMembersBySection: (section) =>
-    get().teamMembers.filter(m =>
-      m.isActive !== false &&
-      (m.section === section || m.extraSections?.includes(section))
-    ),
+  getTeamMembersBySection: (section) => {
+    const CONCERTMASTER_RANK: Record<string, number> = {
+      concertmaster: 0, associate: 1, principal_second: 2,
+    };
+    return get().teamMembers
+      .filter(m => m.isActive !== false && (m.section === section || m.extraSections?.includes(section)))
+      .sort((a, b) => {
+        if (section !== 'concertmasters') return 0;
+        const typeA = a.section === 'concertmasters' ? a.concertmasterType : a.extraSectionsConcertmasterTypes?.['concertmasters'];
+        const typeB = b.section === 'concertmasters' ? b.concertmasterType : b.extraSectionsConcertmasterTypes?.['concertmasters'];
+        return (CONCERTMASTER_RANK[typeA ?? ''] ?? 99) - (CONCERTMASTER_RANK[typeB ?? ''] ?? 99);
+      });
+  },
 
   getTeamMembersBySectionAndGroup: (section, group) =>
-    get().teamMembers.filter(m =>
-      m.section === section &&
-      m.isActive !== false &&
-      (group === 'onekey' ? (m.group === 'onekey' || !m.group) : m.group === group)
-    ),
+    get().teamMembers.filter(m => {
+      if (m.isActive === false) return false;
+      const isPrimary = m.section === section;
+      const isCrossListed = m.extraSections?.includes(section) ?? false;
+      if (!isPrimary && !isCrossListed) return false;
+      const effectiveGroup = isPrimary
+        ? (m.group ?? 'onekey')
+        : (m.extraSectionsGroups?.[section] ?? m.group ?? 'onekey');
+      return group === 'onekey' ? effectiveGroup === 'onekey' : effectiveGroup === 'vanstring';
+    }),
 }));
