@@ -1,8 +1,6 @@
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
+import {
+  signInWithEmailAndPassword,
   signOut,
-  updateProfile,
   User as FirebaseUser
 } from 'firebase/auth';
 import { 
@@ -25,18 +23,17 @@ import {
   uploadBytes, 
   getDownloadURL 
 } from 'firebase/storage';
-import { auth, db, storage } from '../lib/firebase';
-import { 
-  ApiResponse, 
-  LoginRequest, 
-  LoginResponse, 
-  User, 
-  CreateUserRequest, 
-  UpdateUserRequest, 
-  TimelineEvent, 
-  CreateEventRequest, 
-  ActivityLog 
-} from './api';
+import { auth, db, storage, createAuthUserIsolated } from '../lib/firebase';
+
+export interface ApiResponse<T = any> { success: boolean; data?: T; error?: string; message?: string; }
+export interface LoginRequest { username: string; password: string; }
+export interface LoginResponse { token: string; user: { id: string; username: string; email: string; firstName?: string; lastName?: string; role?: string; }; }
+export interface User { id: string; username: string; email: string; firstName?: string; lastName?: string; role: string; isActive: boolean; createdAt: string; lastLoginAt?: string; }
+export interface CreateUserRequest { username: string; email: string; firstName?: string; lastName?: string; role: string; password: string; }
+export interface UpdateUserRequest { firstName?: string; lastName?: string; role?: string; isActive?: boolean; }
+export interface TimelineEvent { id: string; name: string; date: string; category: string; location?: string; time?: string; attendees?: string; performers?: string; duration?: string; description?: string; photo_url?: string; created_at: string; updated_at: string; }
+export interface CreateEventRequest { name: string; date: string; category: string; location?: string; time?: string; attendees?: string; performers?: string; duration?: string; description?: string; photo_url?: string; }
+export interface ActivityLog { id: string; user_id: string; userId?: string; action: string; details: string; ip_address?: string; ipAddress?: string; timestamp: string; username?: string; first_name?: string; last_name?: string; }
 
 export const OWNER_EMAIL = 'iscurt.w@gmail.com';
 
@@ -186,26 +183,10 @@ export class FirebaseService {
 
   async createUser(userData: CreateUserRequest): Promise<ApiResponse<{ userId: string; message: string }>> {
     try {
-      // Create auth user
-      // Note: This signs in the new user automatically, which might not be desired for an admin creating a user.
-      // In a real app, you'd use a secondary app instance or Cloud Functions.
-      // For this implementation, we'll warn about this limitation or use a workaround if possible.
-      // A simple workaround for client-side only is to not create the auth user here but just the firestore doc,
-      // but that prevents them from logging in. 
-      // We will assume for now this is acceptable or the user will register themselves.
-      
-      // BETTER APPROACH for "Admin creating user":
-      // Just create the Firestore document. The user must "Sign Up" themselves to create the Auth account,
-      // OR we use a Cloud Function.
-      // Since we don't have Cloud Functions set up, we will just create the Firestore doc and assume the user
-      // will register with the same email, or we accept that "Add User" in admin panel is metadata only until they register.
-      
-      // Let's try to create the Auth user.
-      const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
-      const user = userCredential.user;
+      // Use an isolated secondary Firebase app so creating the user doesn't sign out the admin
+      const uid = await createAuthUserIsolated(userData.email, userData.password);
 
-      // Create Firestore document
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(db, 'users', uid), {
         username: userData.username,
         email: userData.email,
         firstName: userData.firstName,
@@ -215,7 +196,7 @@ export class FirebaseService {
         createdAt: new Date().toISOString()
       });
 
-      return { success: true, data: { userId: user.uid, message: 'User created' } };
+      return { success: true, data: { userId: uid, message: 'User created' } };
     } catch (error: any) {
       return { success: false, error: error.message };
     }

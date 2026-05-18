@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, deleteApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -22,4 +22,18 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
+export { firebaseConfig };
 export default app;
+
+export async function createAuthUserIsolated(email: string, password: string) {
+  const { getAuth, createUserWithEmailAndPassword } = await import('firebase/auth');
+  const tempName = `temp-${Date.now()}`;
+  const tempApp = initializeApp(firebaseConfig, tempName);
+  const tempAuth = getAuth(tempApp);
+  try {
+    const cred = await createUserWithEmailAndPassword(tempAuth, email, password);
+    return cred.user.uid;
+  } finally {
+    await deleteApp(tempApp);
+  }
+}
