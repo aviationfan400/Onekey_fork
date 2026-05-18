@@ -2168,7 +2168,6 @@ const AdminDashboard: React.FC = () => {
                 <select id="editRole" name="role" value={newUserData.role} onChange={handleInputChange} required>
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
-                  <option value="super_admin">Super Admin</option>
                 </select>
               </div>
 

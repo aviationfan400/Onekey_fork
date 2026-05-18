@@ -64,11 +64,12 @@ export class FirebaseService {
     let userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
-      const isKnownAdmin = firebaseUser.email === OWNER_EMAIL || firebaseUser.email === 'on3keymusic@gmail.com';
+      const isOwner = firebaseUser.email === OWNER_EMAIL;
+      const isKnownAdmin = ['on3keymusic@gmail.com', 'vanstringscm@gmail.com'].includes(firebaseUser.email || '');
       await setDoc(userRef, {
         username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || firebaseUser.uid,
         email: firebaseUser.email || '',
-        role: isKnownAdmin ? 'super_admin' : 'user',
+        role: isOwner ? 'super_admin' : isKnownAdmin ? 'admin' : 'user',
         isActive: true,
         createdAt: new Date().toISOString()
       });
@@ -223,9 +224,13 @@ export class FirebaseService {
   async updateUser(userId: string, userData: UpdateUserRequest): Promise<ApiResponse<{ message: string }>> {
     try {
       const targetDoc = await getDoc(doc(db, 'users', userId));
-      if (targetDoc.exists() && targetDoc.data()?.email === OWNER_EMAIL) {
-        if (userData.role !== undefined || userData.isActive !== undefined) {
+      if (targetDoc.exists()) {
+        const targetEmail = targetDoc.data()?.email;
+        if (targetEmail === OWNER_EMAIL && (userData.role !== undefined || userData.isActive !== undefined)) {
           return { success: false, error: 'The owner account cannot be modified.' };
+        }
+        if (userData.role === 'super_admin' && targetEmail !== OWNER_EMAIL) {
+          return { success: false, error: 'Only the owner account can hold the super_admin role.' };
         }
       }
       await updateDoc(doc(db, 'users', userId), {
