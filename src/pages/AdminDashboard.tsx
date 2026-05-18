@@ -84,7 +84,8 @@ const AdminDashboard: React.FC = () => {
     bio: '',
     instagram: '',
     image: '',
-    section: 'leadership' as TeamMember['section']
+    section: 'leadership' as TeamMember['section'],
+    extraSections: [] as TeamMember['section'][]
   });
 
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -488,7 +489,8 @@ const AdminDashboard: React.FC = () => {
         bio: '',
         instagram: '',
         image: '',
-        section: 'leadership'
+        section: 'leadership',
+        extraSections: []
       });
     } catch (error) {
       console.error('Error creating team member:', error);
@@ -505,7 +507,8 @@ const AdminDashboard: React.FC = () => {
       bio: member.bio,
       instagram: member.instagram,
       image: member.image,
-      section: member.section
+      section: member.section,
+      extraSections: member.extraSections ?? []
     });
     setShowEditTeamModal(true);
   };
@@ -525,7 +528,8 @@ const AdminDashboard: React.FC = () => {
         bio: '',
         instagram: '',
         image: '',
-        section: 'leadership'
+        section: 'leadership',
+        extraSections: []
       });
     } catch (error) {
       console.error('Error updating team member:', error);
@@ -1048,6 +1052,7 @@ const AdminDashboard: React.FC = () => {
                   <option value="leadership">Leadership</option>
                   <option value="communications">Communications</option>
                   <option value="coordinators">Coordinators</option>
+                  <option value="concertmasters">Concertmasters</option>
                   <option value="alumni">Alumni</option>
                 </select>
               </div>
@@ -1961,10 +1966,34 @@ const AdminDashboard: React.FC = () => {
                   <option value="leadership">Leadership</option>
                   <option value="communications">Communications</option>
                   <option value="coordinators">Coordinators</option>
+                  <option value="concertmasters">Concertmasters</option>
                   <option value="alumni">Alumni</option>
                 </select>
               </div>
-              
+
+              <div className="form-group">
+                <label>Also appears in</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.25rem' }}>
+                  {(['leadership','communications','coordinators','concertmasters','alumni'] as TeamMember['section'][])
+                    .filter(s => s !== newTeamData.section)
+                    .map(s => (
+                      <label key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 400, cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={newTeamData.extraSections.includes(s)}
+                          onChange={e => setNewTeamData(prev => ({
+                            ...prev,
+                            extraSections: e.target.checked
+                              ? [...prev.extraSections, s]
+                              : prev.extraSections.filter(x => x !== s)
+                          }))}
+                        />
+                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                      </label>
+                    ))}
+                </div>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="teamBio">Bio *</label>
                 <textarea
@@ -2071,10 +2100,34 @@ const AdminDashboard: React.FC = () => {
                   <option value="leadership">Leadership</option>
                   <option value="communications">Communications</option>
                   <option value="coordinators">Coordinators</option>
+                  <option value="concertmasters">Concertmasters</option>
                   <option value="alumni">Alumni</option>
                 </select>
               </div>
-              
+
+              <div className="form-group">
+                <label>Also appears in</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.25rem' }}>
+                  {(['leadership','communications','coordinators','concertmasters','alumni'] as TeamMember['section'][])
+                    .filter(s => s !== newTeamData.section)
+                    .map(s => (
+                      <label key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 400, cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={newTeamData.extraSections.includes(s)}
+                          onChange={e => setNewTeamData(prev => ({
+                            ...prev,
+                            extraSections: e.target.checked
+                              ? [...prev.extraSections, s]
+                              : prev.extraSections.filter(x => x !== s)
+                          }))}
+                        />
+                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                      </label>
+                    ))}
+                </div>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="editTeamBio">Bio *</label>
                 <textarea

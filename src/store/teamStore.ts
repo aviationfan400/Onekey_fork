@@ -9,7 +9,8 @@ export interface TeamMember {
   bio: string;
   instagram: string;
   image: string;
-  section: 'leadership' | 'communications' | 'coordinators' | 'alumni';
+  section: 'leadership' | 'communications' | 'coordinators' | 'concertmasters' | 'alumni';
+  extraSections?: Array<'leadership' | 'communications' | 'coordinators' | 'concertmasters' | 'alumni'>;
   group?: 'onekey' | 'vanstring';
   isActive: boolean;
   createdAt: string;
@@ -139,6 +140,69 @@ const SEED_MEMBERS: Omit<TeamMember, 'id'>[] = [
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
+    name: 'Vanstring Comms 1',
+    role: 'Vanstring Communications',
+    school: '',
+    bio: '',
+    instagram: '',
+    image: '',
+    section: 'communications',
+    group: 'vanstring',
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    name: 'Vanstring Comms 2',
+    role: 'Vanstring Communications',
+    school: '',
+    bio: '',
+    instagram: '',
+    image: '',
+    section: 'communications',
+    group: 'vanstring',
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    name: 'Vanstring Comms 3',
+    role: 'Vanstring Communications',
+    school: '',
+    bio: '',
+    instagram: '',
+    image: '',
+    section: 'communications',
+    group: 'vanstring',
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    name: 'Concertmaster 1',
+    role: 'Concertmaster',
+    school: '',
+    bio: '',
+    instagram: '',
+    image: '',
+    section: 'concertmasters',
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    name: 'Concertmaster 2',
+    role: 'Concertmaster',
+    school: '',
+    bio: '',
+    instagram: '',
+    image: '',
+    section: 'concertmasters',
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  },
+  {
     name: 'Johnny Yang',
     role: 'Vanstring General Manager',
     school: 'Fraser Heights Secondary School',
@@ -181,11 +245,9 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
 
       let members = res.data.members as TeamMember[];
 
-      // Seed Firestore on first run, or top-up any missing seed members by name
-      const existingNames = new Set(members.map(m => m.name));
-      const missing = SEED_MEMBERS.filter(m => !existingNames.has(m.name));
-      if (missing.length > 0) {
-        await Promise.all(missing.map(m => apiService.createTeamMember(m)));
+      // Seed Firestore only on first run (empty collection)
+      if (members.length === 0) {
+        await Promise.all(SEED_MEMBERS.map(m => apiService.createTeamMember(m)));
         const refreshed = await apiService.getTeamMembers();
         members = (refreshed.data?.members ?? []) as TeamMember[];
       }
@@ -245,7 +307,10 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
   },
 
   getTeamMembersBySection: (section) =>
-    get().teamMembers.filter(m => m.section === section && m.isActive !== false),
+    get().teamMembers.filter(m =>
+      m.isActive !== false &&
+      (m.section === section || m.extraSections?.includes(section))
+    ),
 
   getTeamMembersBySectionAndGroup: (section, group) =>
     get().teamMembers.filter(m =>

@@ -38,8 +38,10 @@ const TeamCarousel: React.FC<Props> = ({ members, compact }) => {
     el.scrollBy({ left: dir === 'left' ? -(CARD_W + GAP) * 2 : (CARD_W + GAP) * 2, behavior: 'smooth' });
   };
 
+  const cardCount = Math.min(members.length, 5) || 1;
+
   return (
-    <div className="tc">
+    <div className="tc" style={{ '--card-count': cardCount } as React.CSSProperties}>
       {/* Prev */}
       <motion.button
         className="tc__arrow tc__arrow--prev"

@@ -37,16 +37,17 @@ interface SplitSectionProps {
   description: string;
   onekeyMembers: TeamMember[];
   vanstringMembers: TeamMember[];
+  fitCards?: boolean;
 }
 
-const SplitSection: React.FC<SplitSectionProps> = ({ title, description, onekeyMembers, vanstringMembers }) => (
+const SplitSection: React.FC<SplitSectionProps> = ({ title, description, onekeyMembers, vanstringMembers, fitCards }) => (
   <section className="team-section">
     <div className="container">
       <header className="team-section__intro">
         <h2 className="team-section__heading">{title}</h2>
         <p className="team-section__desc">{description}</p>
       </header>
-      <div className="leadership-split">
+      <div className={`leadership-split${fitCards ? ' leadership-split--fit' : ''}`}>
         <div className="leadership-split__left" style={{ flex: Math.max(onekeyMembers.length, 1) }}>
           <span className="leadership-split__label">OneKey</span>
           <TeamCarousel members={onekeyMembers} />
@@ -76,6 +77,7 @@ const MeetOurTeam: React.FC = () => {
         description="Founders driving OneKey's vision"
         onekeyMembers={getTeamMembersBySectionAndGroup('leadership', 'onekey')}
         vanstringMembers={getTeamMembersBySectionAndGroup('leadership', 'vanstring')}
+        fitCards
       />
 
       <SplitSection
@@ -89,6 +91,12 @@ const MeetOurTeam: React.FC = () => {
         title="Homework Help Coordinators"
         description="Supporting students through tutoring and academic assistance"
         members={getTeamMembersBySection('coordinators')}
+      />
+
+      <TeamSection
+        title="Concertmasters"
+        description="Leading Vanstring's performances"
+        members={getTeamMembersBySection('concertmasters')}
       />
 
       <TeamSection
