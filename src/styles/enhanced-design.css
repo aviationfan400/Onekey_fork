@@ -687,6 +687,10 @@
   width: 100%;
 }
 
+.tc__track--wheel-scrolling {
+  scroll-snap-type: none;
+}
+
 .tc__track::-webkit-scrollbar { display: none; }
 
 .tc__item {
