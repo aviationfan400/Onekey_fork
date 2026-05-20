@@ -6,26 +6,47 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "0 9 * * 1"  # every Monday at 9am UTC
+    - cron: "45 13 * * 0"  # Sunday 1:45pm UTC
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
       security-events: write
+      packages: read
       actions: read
       contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
-          languages: javascript-typescript
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-and-quality
+          config: |
+            paths-ignore:
+              - node_modules
+              - backend/node_modules
+              - build
+              - backend/dist
+              - "**/*.min.js"
+              - "**/*.test.ts"
+              - "**/*.test.tsx"
 
-      - name: Perform Analysis
-        uses: github/codeql-action/analyze@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:javascript-typescript"
+          category: "/language:${{ matrix.language }}"
