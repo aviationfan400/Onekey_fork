@@ -14,6 +14,10 @@ interface Props {
 
 const TeamCarousel: React.FC<Props> = ({ members, compact, hideBio, currentSection, currentGroup }) => {
   const trackRef  = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const lastFrameTimeRef = useRef<number | null>(null);
+  const targetVelocityRef = useRef(0);
+  const currentVelocityRef = useRef(0);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
   const showArrows = members.length > 4;
@@ -34,6 +38,86 @@ const TeamCarousel: React.FC<Props> = ({ members, compact, hideBio, currentSecti
     ro.observe(el);
     return () => { el.removeEventListener('scroll', updateArrows); ro.disconnect(); };
   }, [updateArrows]);
+
+  const stopWheelAnimation = useCallback(() => {
+    trackRef.current?.classList.remove('tc__track--wheel-scrolling');
+
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    lastFrameTimeRef.current = null;
+    targetVelocityRef.current = 0;
+    currentVelocityRef.current = 0;
+  }, []);
+
+  const runWheelAnimation = useCallback((time: number) => {
+    const el = trackRef.current;
+    if (!el) {
+      stopWheelAnimation();
+      return;
+    }
+
+    const lastFrameTime = lastFrameTimeRef.current ?? time;
+    const frameScale = Math.min((time - lastFrameTime) / 16.67, 2);
+    lastFrameTimeRef.current = time;
+
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const currentVelocity = currentVelocityRef.current;
+    const targetVelocity = targetVelocityRef.current;
+    const nextVelocity = currentVelocity + (targetVelocity - currentVelocity) * 0.16;
+    const nextScrollLeft = Math.max(0, Math.min(maxScrollLeft, el.scrollLeft + nextVelocity * frameScale));
+
+    el.scrollLeft = nextScrollLeft;
+    currentVelocityRef.current = nextVelocity * 0.92;
+    targetVelocityRef.current *= 0.9;
+
+    const isAtStart = nextScrollLeft <= 0;
+    const isAtEnd = nextScrollLeft >= maxScrollLeft;
+    const isPushingPastEdge = (isAtStart && targetVelocityRef.current < 0) || (isAtEnd && targetVelocityRef.current > 0);
+
+    if (
+      isPushingPastEdge ||
+      (Math.abs(currentVelocityRef.current) < 0.1 && Math.abs(targetVelocityRef.current) < 0.1)
+    ) {
+      stopWheelAnimation();
+      return;
+    }
+
+    animationFrameRef.current = requestAnimationFrame(runWheelAnimation);
+  }, [stopWheelAnimation]);
+
+  const handleWheel = useCallback((event: WheelEvent) => {
+    const el = trackRef.current;
+    if (!el || el.scrollWidth <= el.clientWidth) return;
+
+    event.preventDefault();
+    el.classList.add('tc__track--wheel-scrolling');
+
+    const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : el.clientHeight;
+    const deltaX = event.deltaMode === WheelEvent.DOM_DELTA_PIXEL ? event.deltaX : event.deltaX * unit;
+    const deltaY = event.deltaMode === WheelEvent.DOM_DELTA_PIXEL ? event.deltaY : event.deltaY * unit;
+    const delta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
+    if (!delta) return;
+
+    targetVelocityRef.current = Math.max(-140, Math.min(140, targetVelocityRef.current + delta * 0.18));
+
+    if (animationFrameRef.current === null) {
+      animationFrameRef.current = requestAnimationFrame(runWheelAnimation);
+    }
+  }, [runWheelAnimation]);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', handleWheel);
+      stopWheelAnimation();
+    };
+  }, [handleWheel, stopWheelAnimation]);
 
   const scroll = (dir: 'left' | 'right') => {
     const el = trackRef.current;
