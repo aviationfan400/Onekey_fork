@@ -9,6 +9,7 @@ declare module 'framer-motion' {
     initial?: boolean;
     mode?: 'wait' | 'sync' | 'popLayout';
     onExitComplete?: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     custom?: any;
     presenceAffectsLayout?: boolean;
   }

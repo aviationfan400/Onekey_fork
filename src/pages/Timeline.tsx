@@ -160,7 +160,7 @@ const Timeline: React.FC = () => {
     filtered.forEach(ev => {
       const yr = safeFormat(ev.date, 'yyyy');
       if (!map.has(yr)) map.set(yr, []);
-      map.get(yr)!.push({ ...ev, _left: gi++ % 2 === 0 });
+      map.get(yr)?.push({ ...ev, _left: gi++ % 2 === 0 });
     });
     return Array.from(map.entries()).map(([year, evs]) => ({ year, events: evs }));
   }, [filtered]);
@@ -236,8 +236,8 @@ const Timeline: React.FC = () => {
       else          await addEvent(payload);
 
       closeModal();
-    } catch (err: any) {
-      setFormError(err.message ?? 'Something went wrong');
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setSubmitting(false);
     }
@@ -301,7 +301,7 @@ const Timeline: React.FC = () => {
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
                 >
-                  {cat === 'all' ? 'All Events' : meta!.label}
+                  {cat === 'all' ? 'All Events' : meta?.label}
                 </motion.button>
               );
             })}

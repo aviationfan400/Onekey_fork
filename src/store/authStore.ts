@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiService } from '../services/firebaseService';
+import { apiService, CreateUserRequest } from '../services/firebaseService';
 
 export interface User {
   id: string;
@@ -53,7 +53,7 @@ export interface AuthState {
   
   // User management
   fetchUsers: () => Promise<void>;
-  addUser: (userData: any) => Promise<boolean>;
+  addUser: (userData: CreateUserRequest) => Promise<boolean>;
   removeUser: (userId: string) => Promise<boolean>;
   updateUserRole: (userId: string, role: string) => Promise<boolean>;
   updateUserStatus: (userId: string, isActive: boolean) => Promise<boolean>;
@@ -352,17 +352,18 @@ export const useAuthStore = create<AuthState>()(
           const { auth } = await import('../lib/firebase');
           const { updatePassword, reauthenticateWithCredential, EmailAuthProvider } = await import('firebase/auth');
           const firebaseUser = auth.currentUser;
-          if (!firebaseUser || firebaseUser.uid !== userId) {
+          if (!firebaseUser || firebaseUser.uid !== userId || !firebaseUser.email) {
             set({ isLoading: false, error: 'You can only change your own password' });
             return false;
           }
-          const credential = EmailAuthProvider.credential(firebaseUser.email!, currentPassword);
+          const credential = EmailAuthProvider.credential(firebaseUser.email, currentPassword);
           await reauthenticateWithCredential(firebaseUser, credential);
           await updatePassword(firebaseUser, newPassword);
           set({ isLoading: false });
           return true;
-        } catch (error: any) {
-          const msg = error?.code === 'auth/wrong-password' || error?.code === 'auth/invalid-credential'
+        } catch (error: unknown) {
+          const code = (error as { code?: string })?.code;
+          const msg = code === 'auth/wrong-password' || code === 'auth/invalid-credential'
             ? 'Current password is incorrect'
             : error instanceof Error ? error.message : 'Failed to change password';
           set({ isLoading: false, error: msg });

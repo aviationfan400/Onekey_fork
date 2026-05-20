@@ -145,7 +145,7 @@ const AdminTerminal: React.FC = () => {
         concertmasterType: (data.cm_type as TeamMember['concertmasterType']) || undefined,
         isActive: true,
       };
-      const result = await useTeamStore.getState().addTeamMember(payload as any);
+      const result = await useTeamStore.getState().addTeamMember(payload as Omit<TeamMember, 'id' | 'createdAt' | 'updatedAt' | 'isActive'>);
       if (result) push(L(`✓ ${data.name} added successfully`, 'success'));
       else push(L(`failed: ${useTeamStore.getState().error || 'unknown error'}`, 'error'));
     }
@@ -372,7 +372,7 @@ const AdminTerminal: React.FC = () => {
         const m = findMember(query);
         if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
         push(L(`updating ${m.name}…`, 'dim'));
-        const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections: [value] } as any);
+        const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections: [value] } as Partial<Omit<TeamMember, 'id' | 'createdAt'>>);
         push(ok ? L(`✓ ${m.name}: sections → [${value}]`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
         return;
       }
@@ -393,7 +393,7 @@ const AdminTerminal: React.FC = () => {
 
         push(L(`updating ${m.name}…`, 'dim'));
         const dbField = TEAM_FIELDS[field];
-        const ok = await useTeamStore.getState().updateTeamMember(m.id, { [dbField]: value } as any);
+        const ok = await useTeamStore.getState().updateTeamMember(m.id, { [dbField]: value } as Partial<Omit<TeamMember, 'id' | 'createdAt'>>);
         push(ok ? L(`✓ ${m.name}: ${field} → ${value}`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
         return;
       }
@@ -410,7 +410,7 @@ const AdminTerminal: React.FC = () => {
       const m = findMember(query);
       if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
       const sections = Array.from(new Set([...(m.sections ?? []), section]));
-      const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections } as any);
+      const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections } as Partial<Omit<TeamMember, 'id' | 'createdAt'>>);
       push(ok ? L(`✓ ${m.name}: added to ${section}`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
       return;
     }
@@ -423,7 +423,7 @@ const AdminTerminal: React.FC = () => {
       if (!m) { push(L(`no member matching: ${query}`, 'error')); return; }
       const sections = (m.sections ?? []).filter(s => s !== section);
       if (!sections.length) { push(L('cannot remove last section — member must belong to at least one', 'error')); return; }
-      const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections } as any);
+      const ok = await useTeamStore.getState().updateTeamMember(m.id, { sections } as Partial<Omit<TeamMember, 'id' | 'createdAt'>>);
       push(ok ? L(`✓ ${m.name}: removed from ${section}`, 'success') : L(`failed: ${useTeamStore.getState().error}`, 'error'));
       return;
     }

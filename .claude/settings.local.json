@@ -32,7 +32,18 @@
       "Read(//c/c/Users/Yuqiao Wei/code/onekey/**)",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(k,':',v\\) for k,v in d.get\\('scripts',{}\\).items\\(\\)]\")",
       "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); [print\\(f'{k}: {v}'\\) for k,v in d['scripts'].items\\(\\)]\")",
-      "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); print\\('DEPS:', list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)\\); print\\('DEVDEPS:', list\\(d.get\\('devDependencies',{}\\).keys\\(\\)\\)\\)\")"
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); print\\('DEPS:', list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)\\); print\\('DEVDEPS:', list\\(d.get\\('devDependencies',{}\\).keys\\(\\)\\)\\)\")",
+      "Skill(frontend-design)",
+      "Bash(Copy-Item *)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(gh pr *)",
+      "Bash(npm list *)",
+      "Bash(gh api *)",
+      "Bash(gh run *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Yuqiao Wei\\\\code\\\\onekey\\\\src\" -Recurse -Filter \"*.ts\" -o Name)",
+      "Bash(Select-Object -First 20)"
     ]
   }
 }

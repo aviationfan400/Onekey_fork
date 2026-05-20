@@ -4,18 +4,16 @@ import {
   User as FirebaseUser
 } from 'firebase/auth';
 import { 
-  collection, 
-  doc, 
-  getDocs, 
-  getDoc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  Timestamp,
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
   setDoc
 } from 'firebase/firestore';
 import { 
@@ -25,7 +23,7 @@ import {
 } from 'firebase/storage';
 import { auth, db, storage, createAuthUserIsolated } from '../lib/firebase';
 
-export interface ApiResponse<T = any> { success: boolean; data?: T; error?: string; message?: string; }
+export interface ApiResponse<T = unknown> { success: boolean; data?: T; error?: string; message?: string; }
 export interface LoginRequest { username: string; password: string; }
 export interface LoginResponse { token: string; user: { id: string; username: string; email: string; firstName?: string; lastName?: string; role?: string; }; }
 export interface User { id: string; username: string; email: string; firstName?: string; lastName?: string; role: string; isActive: boolean; createdAt: string; lastLoginAt?: string; }
@@ -56,7 +54,7 @@ export class FirebaseService {
     }
   }
 
-  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<Record<string, any> | undefined> {
+  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<Record<string, unknown> | undefined> {
     const userRef = doc(db, 'users', firebaseUser.uid);
     let userDoc = await getDoc(userRef);
 
@@ -117,8 +115,9 @@ export class FirebaseService {
           }
         }
       };
-    } catch (error: any) {
-      return { success: false, error: this.friendlyAuthError(error.code) };
+    } catch (error: unknown) {
+      const code = (error as { code?: string })?.code ?? '';
+      return { success: false, error: this.friendlyAuthError(code) };
     }
   }
 
@@ -144,8 +143,8 @@ export class FirebaseService {
           }
         }
       };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -176,8 +175,8 @@ export class FirebaseService {
       });
 
       return { success: true, data: { users } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -197,8 +196,8 @@ export class FirebaseService {
       });
 
       return { success: true, data: { userId: uid, message: 'User created' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -218,8 +217,8 @@ export class FirebaseService {
         ...userData
       });
       return { success: true, data: { message: 'User updated' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -232,8 +231,8 @@ export class FirebaseService {
       await deleteDoc(doc(db, 'users', userId));
       // Note: This doesn't delete the Auth user without Cloud Functions
       return { success: true, data: { message: 'User deleted' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -267,8 +266,8 @@ export class FirebaseService {
           pagination: { page, limit, total, totalPages }
         }
       };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -284,8 +283,8 @@ export class FirebaseService {
       });
 
       return { success: true, data: { events } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -298,8 +297,8 @@ export class FirebaseService {
       });
 
       return { success: true, data: { id: docRef.id, message: 'Event created' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -310,8 +309,8 @@ export class FirebaseService {
         updated_at: new Date().toISOString()
       });
       return { success: true, data: { message: 'Event updated' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -319,8 +318,8 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db, 'events', eventId));
       return { success: true, data: { message: 'Event deleted' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -340,21 +339,21 @@ export class FirebaseService {
           size: snapshot.metadata.size
         }
       };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
   // Team Members
-  async getTeamMembers(): Promise<ApiResponse<{ members: Record<string, any>[] }>> {
+  async getTeamMembers(): Promise<ApiResponse<{ members: Record<string, unknown>[] }>> {
     try {
       const q = query(collection(db, 'teamMembers'));
       const snap = await getDocs(q);
-      const members: Record<string, any>[] = [];
+      const members: Record<string, unknown>[] = [];
       snap.forEach(d => members.push({ id: d.id, ...d.data() }));
       return { success: true, data: { members } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -362,7 +361,7 @@ export class FirebaseService {
     return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
   }
 
-  async createTeamMember(data: Record<string, any>): Promise<ApiResponse<{ id: string }>> {
+  async createTeamMember(data: Record<string, unknown>): Promise<ApiResponse<{ id: string }>> {
     try {
       const docRef = await addDoc(collection(db, 'teamMembers'), {
         ...this.stripUndefined(data),
@@ -370,17 +369,17 @@ export class FirebaseService {
         updatedAt: new Date().toISOString(),
       });
       return { success: true, data: { id: docRef.id } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
-  async updateTeamMember(id: string, data: Record<string, any>): Promise<ApiResponse<{ message: string }>> {
+  async updateTeamMember(id: string, data: Record<string, unknown>): Promise<ApiResponse<{ message: string }>> {
     try {
       await updateDoc(doc(db, 'teamMembers', id), { ...this.stripUndefined(data), updatedAt: new Date().toISOString() });
       return { success: true, data: { message: 'Updated' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 
@@ -388,8 +387,8 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db, 'teamMembers', id));
       return { success: true, data: { message: 'Deleted' } };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'An error occurred' };
     }
   }
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore, User } from '../store/authStore';
 import { useTimelineStore, TimelineEvent } from '../store/timelineStore';
@@ -10,14 +9,11 @@ import AdminTerminal from '../components/Admin/AdminTerminal';
 import { resolveTeamImageSrc } from '../utils/teamImageUrl';
 
 const AdminDashboard: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const {
     isAuthenticated,
     user,
     users,
     activityLogs,
-    isLoading: authLoading,
     addUser,
     removeUser,
     updateUserRole,
@@ -203,7 +199,7 @@ const AdminDashboard: React.FC = () => {
       return;
     }
     
-    const success = await addUser({
+    await addUser({
       username: newUserData.username,
       email: newUserData.email,
       firstName: newUserData.firstName,
@@ -269,7 +265,7 @@ const AdminDashboard: React.FC = () => {
         }
       }
       
-      const newEvent = await addEvent({
+      await addEvent({
         ...newEventData,
         photo: photoUrls[0] || null, // Keep first photo as main photo for now
         photos: photoUrls, // Store all photos
@@ -301,15 +297,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  };
-
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -323,7 +310,6 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteEvent = async (eventId: string) => {
     if (window.confirm('Are you sure you want to delete this event?')) {
-      const event = events.find(e => e.id === eventId);
       await removeEvent(eventId);
       
       // Log the event deletion
@@ -533,7 +519,6 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteUser = async (userId: string) => {
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      const targetUser = users.find(u => u.id === userId);
       await removeUser(userId);
       
       // Log the user deletion

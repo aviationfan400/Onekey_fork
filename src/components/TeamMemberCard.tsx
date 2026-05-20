@@ -38,7 +38,7 @@ const TeamMemberCard: React.FC<TeamMemberCardProps> = ({ member, compact = false
       return CONCERTMASTER_LABELS[member.concertmasterType];
     }
     if (currentSection && currentGroup && GROUP_SECTION_LABELS[currentSection]) {
-      return GROUP_SECTION_LABELS[currentSection]![currentGroup];
+      return GROUP_SECTION_LABELS[currentSection]?.[currentGroup];
     }
     if (currentSection) return SECTION_ROLE_LABELS[currentSection];
     return member.role;

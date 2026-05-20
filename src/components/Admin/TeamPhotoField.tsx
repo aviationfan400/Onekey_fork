@@ -188,7 +188,9 @@ const TeamPhotoField: React.FC<Props> = ({
       const out = document.createElement('canvas');
       out.width  = OUTPUT;
       out.height = OUTPUT;
-      out.getContext('2d')!.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUTPUT, OUTPUT);
+      const ctx = out.getContext('2d');
+      if (!ctx) throw new Error('Could not get canvas context');
+      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUTPUT, OUTPUT);
 
       const blob = await new Promise<Blob>((res, rej) =>
         out.toBlob(b => b ? res(b) : rej(new Error('Crop failed')), 'image/jpeg', 0.92)
@@ -206,8 +208,8 @@ const TeamPhotoField: React.FC<Props> = ({
       } else {
         setError(result.error || 'Upload failed');
       }
-    } catch (err: any) {
-      setError(err.message || 'Could not upload photo');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Could not upload photo');
     } finally {
       setUploading(false);
     }

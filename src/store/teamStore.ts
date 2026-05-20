@@ -201,13 +201,13 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
         return;
       }
 
-      let members = res.data.members as any[];
+      let members = res.data.members as Record<string, unknown>[];
 
       // Seed Firestore only on first run (empty collection)
       if (members.length === 0) {
         await Promise.all(SEED_MEMBERS.map(m => apiService.createTeamMember(m)));
         const refreshed = await apiService.getTeamMembers();
-        members = (refreshed.data?.members ?? []) as any[];
+        members = (refreshed.data?.members ?? []) as Record<string, unknown>[];
       }
 
       // Migrate old schema (section + extraSections) → sections[]
@@ -223,8 +223,8 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
       }
 
       set({ teamMembers: (members as TeamMember[]).filter(m => m.isActive !== false), isLoading: false });
-    } catch (err: any) {
-      set({ isLoading: false, error: err.message });
+    } catch (err: unknown) {
+      set({ isLoading: false, error: err instanceof Error ? err.message : 'An error occurred' });
     }
   },
 
@@ -239,8 +239,8 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
       await get().fetchTeamMembers();
       const newId = res.data?.id;
       return newId ? get().teamMembers.find(m => m.id === newId) ?? null : null;
-    } catch (err: any) {
-      set({ isLoading: false, error: err.message });
+    } catch (err: unknown) {
+      set({ isLoading: false, error: err instanceof Error ? err.message : 'An error occurred' });
       return null;
     }
   },
@@ -255,8 +255,8 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
       }
       await get().fetchTeamMembers();
       return true;
-    } catch (err: any) {
-      set({ isLoading: false, error: err.message });
+    } catch (err: unknown) {
+      set({ isLoading: false, error: err instanceof Error ? err.message : 'An error occurred' });
       return false;
     }
   },
@@ -271,8 +271,8 @@ export const useTeamStore = create<TeamState>()((set, get) => ({
       }
       await get().fetchTeamMembers();
       return true;
-    } catch (err: any) {
-      set({ isLoading: false, error: err.message });
+    } catch (err: unknown) {
+      set({ isLoading: false, error: err instanceof Error ? err.message : 'An error occurred' });
       return false;
     }
   },
