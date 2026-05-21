@@ -54,7 +54,16 @@ export class FirebaseService {
     }
   }
 
-  private async ensureFirestoreUser(firebaseUser: FirebaseUser): Promise<Record<string, unknown> | undefined> {
+  type AppUserData = {
+    username?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    role?: string;
+  };
+
+  private async ensureFirestoreUser(firebaseUser: User): Promise<AppUserData> {
+
     const userRef = doc(db, 'users', firebaseUser.uid);
     let userDoc = await getDoc(userRef);
 
@@ -74,7 +83,7 @@ export class FirebaseService {
       userDoc = await getDoc(userRef);
     }
 
-    return userDoc.data();
+    return userDoc.data() as AppUserData;
   }
 
   // Authentication
