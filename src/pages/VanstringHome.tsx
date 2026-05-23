@@ -122,7 +122,7 @@ const VanstringHome: React.FC = () => {
 
   return (
     <div ref={rootRef} className="min-h-screen bg-stone-900 text-white">
-      <section className="vs-hero relative overflow-hidden pt-[4.5rem]">
+      <section className="vs-hero relative overflow-hidden">
         <div className="relative h-[44vw] min-h-[420px] max-h-[calc(100vh-4.5rem)] overflow-hidden">
           <img
             src={`${process.env.PUBLIC_URL}/pics/vanstring.jpg`}
