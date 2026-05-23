@@ -89,6 +89,7 @@ export class FirebaseService {
     return userDoc.data();
   }
 
+
   // Authentication
   async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     try {
