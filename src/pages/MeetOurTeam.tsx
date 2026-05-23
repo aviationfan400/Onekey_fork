@@ -84,11 +84,12 @@ const MeetOurTeam: React.FC = () => {
 
   useEffect(() => { fetchTeamMembers(); }, [fetchTeamMembers]);
 
-  // Hero animation + hide ALL animatable static elements on mount
-  // useLayoutEffect runs synchronously BEFORE browser paint — prevents flash of unhidden content
+  // Hero entrance + bind section scroll triggers (regardless of data state)
+  // Runs once on mount. Section elements get hidden initially and animated in by ScrollTrigger
+  // as the user scrolls — independent of whether team data has loaded yet.
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Hide everything that will eventually animate — even elements that exist before data loads
+      // Initial states — hide everything that will animate in
       gsap.set('.team-hero__title',         { clipPath: 'inset(0 100% 0 0)', y: 30, opacity: 0 });
       gsap.set('.team-hero__line',          { scaleX: 0, transformOrigin: 'left center' });
       gsap.set('.team-section__heading',    { y: 40, opacity: 0, clipPath: 'inset(0 0 100% 0)' });
@@ -96,70 +97,58 @@ const MeetOurTeam: React.FC = () => {
       gsap.set('.leadership-split__label',  { y: -8, opacity: 0, scale: 0.8 });
       gsap.set('.leadership-split__divider',{ scaleY: 0, transformOrigin: 'center center' });
 
-      // Animate hero in
+      // Hero — animate in immediately
       gsap.to('.team-hero__title',
         { clipPath: 'inset(0 0% 0 0)', y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.05 }
       );
       gsap.to('.team-hero__line',
         { scaleX: 1, duration: 0.7, ease: 'power3.out', delay: 0.35 }
       );
-    }, rootRef);
-    return () => ctx.revert();
-  }, []);
 
-  // Section scroll-triggered animations — re-bind whenever team data changes
-  useLayoutEffect(() => {
-    if (teamMembers.length === 0) return;
-
-    const ctx = gsap.context(() => {
-      // Initial states for data-dependent elements (cards, split labels, divider)
-      // Also re-set heading/desc in case they were already revealed on a prior render
-      gsap.set('.team-section__heading',    { y: 40, opacity: 0, clipPath: 'inset(0 0 100% 0)' });
-      gsap.set('.team-section__desc',       { y: 20, opacity: 0 });
-      gsap.set('.leadership-split__label',  { y: -8, opacity: 0, scale: 0.8 });
-      gsap.set('.leadership-split__divider',{ scaleY: 0, transformOrigin: 'center center' });
-      gsap.set('.team-card',                { y: 60, opacity: 0, scale: 0.9 });
-
-      // Then bind scroll-triggered animations
+      // Sections — bind scroll-trigger reveals for everything that's static (headings, descriptions, labels, divider)
       const sections = gsap.utils.toArray<HTMLElement>('.team-section');
-
       sections.forEach((section) => {
         const heading = section.querySelector('.team-section__heading');
         const desc    = section.querySelector('.team-section__desc');
         const labels  = section.querySelectorAll('.leadership-split__label');
         const divider = section.querySelector('.leadership-split__divider');
-        const cards   = section.querySelectorAll('.team-card');
 
         const tl = gsap.timeline({
           scrollTrigger: { trigger: section, start: 'top 88%', once: true },
           defaults: { ease: 'power3.out' },
         });
 
-        if (heading) {
-          tl.to(heading, { y: 0, opacity: 1, clipPath: 'inset(0 0 0% 0)', duration: 0.6 });
-        }
-        if (desc) {
-          tl.to(desc, { y: 0, opacity: 1, duration: 0.45 }, '-=0.4');
-        }
+        if (heading) tl.to(heading, { y: 0, opacity: 1, clipPath: 'inset(0 0 0% 0)', duration: 0.6 });
+        if (desc)    tl.to(desc,    { y: 0, opacity: 1, duration: 0.45 }, '-=0.4');
         if (labels.length > 0) {
-          tl.to(labels,
-            { y: 0, opacity: 1, scale: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(1.7)' },
-            '-=0.3'
-          );
+          tl.to(labels, { y: 0, opacity: 1, scale: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(1.7)' }, '-=0.3');
         }
-        if (divider) {
-          tl.to(divider, { scaleY: 1, duration: 0.5, ease: 'power2.out' }, '-=0.4');
-        }
-        if (cards.length > 0) {
-          tl.to(cards,
-            { y: 0, opacity: 1, scale: 1, duration: 0.55, stagger: 0.05, ease: 'power3.out' },
-            '-=0.35'
-          );
-        }
+        if (divider) tl.to(divider, { scaleY: 1, duration: 0.5, ease: 'power2.out' }, '-=0.4');
       });
     }, rootRef);
 
-    // Layout settles after data + images load — refresh ScrollTrigger positions
+    return () => ctx.revert();
+  }, []);
+
+  // Card reveal — fires once team data lands; cards don't exist before then
+  useLayoutEffect(() => {
+    if (teamMembers.length === 0) return;
+
+    const ctx = gsap.context(() => {
+      gsap.set('.team-card', { y: 60, opacity: 0, scale: 0.9 });
+
+      gsap.utils.toArray<HTMLElement>('.team-section').forEach((section) => {
+        const cards = section.querySelectorAll('.team-card');
+        if (cards.length === 0) return;
+        gsap.to(cards, {
+          y: 0, opacity: 1, scale: 1,
+          duration: 0.55, stagger: 0.05, ease: 'power3.out',
+          scrollTrigger: { trigger: section, start: 'top 78%', once: true },
+        });
+      });
+    }, rootRef);
+
+    // Layout settles after images load — refresh ScrollTrigger positions so triggers fire at correct scroll points
     const t1 = setTimeout(() => ScrollTrigger.refresh(), 200);
     const t2 = setTimeout(() => ScrollTrigger.refresh(), 800);
 
