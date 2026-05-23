@@ -1,7 +1,9 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Instagram } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { BEHOLD_FEED_ID, INSTAGRAM_HANDLE, INSTAGRAM_URL, INSTAGRAM_SINCE } from '../config/instagram';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -109,6 +111,17 @@ const VanstringHome: React.FC = () => {
     }, rootRef);
 
     return () => ctx.revert();
+  }, []);
+
+  // Load Behold widget script once, only when a feed ID is configured
+  useEffect(() => {
+    if (!BEHOLD_FEED_ID) return;
+    if (document.querySelector('script[data-behold-widget]')) return;
+    const script = document.createElement('script');
+    script.src = 'https://w.behold.so/widget.js';
+    script.type = 'module';
+    script.setAttribute('data-behold-widget', 'true');
+    document.body.appendChild(script);
   }, []);
 
   return (
@@ -232,6 +245,48 @@ const VanstringHome: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Instagram feed ─────────────────────────────────────────────── */}
+      <section className="container relative mx-auto px-6 pb-20 md:pb-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
+            <div>
+              <span className="mb-5 block h-px w-16 bg-indigo-400" aria-hidden="true" />
+              <h2 className="font-display text-3xl font-semibold text-white md:text-5xl">
+                Follow Along
+              </h2>
+              <p className="mt-3 text-base font-light leading-7 text-stone-300/90 md:text-lg">
+                See what we've been up to <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-indigo-300 hover:text-indigo-200 transition-colors">@{INSTAGRAM_HANDLE}</a> · sharing since {INSTAGRAM_SINCE}
+              </p>
+            </div>
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-indigo-400/30 bg-indigo-500/10 text-indigo-200 text-sm font-medium hover:bg-indigo-500/20 hover:border-indigo-400/50 transition-all"
+            >
+              <Instagram size={16} />
+              Open Instagram
+            </a>
+          </div>
+
+          {BEHOLD_FEED_ID ? (
+            <div className="overflow-hidden rounded-2xl border border-white/10 bg-stone-800/35 p-4 shadow-xl shadow-black/10">
+              <behold-widget feed-id={BEHOLD_FEED_ID} />
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-indigo-400/25 bg-stone-800/30 p-10 text-center">
+              <Instagram size={32} className="mx-auto mb-4 text-indigo-300/60" />
+              <p className="text-base font-light text-stone-300/80">
+                Instagram feed coming soon.
+              </p>
+              <p className="mt-2 text-xs text-stone-500">
+                Configure <code className="px-1.5 py-0.5 rounded bg-stone-900/60 text-indigo-300">BEHOLD_FEED_ID</code> in <code className="px-1.5 py-0.5 rounded bg-stone-900/60 text-indigo-300">src/config/instagram.ts</code> to enable.
+              </p>
+            </div>
+          )}
         </div>
       </section>
     </div>
