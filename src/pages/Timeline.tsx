@@ -39,58 +39,6 @@ const CAT = {
 type CatKey = keyof typeof CAT;
 type FilterKey = 'all' | CatKey;
 
-// ─── TEMP preview events (remove before prod) ────────────────────────────────
-const PREVIEW_EVENTS: (TimelineEvent & { _left: boolean })[] = [
-  {
-    id: '__preview_1',
-    name: 'Spring Concert at Sunrise Manor',
-    date: '2025-04-12',
-    category: 'performances',
-    location: 'Sunrise Manor, Room 4',
-    time: '14:00',
-    attendees: '45 seniors',
-    performers: '8 student volunteers',
-    duration: '2 hours',
-    description: 'Students performed a mix of classical and pop pieces for residents of Sunrise Manor, ending with a Q&A session that turned into an hour-long conversation about music.',
-    photo: '/slideshow/041A0050.JPG',
-    createdAt: new Date().toISOString(),
-    createdBy: 'preview',
-    _left: true,
-  },
-  {
-    id: '__preview_2',
-    name: 'Weekly Tutoring Session',
-    date: '2025-03-08',
-    category: 'homework',
-    location: 'Riverside Community Center',
-    time: '15:30',
-    attendees: '12 students',
-    performers: '5 volunteers',
-    duration: '90 minutes',
-    description: 'Helped middle schoolers with algebra, essay writing, and SAT prep.',
-    photo: '/slideshow/041A1349.JPG',
-    createdAt: new Date().toISOString(),
-    createdBy: 'preview',
-    _left: false,
-  },
-  {
-    id: '__preview_3',
-    name: 'Food Bank Fundraiser Drive',
-    date: '2025-02-22',
-    category: 'charity',
-    location: 'Lincoln High School',
-    time: '10:00',
-    attendees: '120 community members',
-    performers: '15 volunteers',
-    duration: '4 hours',
-    description: 'Raised $2,400 and collected over 600 lbs of non-perishables for the local food bank.',
-    photo: '/slideshow/041A5710.JPG',
-    createdAt: new Date().toISOString(),
-    createdBy: 'preview',
-    _left: true,
-  },
-];
-
 const UPCOMING_EVENTS: TimelineEvent[] = [
   {
     id: '__upcoming_vanstring_cinema_four_seasons',
@@ -169,7 +117,7 @@ const Timeline: React.FC = () => {
     return date.getTime();
   }, []);
 
-  const sourceEvents = useMemo(() => events.length > 0 ? events : PREVIEW_EVENTS, [events]);
+  const sourceEvents = events;
 
   const upcomingEvents = useMemo(() => {
     const merged = [...UPCOMING_EVENTS, ...sourceEvents];
