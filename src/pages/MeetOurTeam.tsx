@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { useTeamStore, TeamMember, SectionKey } from '../store/teamStore';
 import TeamMemberCard from '../components/TeamMemberCard';
 import TeamCarousel from '../components/TeamCarousel';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface TeamSectionProps {
   title: string;
@@ -75,13 +79,105 @@ const SplitSection: React.FC<SplitSectionProps> = ({
 );
 
 const MeetOurTeam: React.FC = () => {
-  const { getTeamMembersBySection, getTeamMembersBySectionAndGroup, fetchTeamMembers } = useTeamStore();
+  const { teamMembers, getTeamMembersBySection, getTeamMembersBySectionAndGroup, fetchTeamMembers } = useTeamStore();
+  const rootRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => { fetchTeamMembers(); }, [fetchTeamMembers]);
 
+  // Hero animation + hide ALL animatable static elements on mount
+  // useLayoutEffect runs synchronously BEFORE browser paint — prevents flash of unhidden content
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Hide everything that will eventually animate — even elements that exist before data loads
+      gsap.set('.team-hero__title',         { clipPath: 'inset(0 100% 0 0)', y: 30, opacity: 0 });
+      gsap.set('.team-hero__line',          { scaleX: 0, transformOrigin: 'left center' });
+      gsap.set('.team-section__heading',    { y: 40, opacity: 0, clipPath: 'inset(0 0 100% 0)' });
+      gsap.set('.team-section__desc',       { y: 20, opacity: 0 });
+      gsap.set('.leadership-split__label',  { y: -8, opacity: 0, scale: 0.8 });
+      gsap.set('.leadership-split__divider',{ scaleY: 0, transformOrigin: 'center center' });
+
+      // Animate hero in
+      gsap.to('.team-hero__title',
+        { clipPath: 'inset(0 0% 0 0)', y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.05 }
+      );
+      gsap.to('.team-hero__line',
+        { scaleX: 1, duration: 0.7, ease: 'power3.out', delay: 0.35 }
+      );
+    }, rootRef);
+    return () => ctx.revert();
+  }, []);
+
+  // Section scroll-triggered animations — re-bind whenever team data changes
+  useLayoutEffect(() => {
+    if (teamMembers.length === 0) return;
+
+    const ctx = gsap.context(() => {
+      // Initial states for data-dependent elements (cards, split labels, divider)
+      // Also re-set heading/desc in case they were already revealed on a prior render
+      gsap.set('.team-section__heading',    { y: 40, opacity: 0, clipPath: 'inset(0 0 100% 0)' });
+      gsap.set('.team-section__desc',       { y: 20, opacity: 0 });
+      gsap.set('.leadership-split__label',  { y: -8, opacity: 0, scale: 0.8 });
+      gsap.set('.leadership-split__divider',{ scaleY: 0, transformOrigin: 'center center' });
+      gsap.set('.team-card',                { y: 60, opacity: 0, scale: 0.9 });
+
+      // Then bind scroll-triggered animations
+      const sections = gsap.utils.toArray<HTMLElement>('.team-section');
+
+      sections.forEach((section) => {
+        const heading = section.querySelector('.team-section__heading');
+        const desc    = section.querySelector('.team-section__desc');
+        const labels  = section.querySelectorAll('.leadership-split__label');
+        const divider = section.querySelector('.leadership-split__divider');
+        const cards   = section.querySelectorAll('.team-card');
+
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: section, start: 'top 88%', once: true },
+          defaults: { ease: 'power3.out' },
+        });
+
+        if (heading) {
+          tl.to(heading, { y: 0, opacity: 1, clipPath: 'inset(0 0 0% 0)', duration: 0.6 });
+        }
+        if (desc) {
+          tl.to(desc, { y: 0, opacity: 1, duration: 0.45 }, '-=0.4');
+        }
+        if (labels.length > 0) {
+          tl.to(labels,
+            { y: 0, opacity: 1, scale: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(1.7)' },
+            '-=0.3'
+          );
+        }
+        if (divider) {
+          tl.to(divider, { scaleY: 1, duration: 0.5, ease: 'power2.out' }, '-=0.4');
+        }
+        if (cards.length > 0) {
+          tl.to(cards,
+            { y: 0, opacity: 1, scale: 1, duration: 0.55, stagger: 0.05, ease: 'power3.out' },
+            '-=0.35'
+          );
+        }
+      });
+    }, rootRef);
+
+    // Layout settles after data + images load — refresh ScrollTrigger positions
+    const t1 = setTimeout(() => ScrollTrigger.refresh(), 200);
+    const t2 = setTimeout(() => ScrollTrigger.refresh(), 800);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      ctx.revert();
+    };
+  }, [teamMembers]);
+
   return (
-    <div className="team-page">
+    <div ref={rootRef} className="team-page">
       <header className="team-hero container">
         <h1 className="team-hero__title">Meet the Team</h1>
+        <div className="team-hero__line" style={{
+          width: 72, height: 2, background: '#c8a46e',
+          marginTop: 18, borderRadius: 1, transformOrigin: 'left center',
+        }} />
       </header>
 
       <SplitSection
