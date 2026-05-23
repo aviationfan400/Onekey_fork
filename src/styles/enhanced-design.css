@@ -178,6 +178,12 @@
   margin: 0 auto;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
+  min-height: 3.5rem; /* mobile — matches main's pt-14 so navbar height aligns with reserved space */
+}
+@media (min-width: 768px) {
+  .site-nav__inner {
+    min-height: 4.5rem; /* desktop — matches main's md:pt-[4.5rem] */
+  }
 }
 
 .site-nav__logo {
